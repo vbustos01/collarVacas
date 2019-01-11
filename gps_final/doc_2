@@ -1,0 +1,36 @@
+dios:	https://github.com/peterhinch
+jesus:	https://github.com/dream11nikhil?tab=repositories
+
+############ 	Info sobre GROVE GPS - SIM28 	#############################
+############ 	A.K.A 113020003 GPS  			#############################
+VOLTAJE: 	3.3V/5V
+BAUDRATE:	9600 - 115200 (9600 default)
+CONSUMO:	40mA @ 3Vdc
+Sensitivity: -160 dBm
+
+pagina del fabricante:	http://wiki.seeedstudio.com/Grove-GPS/
+datasheet SIM28:		http://www.python-exemplary.com/download/sim28.pdf
+
+############ Dimensions: ############
+Printed circuit board: 40 x 20 x 13 mm
+GPS sensor: 15 x 15 x 7 mm
+####################################
+
+
+############ 	INFORMACION SOBRE EL PROTOCOLO NMEA 	#####################
+pagina oficial:	https://www.nmea.org/
+simbologia:		http://aprs.gids.nl/nmea/#gga
+descripcion:	http://www.informaticaabordo.com/2011/10/%C2%BFque-es-el-standar-nmea/
+
+############					OTROS					#####################
+
+proyecto parecido:
+	https://github.com/peterhinch/micropython-async
+evitar conflicto entre oled y GPS
+	https://github.com/Heltec-Aaron-Lee/WiFi_Kit_series/issues/38
+algo parecido pero en C
+	https://www.thethingsnetwork.org/labs/story/heltec-lorawan-gps-quick-start
+decodificacion
+	https://forum.micropython.org/viewtopic.php?f=15&t=4471&p=25987&hilit=gps#p25987
+discusion sobre orden nmea:
+	https://forum.micropython.org/viewtopic.php?f=15&t=4471&p=25987&hilit=gps#p25987

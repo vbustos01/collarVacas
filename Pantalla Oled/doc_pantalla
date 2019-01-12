@@ -1,0 +1,15 @@
+datasheet de la pantalla:
+	https://cdn-shop.adafruit.com/datasheets/SSD1306.pdf
+
+repositorio oficial del esp32
+	https://github.com/Heltec-Aaron-Lee/WiFi_Kit_series
+
+libreria:
+	https://github.com/loboris/MicroPython_ESP32_psRAM_LoBo/wiki/display
+
+ayuda foros:
+	https://forum.micropython.org/viewtopic.php?t=4826
+	https://forum.micropython.org/viewtopic.php?t=4002
+
+repositorio de un proyecto ejemplo:
+	https://github.com/Wei1234c/SX127x_driver_for_MicroPython_on_ESP8266

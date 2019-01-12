@@ -3,7 +3,7 @@
 Proyecto realizado en la universidad de la Frontera
 
 ## Instalacion del firmware en la tarjeta
-Para poder trabajar desde con la interfaz ESP32 el usuario debe contar con ciertos permisos para escribir sobre el puerto en el cual esta conectada la placa, en este caso ttyUSB0
+Para poder trabajar con la interfaz ESP32 el usuario debe contar con ciertos permisos para escribir sobre el puerto en el cual esta conectada la placa, en este caso ttyUSB0
 ```
 sudo adduser MyUser dialout
 sudo chmod a+rw /dev/ttyUSB0

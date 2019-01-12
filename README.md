@@ -1,6 +1,6 @@
 ## Collar para la deteccion del celo y la cojera
 
-Proyecto realizado en la universidad de la Fronteraasd
+Proyecto realizado en la universidad de la Frontera
 
 ## Instalacion del firmware en la tarjeta
 

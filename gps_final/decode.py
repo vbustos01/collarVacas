@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+""" Metodo para decodificar cadenas NMEA """
+
 # Ejemplos tipicos del sensor
 #eje = b'$GPGSV,3,1,10,12,67,172,16,24,58,036,18,25,50,240,,02,38,069,21*7D\r\n'
 eje = b'$GPRMC,140014.000,A,3844.7685,S,07236.9229,W,1.87,189.76,110119,,,A*60\r\n'

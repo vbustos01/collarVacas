@@ -3,6 +3,8 @@ ampy -p /dev/ttyUSB0 put acelerometro/mpu6050.py
 ampy -p /dev/ttyUSB0 put acelerometro/constants.py
 ampy -p /dev/ttyUSB0 put acelerometro/cfilter.py
 
+ampy -p /dev/ttyUSB0 put SD/sdcard.py
+
 ampy -p /dev/ttyUSB0 put gps_final/ssd1306.py
 
 ampy -p /dev/ttyUSB0 put LoRa/config_lora.py

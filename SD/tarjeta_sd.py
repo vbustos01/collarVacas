@@ -17,7 +17,7 @@ i2c = I2C(scl=scl, sda=sda, freq=450000)
 oled = ssd1306.SSD1306_I2C(128, 64, i2c, addr=0x3c)
 
 oled.fill(0)
-oled.text('Hola', 45, 5)
+oled.text('Iniciando', 0, 0)
 oled.show()
 """
 #objeto MPU
@@ -27,13 +27,15 @@ mpu = mpu6050.MPU()
 #objeto UART/GPS
 gps = UART(2, 115200)
 gps.init(9600,bits=8,parity=None,stop=1,tx=17,rx=5)
-
+oled.text('Gps...OK', 0, 10)
+oled.show()
 #objeto SPI
 Pin(18,Pin.OUT,value=1) #para desactivar LoRa
 spi = SPI(sck=Pin(23),miso=Pin(12),mosi=Pin(13))
 #objeto SD
 sd = sdcard.SDCard(spi, Pin(2,Pin.OUT))
-
+oled.text('SD...OK', 0, 20)
+oled.show()
 while True:
     #lectura y escritura de SD
     # Ensure right baudrate
@@ -44,6 +46,9 @@ while True:
     aux = gps.readline()
     gps_data = str(aux)#, "utf-8")
     filename = '/fc/gps_data.txt'
+    
+    oled.text('Escribiendo SD', 0, 30)
+    oled.show()
     
     with open(filename,'w') as f:
         n = f.write(gps_data)
@@ -70,8 +75,9 @@ while True:
     time.sleep(0.8)
     Pin(25,Pin.OUT,value=1)
 
-
-
+    #reseteo pantalla
+    oled.fill(0)
+    
 # print()
 # print('Verifying data read back')
 # success = True

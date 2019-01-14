@@ -30,7 +30,6 @@ os.mount(sd, '/fc')
 gps_data = 'hola secsua'
 filename = '/fc/gps_data.txt'
 
-
 with open(filename,'w') as f:
     n = f.write(gps_data)
     print(n, 'bytes written')

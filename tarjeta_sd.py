@@ -17,7 +17,6 @@ spi = SPI(sck=Pin(23),miso=Pin(12),mosi=Pin(13))
 #objeto SD
 sd = sdcard.SDCard(spi, Pin(2,Pin.OUT))
 
-
 while True:
 
 #lectura y escritura de SD
@@ -92,3 +91,4 @@ def isr(pin):
 
 #while True:
 #	valores=mpu.read_sensors_scaled();
+

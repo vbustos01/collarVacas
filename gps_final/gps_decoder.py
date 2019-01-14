@@ -6,7 +6,6 @@ def decode_gps(frame):
 	if(data[0]=='$GPGSV'):
 		# La cabecera es GPGSV (GPS satelites in view)
 		ELEVACION = data[5]
-		return 'elevacion: ' + ELEVACION
 	if(data[0]=='$GPRMC'):
 		# la cabecera es GPRMC (Recommended minimum specific GPS/Transit data)
 		sellodetiempo = data[1]
@@ -16,11 +15,11 @@ def decode_gps(frame):
 			ref_latitud = data[4]
 			longitud = data[5]
 			ref_longitud = data[6]
-			VELOCIDAD = data[7]
 			# Fecha ddmma
 			dia = data[9][:2]
 			mes = data[9][2:4]
 			year = data[9][4:6]
+			# retorno de variables
 		else:
 			print("paquete erroneo")
 	if(data[0]=='$GPGGA'):

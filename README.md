@@ -42,5 +42,7 @@ una vez instalado se puede revisar el uso basico de ampy mediante el comando
 ampy --help
 ```
 ## Instalar monitor serial Picocom
+```
 sudo apt-get install picocom
+```
 ## Modulos:

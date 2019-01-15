@@ -1,0 +1,2 @@
+Solucion a bug de SD:
+	https://github.com/espressif/esp-idf/tree/master/examples/storage/sd_card#note-about-gpio12

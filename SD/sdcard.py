@@ -23,7 +23,6 @@ Example usage on ESP8266:
 from micropython import const
 import time
 
-
 _CMD_TIMEOUT = const(100)
 
 _R1_IDLE_STATE = const(1 << 0)

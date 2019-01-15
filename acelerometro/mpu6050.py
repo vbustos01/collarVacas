@@ -9,8 +9,13 @@ import cfilter
 
 micropython.alloc_emergency_exception_buf(100)
 
-default_pin_scl = 22
-default_pin_sda = 21
+#default_pin_scl = 22
+#default_pin_sda = 21
+
+# los mismos de la pantalla
+default_pin_scl = 15
+default_pin_sda = 4
+
 default_pin_intr = 34
 default_pin_led = 25
 default_sample_rate = 0x20

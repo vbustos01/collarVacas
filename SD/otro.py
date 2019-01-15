@@ -9,7 +9,8 @@ rst = Pin(16, Pin.OUT)
 rst.value(1)
 scl = Pin(15, Pin.OUT, Pin.PULL_UP)
 sda = Pin(4, Pin.OUT, Pin.PULL_UP)
-i2c = I2C(scl=scl, sda=sda, freq=450000)
+#i2c = I2C(scl=scl, sda=sda, freq=450000)
+i2c = I2C(scl=scl, sda=sda, freq=400000)
 oled = ssd1306.SSD1306_I2C(128, 64, i2c, addr=0x3c)
 
 oled.fill(0)
@@ -21,13 +22,17 @@ Pin(18,Pin.OUT,value=1) #para desactivar LoRa
 spi = SPI(sck=Pin(23), miso=Pin(12), mosi=Pin(13))
 sd = sdcard.SDCard(spi, Pin(2,Pin.OUT))
 
-oled.fill(0)
-oled.text('Modulo listo', 0, 0)
+oled.text('Modulo SD listo', 0, 10)
 oled.show()
 
+# inicializacion modulo GPS
+gps = UART(2, 115200)
+gps.init(9600,bits=8,parity=None,stop=1,tx=17,rx=5)
+oled.text('Gps...OK', 0, 20)
+oled.show()
 
 os.mount(sd, '/fc')
-gps_data = 'hola secsua'
+gps_data = 'hola123'
 filename = '/fc/gps_data.txt'
 
 with open(filename,'w') as f:

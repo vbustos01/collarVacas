@@ -1,0 +1,12 @@
+detalle de pines:
+	Modulo SD:
+		- miso: 14
+		- mosi: 13
+		- sck: 23
+		- cs: 2
+	Modulo GPS:
+		- tx: 17
+		- rx: 5
+	Acelerometro:
+		- scl: 15
+		- sda: 4

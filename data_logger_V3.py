@@ -1,5 +1,6 @@
 """
     Proceso automatico para guardar informacion del modulo GPS y acelerometro en la tarjeta SD
+    ademas de determinar el tiempo entre cada muestra a traves de GPS
 """
 from machine import I2C, Pin, SPI, UART
 import os
@@ -20,7 +21,7 @@ i2c = I2C(scl=scl, sda=sda, freq=450000)
 oled = ssd1306.SSD1306_I2C(128, 64, i2c, addr=0x3c)
 
 oled.fill(0)
-oled.text('Iniciando', 0, 0)
+oled.text('Iniciando (t={})'.format(time.time()), 0, 0)
 oled.show()
 
 #####################################Inicializacion de modulos######################################
@@ -66,7 +67,10 @@ while 1:
     with open(filename,'a') as f:
         n = f.write('{},'.format(accelerometer_data))
         print(n, 'bytes written')
-    
+    # escribe informacion sobre el tiempo
+    filename = '/fc/time_data.txt'
+    with open(filename, 'a') as f:
+        n = f.write('{},'.format(time.time()))
     os.umount('/fc')
     time.sleep(0.8)
     Pin(25, Pin.OUT, value=0)

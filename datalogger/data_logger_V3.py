@@ -10,12 +10,25 @@ from machine import I2C, Pin, SPI, UART
 import os
 import time
 import utime
-import mpu6050
+import mpu6050	
 import micropython
 import sdcard
 import ssd1306
+
 micropython.alloc_emergency_exception_buf(100)
+
 #####################################Inicializacion de modulos######################################
+# Pantalla oled
+rst = Pin(16, Pin.OUT)
+rst.value(1)
+scl = Pin(15, Pin.OUT, Pin.PULL_UP)
+sda = Pin(4, Pin.OUT, Pin.PULL_UP)
+i2c = I2C(scl=scl, sda=sda, freq=450000)
+oled = ssd1306.SSD1306_I2C(128, 64, i2c, addr=0x3c)
+
+oled.fill(0)
+oled.text('Iniciando (t={})'.format(utime.ticks_ms()), 0, 0)
+oled.show()
 #objeto MPU
 mpu = mpu6050.MPU()
 #objeto UART/GPS
@@ -29,6 +42,8 @@ sd = sdcard.SDCard(spi, Pin(2,Pin.OUT))
 ###################################Control de tiempo de muestreo####################################
 milis_antes = utime.ticks_ms()
 intervalo = 100    # en milisegundos
+oled.text('(t={})'.format(utime.ticks_ms()), 0, 8)
+oled.show()
 ################################################loop################################################
 while 1:
     milis_ahora = utime.ticks_ms()

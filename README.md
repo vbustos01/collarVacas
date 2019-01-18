@@ -41,8 +41,17 @@ una vez instalado se puede revisar el uso basico de ampy mediante el comando
 ```
 ampy --help
 ```
+Para ejecutar codigo desde el computador en la placa se utiliza ampy de la siguiente forma:
+```
+ampy -p /dev/ttyUSB0 run micodigo.py
+```
+
+ampy cuenta con un timeout, por lo cual para ejecutar bucles infinitos se debe especificar el flag -n
+```
+ampy -p /dev/ttyUSB0 run -n micodigo_infinito.py
+```
+
 ## Instalar monitor serial Picocom
 ```
 sudo apt-get install picocom
 ```
-## Modulos:

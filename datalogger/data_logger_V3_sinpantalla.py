@@ -43,12 +43,6 @@ while 1:
         milis_antes = milis_ahora
         #se monta el sistema de archivos de la sd
         os.mount(sd, '/fc')
-        # INFORMACION MODULO GPS
-        aux = gps.readline()
-        gps_data = str(aux)
-        filename = '/fc/gps_data.txt'
-        with open(filename,'a') as f:
-            n = f.write('{}\n'.format(gps_data))
         # INFORMACION MODULO ACELEROMETRO
         aux = mpu.read_sensors_scaled()
         aux = aux[0] + aux[1] + aux[2]

@@ -27,6 +27,10 @@ instalar firmware (se debe modificar tanto el puerto como el .bin en caso de ser
 esptool.py --chip esp32 -p /dev/ttyUSB0 write_flash -z 0x1000 esp32-20190107-v1.9.4-773-gafecc124e.bin
 ```
 ## Modificar ficheros dentro de la tarjeta
+Antes de instalar ampy se recomienda cambiar los permisos de acceso a la carpeta donde estan ubicadas las librerias de python mediante el siguiente comando:
+```
+	sudo chmod -drwx /home/USUARIO/.local/lib
+```
 Para poder subir o ejecutar ficheros se utiliza el software "ampy", el cual se puede instalar directamente desde la linea de comandos como sigue:
 
 instalacion de Pip3
@@ -35,7 +39,7 @@ sudo apt-get install python3-pip
 ```
 instalacion de ampy:
 ```
-sudo pip3 install --user adafruit-ampy
+pip3 install --user adafruit-ampy
 ```
 una vez instalado se puede revisar el uso basico de ampy mediante el comando
 ```

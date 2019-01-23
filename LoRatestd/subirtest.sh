@@ -34,4 +34,6 @@ sudo ampy -p /dev/ttyUSB0 put all/LoRaReceiver.py
 echo 'LoRaReciver subido ...'
 sudo ampy -p /dev/ttyUSB0 put all/LoRaSender.py
 echo 'LoRaSender subido ...'
+sudo ampy -p /dev/ttyUSB0 put all/ssd1306.py
+echo 'Pantalla_i2c subido ...'
 

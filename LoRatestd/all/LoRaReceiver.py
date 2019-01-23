@@ -7,7 +7,7 @@ def receive(lora):
     sda=Pin(4,Pin.OUT,Pin.PULL_UP)
     i2c = I2C(sda=sda,scl=scl,freq=450000)
     display = ssd1306.SSD1306_I2C(128, 64, i2c)
-    display.text("Lora Reciver",0,10)
+    display.text("Lora Receiver",0,10)
 
     while True:
         if lora.receivedPacket():

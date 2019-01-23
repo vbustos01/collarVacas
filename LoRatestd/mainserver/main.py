@@ -1,6 +1,6 @@
 #import LoRaDuplexCallback
 #import LoRaPingPong
-import LoRaSender
+#import LoRaSender
 import LoRaReceiver
 import config_lora
 from sx127x import SX127x

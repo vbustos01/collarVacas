@@ -1,19 +1,20 @@
 #!/bin/bash
 echo 'ingrese modo emisor o receptor'
 read var1
-echo $var1
+echo "ingreso modo {$var1}"
 
 #cd mainclient | sudo ampy -p /dev/ttyUSB0 put main.py
 
 case $var1 in
 	emisor)
-		echo 'entre en emisor'
 		cd mainclient
 		sudo ampy -p /dev/ttyUSB0 put main.py
+		echo 'client subido ...'
 		;;
 	receptor)
 		cd mainserver
 		sudo ampy -p /dev/ttyUSB0 put main.py
+		echo 'server subido ...'
 		;;
 	*)
 		echo "ingrese correctamente"
@@ -21,11 +22,16 @@ case $var1 in
 esac
 
 cd ..
-ampy -p /dev/ttyUSB0 put config_lora.py
-ampy -p /dev/ttyUSB0 put controller.py
-ampy -p /dev/ttyUSB0 put controller_esp32.py
-ampy -p /dev/ttyUSB0 put sx127x.py
-ampy -p /dev/ttyUSB0 put LoRaReceiver.py
-ampy -p /dev/ttyUSB0 put LoRaSender.py
-
+sudo ampy -p /dev/ttyUSB0 put all/config_lora.py
+echo 'config_lora subido ...'
+sudo ampy -p /dev/ttyUSB0 put all/controller.py
+echo 'controller subido ...'
+sudo ampy -p /dev/ttyUSB0 put all/controller_esp32.py
+echo 'controller_esp32 subido ...'
+sudo ampy -p /dev/ttyUSB0 put all/sx127x.py
+echo 'sx127x subido ...'
+sudo ampy -p /dev/ttyUSB0 put all/LoRaReceiver.py
+echo 'LoRaReciver subido ...'
+sudo ampy -p /dev/ttyUSB0 put all/LoRaSender.py
+echo 'LoRaSender subido ...'
 

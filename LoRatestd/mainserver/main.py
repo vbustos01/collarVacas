@@ -14,5 +14,5 @@ lora = controller.add_transceiver(SX127x(name = 'LoRa1'),
 
 #LoRaDuplexCallback.duplexCallback(lora)
 #LoRaPingPong.ping_pong(lora)
-LoRaSender.send(lora)
-#LoRaReceiver.receive(lora)
+#LoRaSender.send(lora)
+LoRaReceiver.receive(lora)

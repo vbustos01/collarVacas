@@ -17,7 +17,8 @@ def receive(lora):
                 payload = lora.read_payload()
                 display.fill(0)
                 display.text("Recibi esto:",0,10)
-                display.text("{0} RSSI: {1}".format(payload.decode(), lora.packetRssi()),0,32)
+                display.text(payload.decode(),0,20)
+                display.text("RSSI:{0}".format(lora.packetRssi()),0,40)
                 display.show()
                 #print("*** Received message ***\n{}".format(payload.decode()))
 
@@ -25,4 +26,3 @@ def receive(lora):
                 print(e)
             #display.show_text("RSSI: {}\n".format(lora.packetRssi()), 10, 10)
             #print("with RSSI: {}\n".format(lora.packetRssi))
-

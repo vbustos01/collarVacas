@@ -20,7 +20,7 @@ import config_lora#Indentificador de Nodos """en este caso no se implementa"""
 
 controller = ESP32Controller()#Configuracion de Pines y SPI para modificarlos realizarlo en 
                                     #En esta seccion ocurre una herencia multiple del objeto lora
-lora = controller.add_transceiver(SX127x(name = 'LoRa1',parametros),
+lora = controller.add_transceiver(SX127x(name = 'LoRa1',parameters = parametros),
                                   pin_id_ss = ESP32Controller.PIN_ID_FOR_LORA_SS,
                                   pin_id_RxDone = ESP32Controller.PIN_ID_FOR_LORA_DIO0) 
                                 

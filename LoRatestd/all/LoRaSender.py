@@ -23,4 +23,3 @@ def send(lora):
 
         counter += 1
         sleep(0.2)
-

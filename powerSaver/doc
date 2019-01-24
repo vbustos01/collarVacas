@@ -27,5 +27,14 @@
 
 # clonar repositorio de github
 
-# retornar a version anterior del proyecto
+# retornar a version anterior del proyecto 
 	git reset --hard 30545f4cccec7460634b656d278782dd7151098e
+
+# cambiar .profile que esta en la carpeta personal (oculto) y agregarle al final
+	export PATH="$HOME/esp/xtensa-esp32-elf/bin:$PATH"
+	export PATH=$PATH:$HOME/esp/crosstool-NG/builds/xtensa-esp32-elf/bin
+
+# extraer el tar.gz que esta en esta pag: https://docs.espressif.com/projects/esp-idf/en/latest/get-started/linux-setup.html
+en el directorio ~/esp/
+
+# reiniciar sesion

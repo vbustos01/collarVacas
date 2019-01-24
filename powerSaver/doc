@@ -14,3 +14,18 @@
 	https://github.com/micropython/micropython/tree/master/ports/esp32
 	https://github.com/espressif/esp-idf/blob/master/examples/wifi/power_save/main/power_save.c
 	https://github.com/PyConPL/Book/blob/master/2016/workshops/hacking_micropython/text.md
+
+# crear carpeta de trabajo:
+	mkdir ~/esp
+	cd ~/esp
+
+# clonar repositorio dentro de /esp
+
+    git clone https://github.com/espressif/esp-idf.git
+    git checkout <Current supported ESP-IDF commit hash>
+    git submodule update --init --recursive
+
+# clonar repositorio de github
+
+# retornar a version anterior del proyecto
+	git reset --hard 30545f4cccec7460634b656d278782dd7151098e

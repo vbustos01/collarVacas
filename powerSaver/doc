@@ -38,3 +38,12 @@
 en el directorio ~/esp/
 
 # reiniciar sesion
+
+# luego, ir al directorio de micropython y ejecutar lo que sigue en el terminal: -> referencia: https://github.com/micropython/micropython-esp32/issues/180
+
+	make clean
+	git submodule init lib/berkeley-db-1.xx
+	git submodule update
+
+
+

@@ -236,9 +236,9 @@ class SX127x:
 
 
     def setSignalBandwidth(self, sbw):
-        bins = (7.8E3, 10.4E3, 15.6E3, 20.8E3, 31.25E3, 41.7E3, 62.5E3, 125E3, 250E3)
+        bins = (7.8E3, 10.4E3, 15.6E3, 20.8E3, 31.25E3, 41.7E3, 62.5E3, 125E3, 250E3,500E3)
 
-        bw = 9
+        bw = 10
         for i in range(len(bins)):
             if sbw <= bins[i]:
                 bw = i

@@ -7,12 +7,12 @@ class ESP32Controller(Controller):
     # LoRa config
     PIN_ID_FOR_LORA_RESET = 14
 
-    PIN_ID_FOR_LORA_SS = 18
+    PIN_ID_FOR_LORA_SS = 18 #chip select
     PIN_ID_SCK = 5
     PIN_ID_MOSI = 27
     PIN_ID_MISO = 19
 
-    PIN_ID_FOR_LORA_DIO0 = 26
+    PIN_ID_FOR_LORA_DIO0 = 26 #Pin Interrupcion
     PIN_ID_FOR_LORA_DIO1 = None
     PIN_ID_FOR_LORA_DIO2 = None
     PIN_ID_FOR_LORA_DIO3 = None
@@ -59,7 +59,7 @@ class ESP32Controller(Controller):
     def prepare_irq_pin(self, pin_id):
         pin = self.prepare_pin(pin_id, Pin.IN)
         if pin:
-            pin.set_handler_for_irq_on_rising_edge = lambda handler: pin.irq(handler = handler, trigger = Pin.IRQ_RISING)
+            pin.set_handler_for_irq_on_rising_edge = lambda handler: pin.irq(handler = handler, trigger = Pin.IRQ_RISING)#Creación de una Interrupcion
             pin.detach_irq = lambda : pin.irq(handler = None, trigger = 0)
             return pin
 

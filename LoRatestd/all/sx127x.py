@@ -13,7 +13,6 @@ REG_FRF_LSB = 0x08
 REG_PA_CONFIG = 0x09
 REG_LNA = 0x0c
 REG_FIFO_ADDR_PTR = 0x0d
-
 REG_FIFO_TX_BASE_ADDR = 0x0e
 FifoTxBaseAddr = 0x00
 # FifoTxBaseAddr = 0x80
@@ -253,7 +252,9 @@ class SX127x:
         denominator = min(max(denominator, 5), 8)
         cr = denominator - 4
         self.writeRegister(REG_MODEM_CONFIG_1, (self.readRegister(REG_MODEM_CONFIG_1) & 0xf1) | (cr << 1))
-
+    
+    def setAddresNodo(self,direccion):
+        self.writeRegister(, 0xc5 if sf == 6 else 0xc3)
 
     def setPreambleLength(self, length):
         self.writeRegister(REG_PREAMBLE_MSB,  (length >> 8) & 0xff)

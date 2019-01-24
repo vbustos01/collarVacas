@@ -16,8 +16,7 @@ def send(lora):
         #print("Sending packet: \n{}\n".format(payload))
         display.fill(0)
         display.text("Envio esto:",0,10)
-        display.text("{0}".format(payload),0,32)
-        display.text("RSSI{0}".format(lora.packetRssi()),0,32)
+        display.text("{0} RSSI: {1}".format(payload, lora.packetRssi()),0,32)
         display.show()
         lora.println(payload)
 

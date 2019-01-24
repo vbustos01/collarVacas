@@ -5,7 +5,7 @@
 from sx127x import SX127x
 from controller_esp32 import ESP32Controller
 import LoRaReceiver
-#import config_lora#Indentificador de Nodos """en este caso no se implementa"""
+import config_lora#Indentificador de Nodos """en este caso no se implementa"""
 
 """Los siguientes parametros se encuentran por defecto para configurarlos modifique el diccionario parametros despues de este ejemplo(por defecto)"""
 # parameters = {'frequency': 866E6, 'tx_power_level': 2, 'signal_bandwidth': 125E3,
@@ -16,14 +16,14 @@ import LoRaReceiver
 # spreading_factor (6 to 12)
 # coding_rate (5 to 8)
 """IMPORTANTE REVIZAR Payload pag 31 data sx127x """
- parametros = {'frequency': 866E6, 'tx_power_level': 2, 'signal_bandwidth': 125E3,
-                                'spreading_factor': 8, 'coding_rate': 5, 'preamble_length': 8,
-                                'implicitHeader': False, 'sync_word': 0x12, 'enable_CRC': False}
+ #parametros = {'frequency': 866E6, 'tx_power_level': 2, 'signal_bandwidth': 125E3,
+ #                               'spreading_factor': 8, 'coding_rate': 5, 'preamble_length': 8,
+ #                               'implicitHeader': False, 'sync_word': 0x12, 'enable_CRC': False}
 
 
 controller = ESP32Controller()#Configuracion de Pines y SPI para modificarlos realizarlo en 
                                     #En esta seccion ocurre una herencia multiple del objeto lora
-lora = controller.add_transceiver(SX127x(name = 'LoRa1',),
+lora = controller.add_transceiver(SX127x(name = 'LoRa1'),
                                   pin_id_ss = ESP32Controller.PIN_ID_FOR_LORA_SS,
                                   pin_id_RxDone = ESP32Controller.PIN_ID_FOR_LORA_DIO0) 
                                 

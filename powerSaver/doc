@@ -1,0 +1,16 @@
+# otra guia muy util
+	https://medium.com/@alwint3r/compiling-micropython-for-esp32-85cc1968e424
+
+# Link del toolchain y tutorial
+	https://docs.espressif.com/projects/esp-idf/en/latest/get-started/linux-setup.html
+
+# agregar perfiles a ./profile de bash
+	http://www.theunixschool.com/2011/07/what-is-profile-file.html
+# actualizar perfil (despues de reiniciar sesion)
+	. $HOME/.profile
+
+# links de interes
+	
+	https://github.com/micropython/micropython/tree/master/ports/esp32
+	https://github.com/espressif/esp-idf/blob/master/examples/wifi/power_save/main/power_save.c
+	https://github.com/PyConPL/Book/blob/master/2016/workshops/hacking_micropython/text.md

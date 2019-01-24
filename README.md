@@ -29,7 +29,7 @@ esptool.py --chip esp32 -p /dev/ttyUSB0 write_flash -z 0x1000 esp32-20190107-v1.
 ## Modificar ficheros dentro de la tarjeta
 Antes de instalar ampy se recomienda cambiar los permisos de acceso a la carpeta donde estan ubicadas las librerias de python mediante el siguiente comando:
 ```
-	sudo chmod -drwx /home/USUARIO/.local/lib
+sudo chmod -drwx /home/USUARIO/.local/lib
 ```
 Para poder subir o ejecutar ficheros se utiliza el software "ampy", el cual se puede instalar directamente desde la linea de comandos como sigue:
 

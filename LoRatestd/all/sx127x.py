@@ -199,8 +199,9 @@ class SX127x:
 
     def sleep(self):
         self.writeRegister(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_SLEEP)
-
-
+    def readpowertx(self):
+        return self.readRegister(REG_PA_CONFIG)
+    
     def setTxPower(self, level, outputPin = PA_OUTPUT_PA_BOOST_PIN):
         if (outputPin == PA_OUTPUT_RFO_PIN):
             # RFO
@@ -211,6 +212,19 @@ class SX127x:
             # PA BOOST
             level = min(max(level, 2), 17)
             self.writeRegister(REG_PA_CONFIG, PA_BOOST | (level - 2))
+    def set_pa_config(self, pa_select=None, max_power=None, output_power=None):
+        """ Configure the PA
+        :param pa_select: Selects PA output pin, 0->RFO, 1->PA_BOOST
+        :param max_power: Select max output power Pmax=10.8+0.6*MaxPower
+        :param output_power: Output power Pout=Pmax-(15-OutputPower) if PaSelect = 0,
+                Pout=17-(15-OutputPower) if PaSelect = 1 (PA_BOOST pin)
+        :return: new register value
+        """
+        loc = locals()
+        current = self.readRegister(REG_PA_CONFIG)
+        loc = {s: current[s] if loc[s] is None else loc[s] for s in loc}
+        val = (loc['pa_select'] << 7) | (loc['max_power'] << 4) | (loc['output_power'])
+        self.writeRegister(REG_PA_CONFIG, val)
 
 
     def setFrequency(self, frequency):
@@ -236,9 +250,9 @@ class SX127x:
 
 
     def setSignalBandwidth(self, sbw):
-        bins = (7.8E3, 10.4E3, 15.6E3, 20.8E3, 31.25E3, 41.7E3, 62.5E3, 125E3, 250E3,500E3)
+        bins = (7.8E3, 10.4E3, 15.6E3, 20.8E3, 31.25E3, 41.7E3, 62.5E3, 125E3, 250E3)
 
-        bw = 10
+        bw = 9
         for i in range(len(bins)):
             if sbw <= bins[i]:
                 bw = i

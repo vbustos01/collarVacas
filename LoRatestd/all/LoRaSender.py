@@ -23,7 +23,7 @@ def send(lora):
     while True:
         display.fill(0)
         display.text("MODO EMISOR",0,0)
-        payload = "Hello |{0}|".format(counter)
+        payload = ">|{0}|HelloWOOOOOOORDDDDDLLLLLLLLLLLLLLLLL88888142".format(counter)
         #print("Sending packet: \n{}\n".format(payload))
         display.text("Envio esto:",0,10)
         display.text(payload,0,20)

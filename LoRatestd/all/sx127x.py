@@ -199,6 +199,10 @@ class SX127x:
 
     def sleep(self):
         self.writeRegister(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_SLEEP)
+    def readCRCmsg(self):
+        return ( self.readRegister(REG_IRQ_FLAGS) & 0x20 )
+    def readIRQFLAGS(self):
+        return (self.readRegister(REG_IRQ_FLAGS))
     def readpowertx(self):
         return self.readRegister(REG_PA_CONFIG)
     
@@ -213,6 +217,7 @@ class SX127x:
             level = min(max(level, 2), 17)
             self.writeRegister(REG_PA_CONFIG, PA_BOOST | (level - 2))
     def set_pa_config(self, pa_select=None, max_power=None, output_power=None):
+        pass;
         """ Configure the PA
         :param pa_select: Selects PA output pin, 0->RFO, 1->PA_BOOST
         :param max_power: Select max output power Pmax=10.8+0.6*MaxPower
@@ -220,11 +225,11 @@ class SX127x:
                 Pout=17-(15-OutputPower) if PaSelect = 1 (PA_BOOST pin)
         :return: new register value
         """
-        loc = locals()
-        current = self.readRegister(REG_PA_CONFIG)
-        loc = {s: current[s] if loc[s] is None else loc[s] for s in loc}
-        val = (loc['pa_select'] << 7) | (loc['max_power'] << 4) | (loc['output_power'])
-        self.writeRegister(REG_PA_CONFIG, val)
+        #loc = locals()
+        #current = self.readRegister(REG_PA_CONFIG)
+        #loc = #{s: current[s] if loc[s] is None else loc[s] for s in loc}
+        #val = #(loc['pa_select'] << 7) | (loc['max_power'] << 4) | (loc['output_power'])
+        #self.writeRegister(REG_PA_CONFIG, val)
 
 
     def setFrequency(self, frequency):
@@ -277,7 +282,7 @@ class SX127x:
     def enableCRC(self, enable_CRC = False):
         modem_config_2 = self.readRegister(REG_MODEM_CONFIG_2)
         config = modem_config_2 | 0x04 if enable_CRC else modem_config_2 & 0xfb
-        self.writeRegister(REG_MODEM_CONFIG_2, config)
+        self.writeRegister(REG_MODEM_CONFIG_2, config) #
 
 
     def setSyncWord(self, sw):

@@ -1,3 +1,0 @@
-informacion uso modulo sx127x basada en micropython
-    Funciones de configuracion (escritura en registros de la placa)
-    

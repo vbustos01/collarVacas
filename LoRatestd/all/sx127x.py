@@ -1,5 +1,6 @@
 from time import sleep
 import gc
+import sys
 
 PA_OUTPUT_RFO_PIN = 0
 PA_OUTPUT_PA_BOOST_PIN = 1
@@ -215,9 +216,48 @@ class SX127x:
         else:
             # PA BOOST
             level = min(max(level, 2), 17)
+            self.writeRegister(REG_PA_CONFIG, 0Xf0 | (level - 2))
+            #self.writeRegister(REG_PA_CONFIG, PA_BOOST | (level - 2))
+    def setTxPowermax(self, level,MPower, outputPin = PA_OUTPUT_PA_BOOST_PIN):
+        if (outputPin == PA_OUTPUT_RFO_PIN):
+            # RFO
+            level = min(max(level, 0), 14)
+            self.writeRegister(REG_PA_CONFIG, 0x70 | level)
+
+        else:
+            # PA BOOST
+            """AQUIESTA LA SOLUCION JOSE"""
+            level = min(max(level, 2), 17)
             self.writeRegister(REG_PA_CONFIG, PA_BOOST | (level - 2))
+    def get_pa_config(self, convert_dBm=False):#Esta funcion permite obtener la configuracion del amplicador
+        v = self.readRegister(REG_PA_CONFIG)
+        pa_select    = v >> 7
+        max_power    = v >> 4 & 0b111
+        output_power = v & 0b1111
+        if convert_dBm:
+            max_power = max_power * .6 + 10.8
+            output_power = max_power - (15 - output_power)
+        return dict(
+                pa_select    = pa_select,
+                max_power    = max_power,
+                output_power = output_power
+            )
     def set_pa_config(self, pa_select=None, max_power=None, output_power=None):
-        pass;
+        """ Configure the PA
+        :param pa_select: Selects PA output pin, 0->RFO, 1->PA_BOOST
+        :param max_power: Select max output power Pmax=10.8+0.6*MaxPower
+        :param output_power: Output power Pout=Pmax-(15-OutputPower) if PaSelect = 0,
+                Pout=17-(15-OutputPower) if PaSelect = 1 (PA_BOOST pin)
+        :return: new register value
+        """
+        loc = locals()
+        current = self.get_pa_config()
+        loc = {s: current[s] if loc[s] is None else loc[s] for s in loc}
+        val = (loc['pa_select'] << 7) | (loc['max_power'] << 4) | (loc['output_power'])
+        self.writeRegister(REG_PA_CONFIG,val)
+
+    #def set_pa_config(self, pa_select=None, max_power=None, output_power=None):
+        #pass;
         """ Configure the PA
         :param pa_select: Selects PA output pin, 0->RFO, 1->PA_BOOST
         :param max_power: Select max output power Pmax=10.8+0.6*MaxPower

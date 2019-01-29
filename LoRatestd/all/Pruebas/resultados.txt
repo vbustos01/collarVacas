@@ -1,0 +1,19 @@
+objeto=SX127x(name = 'LoRa1',parameters = {'frequency': 866E6, 'tx_power_level': 14, 'signal_bandwidth': 250E3,'spreading_factor': 12, 'coding_rate': 5, 'preamble_length': 8,'implicitHeader': False, 'sync_word': 0x12, 'enable_CRC': False})
+RSSI: Tx -164 Rx -128
+#SE PIERDEN PAQUETES
+objeto=SX127x(name = 'LoRa1',parameters = {'frequency': 866E6, 'tx_power_level': 14, 'signal_bandwidth': 250E3,'spreading_factor': 6, 'coding_rate': 5, 'preamble_length': 8,'implicitHeader': False, 'sync_word': 0x12, 'enable_CRC': False})
+RSSI: Tx -164 Rx nada
+
+objeto=SX127x(name = 'LoRa1',parameters = {'frequency': 866E6, 'tx_power_level': 14, 'signal_bandwidth': 250E3,'spreading_factor': 12, 'coding_rate': 8, 'preamble_length': 8,'implicitHeader': False, 'sync_word': 0x12, 'enable_CRC': False})
+RSSI: Tx -164 Rx -126
+#SE PIERDEN PAQUETES
+objeto=SX127x(name = 'LoRa1',parameters = {'frequency': 866E6, 'tx_power_level': 14, 'signal_bandwidth': 7.8E3,'spreading_factor': 12, 'coding_rate':8, 'preamble_length': 8,'implicitHeader': False, 'sync_word': 0x12, 'enable_CRC': False})
+RSSI: Tx -164 Rx nada
+
+objeto=SX127x(name = 'LoRa1',parameters = {'frequency': 866E6, 'tx_power_level': 14, 'signal_bandwidth': 15.6E3,'spreading_factor': 12, 'coding_rate':5, 'preamble_length': 8,'implicitHeader': False, 'sync_word': 0x12, 'enable_CRC': False})
+RSSI: TX -164 RX nada
+
+objeto=SX127x(name = 'LoRa1',parameters = {'frequency': 866E6, 'tx_power_level': 14, 'signal_bandwidth': 62.5E3,'spreading_factor': 12, 'coding_rate':5, 'preamble_length': 8,'implicitHeader': False, 'sync_word': 0x12, 'enable_CRC': False})
+RSSI: TX -164 RX 
+
+

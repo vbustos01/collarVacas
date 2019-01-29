@@ -4,4 +4,5 @@
 # Manual de usuario y especificaciones
 	https://www.mouser.com/catalog/specsheets/Seeed_101020023.pdf
 
-# 
+# libreria adc de micropython
+	https://docs.micropython.org/en/latest/library/machine.ADC.html

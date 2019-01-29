@@ -14,6 +14,8 @@
 	https://github.com/micropython/micropython/tree/master/ports/esp32
 	https://github.com/espressif/esp-idf/blob/master/examples/wifi/power_save/main/power_save.c
 	https://github.com/PyConPL/Book/blob/master/2016/workshops/hacking_micropython/text.md
+	# ejemplos de codigo c en microphython
+	https://forum.micropython.org/viewtopic.php?f=3&t=5578
 
 # crear carpeta de trabajo:
 	mkdir ~/esp

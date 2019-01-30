@@ -1,4 +1,4 @@
-matute:
+# matute:
 	https://stackoverflow.com/questions/50058811/how-to-access-video-stream-from-an-ip-camera-using-opencv-in-python
 
 # libreria onvif
@@ -6,3 +6,9 @@ matute:
 
 # bug de libreria onvif
 	https://github.com/quatanium/python-onvif/issues/13
+
+# especificacion tecnica de onvif
+	https://www.onvif.org/specs/srv/media/ONVIF-Media-Service-Spec-v210.pdf
+
+# comandos onvif
+	https://www.onvif.org/onvif/ver20/util/operationIndex.html

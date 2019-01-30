@@ -19,6 +19,9 @@ def send(lora):
     lista.append(val & 0x0f)
     lista[1] = lista[1]*.6 + 10.8
     lista[2] = lista[1] - (15 - lista[2])
+    display.fill(0)
+    display.text("MODO EMISOR",0,0)
+    display.show()
 
 
     while True:
@@ -35,4 +38,4 @@ def send(lora):
         lora.println(payload)
 
         counter += 1
-        sleep(0.1)
+        sleep(0.05)

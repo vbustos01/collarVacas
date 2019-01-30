@@ -1,6 +1,6 @@
-## Collar para la deteccion del celo y la cojera
+## Collar
 
-Proyecto realizado en la universidad de la Frontera
+Proyecto
 
 ## Instalacion del firmware en la tarjeta
 Para poder trabajar con la interfaz ESP32 el usuario debe contar con ciertos permisos para escribir sobre el puerto en el cual esta conectada la placa, en este caso ttyUSB0

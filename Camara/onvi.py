@@ -1,6 +1,8 @@
 from onvif import ONVIFCamera
+from time import sleep
 
 # instanciacion del objeto onvif
+# _token = "Profile_1"
 ip = '192.168.0.64'
 port = 80
 user = 'admin'
@@ -28,14 +30,34 @@ proto = cam.devicemgmt.GetNetworkProtocols()
 for i in proto:
 	print i
 
-# servicio media
-media_serv = cam.create_media_service()
-print media_serv.GetProfile()
+media = cam.create_media_service()
+ptz = cam.create_ptz_service()
+media_profile = media.GetProfiles()[0] # profile
 
-# PTZ
-ptz_serv = cam.create_ptz_service()
+peticion = ptz.create_type('GetConfigurationOptions')
+peticion.ConfigurationToken = media_profile.PTZConfiguration._token
+ptz_config = ptz.GetConfigurationOptions(peticion)
+peticion = ptz.create_type('ContinuousMove')
+peticion.ProfileToken = media_profile._token
+ptz.Stop({'ProfileToken': media_profile._token})
+
+# rangos de la camara
+XMAX = ptz_config.Spaces.ContinuousPanTiltVelocitySpace[0].XRange.Max
+XMIN = ptz_config.Spaces.ContinuousPanTiltVelocitySpace[0].XRange.Min
+YMAX = ptz_config.Spaces.ContinuousPanTiltVelocitySpace[0].YRange.Max
+YMIN = ptz_config.Spaces.ContinuousPanTiltVelocitySpace[0].YRange.Min
+
+# movimiento
+peticion.Velocity.PanTilt._x = XMAX
+peticion.Velocity.PanTilt._y = 0
+ptz.ContinuousMove(peticion)
+sleep(2)
+ptz.Stop({'ProfileToken': peticion.ProfileToken})
+
+
 # ejemplo funcional de libreria ptz
 #pt = cam.ptz.GetServiceCapabilities()
+
 
 ############### revision de atributos #################
 ############ comentar de ser necesario ################

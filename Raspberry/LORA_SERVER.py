@@ -17,13 +17,13 @@ class mylora(LoRa):
         self.clear_irq_flags(RxDone=1)
         payload = self.read_payload(nocheck=True)
         print ("Receive: ")
-        print(bytes(payload).decode()) # Receive DATA
+        print(bytes(payload).decode("utf-8",'ignore')) # Receive DATA
         #BOARD.led_off()
         #time.sleep(2) # Wait for the client be ready
         #print ("Send: ACK")
         #self.write_payload([255, 255, 0, 0, 65, 67, 75, 0]) # Send ACK
         #self.set_mode(MODE.TX)
-        #self.var=1
+        self.var=1
 
     def on_tx_done(self):
         print("\nTxDone")
@@ -50,29 +50,14 @@ class mylora(LoRa):
         print(self.get_irq_flags())
 
     def start(self):
-        self.set_mode(MODE.RXCONT)
-        print('Modo lectura continua')         
+        print("modo recepcion continua")
+        self.set_mode(MODE.RXCONT) # Receiver mode          
         while True:
-
-            #while (self.var==0):
-                #print ("Send: INF")
-                #self.write_payload([255, 255, 0, 0, 73, 78, 70, 0]) # Send INF
-                #self.set_mode(MODE.TX)
-                #time.sleep(3) # there must be a better solution but sleep() works
-                #self.reset_ptr_rx()
-                #self.set_mode(MODE.RXCONT) # Receiver mode
-                #self.reset_ptr_rx()
-                #start_time = time.time()
-                #while (time.time() - start_time < 10): # wait until receive data or 10s
-                    #pass;
-            
-            #self.var=0
-            #self.reset_ptr_rx()
-            #self.set_mode(MODE.RXCONT) # Receiver mode
-            #time.sleep(10)
+            pass;
 
 lora = mylora(verbose=False)
-#args = parser.parse_args(lora) # configs in LoRaArgumentParser.py
+lora.set_freq(866)
+#args = parser.parse_args(lora) # configs in LoRaArgumentParser.py 
 #     Slow+long range  Bw = 125 kHz, Cr = 4/8, Sf = 4096chips/symbol, CRC on. 13 dBm
 lora.set_pa_config(pa_select=1, max_power=21, output_power=15)
 lora.set_bw(BW.BW125)
@@ -80,9 +65,8 @@ lora.set_coding_rate(CODING_RATE.CR4_5)
 lora.set_spreading_factor(8)
 lora.set_rx_crc(True)
 lora.set_lna_gain(GAIN.G1)
-lora.set_implicit_header_mode(False)#CABEZERA EN MODO EXPLICITO
-lora.set_preamble(8)#tamaño del preambulo
-#PALABRA DE SINCRONIZACION =0x12
+lora.set_preamble(8)
+lora.set_implicit_header_mode(True)
 #lora.set_low_data_rate_optim(True)
 #  Medium Range  Defaults after init are 434.0MHz, Bw = 125 kHz, Cr = 4/5, Sf = 128chips/symbol, CRC on 13 dBm
 #lora.set_pa_config(pa_select=1)

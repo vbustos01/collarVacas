@@ -17,7 +17,7 @@ import config_lora#Indentificador de Nodos """en este caso no se implementa"""
 # coding_rate (5 to 8)
 """IMPORTANTE REVIZAR Payload pag 31 data sx127x """
  #parametros = {'frequency': 869E6, 'tx_power_level': 2, 'signal_bandwidth': 125E3,'spreading_factor': 8, 'coding_rate': 5, 'preamble_length': 8,'implicitHeader': False, 'sync_word': 0x12, 'enable_CRC': False}
-objeto=SX127x(name = 'LoRa1',parameters = {'frequency': 866E6, 'tx_power_level': 14, 'signal_bandwidth': 125E3,'spreading_factor': 8, 'coding_rate':5, 'preamble_length': 8,'implicitHeader': False, 'sync_word': 0x12, 'enable_CRC':True})
+objeto=SX127x(name = 'LoRa1',parameters = {'frequency': 866E6, 'tx_power_level': 14, 'signal_bandwidth': 125E3,'spreading_factor': 10, 'coding_rate':5, 'preamble_length': 8,'implicitHeader': False, 'sync_word': 0x12, 'enable_CRC':True})
 controller = ESP32Controller()#Configuracion de Pines y SPI para modificarlos realizarlo en 
                                     #En esta seccion ocurre una herencia multiple del objeto lora
 lora = controller.add_transceiver(objeto,

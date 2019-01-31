@@ -1,7 +1,7 @@
 #import LoRaDuplexCallback
 #import LoRaPingPong
 import LoRaSender
-import LoRaReceiver
+#import LoRaReceiver
 import config_lora
 from sx127x import SX127x
 from controller_esp32 import ESP32Controller

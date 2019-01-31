@@ -50,10 +50,12 @@ class mylora(LoRa):
         print(self.get_irq_flags())
 
     def start(self):
-        print("modo recepcion continua")
-        self.set_mode(MODE.RXCONT) # Receiver mode          
+        print('modo receptor')
         while True:
-            pass;
+            self.reset_ptr_rx()
+            self.set_mode(MODE.RXCONT) # Receiver mode
+            while True:
+                pass;
 
 lora = mylora(verbose=False)
 lora.set_freq(866)
@@ -65,7 +67,6 @@ lora.set_coding_rate(CODING_RATE.CR4_5)
 lora.set_spreading_factor(8)
 lora.set_rx_crc(True)
 lora.set_lna_gain(GAIN.G1)
-
 lora.set_preamble(8)
 lora.set_implicit_header_mode(False)
 print(lora.get_all_registers())

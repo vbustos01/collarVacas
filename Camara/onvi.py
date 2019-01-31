@@ -54,7 +54,7 @@ ptz.ContinuousMove(peticion)
 sleep(2)
 ptz.Stop({'ProfileToken': peticion.ProfileToken})
 
-
+print("jeje")
 # ejemplo funcional de libreria ptz
 #pt = cam.ptz.GetServiceCapabilities()
 

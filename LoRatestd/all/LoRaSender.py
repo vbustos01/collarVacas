@@ -38,4 +38,4 @@ def send(lora):
         lora.println(payload)
 
         counter += 1
-        sleep(0.05)
+        sleep(0.1)

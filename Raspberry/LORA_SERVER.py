@@ -69,10 +69,11 @@ lora.set_lna_gain(GAIN.G1)
 lora.set_preamble(8)
 lora.set_implicit_header_mode(False)
 print(lora.get_all_registers())
+print(lora.get_freq())
 #lora.set_low_data_rate_optim(True)
 #  Medium Range  Defaults after init are 434.0MHz, Bw = 125 kHz, Cr = 4/5, Sf = 128chips/symbol, CRC on 13 dBm
 #lora.set_pa_config(pa_select=1)
-assert(lora.get_agc_auto_on() == 1)
+#assert(lora.get_agc_auto_on() == 1)
 try:
     print("START")
     lora.start()

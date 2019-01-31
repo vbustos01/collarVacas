@@ -172,11 +172,16 @@ class SX127x:
 
     def println(self, string, implicitHeader = False):
         self.aquire_lock(True)  # wait until RX_Done, lock and begin writing.
-
         self.beginPacket(implicitHeader)
         self.write(string.encode())
         self.endPacket()
+        self.aquire_lock(False) # unlock when done writing
 
+    def bytesprintln(self, bytesdata, implicitHeader = False):
+        self.aquire_lock(True)  # wait until RX_Done, lock and begin writing.
+        self.beginPacket(implicitHeader)
+        self.write(bytesdata)
+        self.endPacket()
         self.aquire_lock(False) # unlock when done writing
 
 

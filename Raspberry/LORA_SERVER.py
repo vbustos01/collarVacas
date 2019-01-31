@@ -52,7 +52,7 @@ class mylora(LoRa):
     def start(self):
         while True:
             while (self.var==0):
-                print ("Send: INF")
+                print ("Se envio: 10 0 93")
                 self.write_payload([10, 0, 93]) # Send INF
                 self.set_mode(MODE.TX)
                 while (self.get_irq_flags()['tx_done'] == 0):#Espera que se envie el paquete
@@ -60,7 +60,6 @@ class mylora(LoRa):
                 self.clear_irq_flags(TxDone=1)#Reinicio la interrupcion TxDone
                 self.reset_ptr_rx()
                 self.set_mode(MODE.RXCONT) # Receiver mode
-            
                 start_time = time.time()
                 while (time.time() - start_time < 1): # wait until receive data or 10s
                     pass;
@@ -68,7 +67,7 @@ class mylora(LoRa):
             self.var=0
             self.reset_ptr_rx()
             self.set_mode(MODE.RXCONT) # Receiver mode
-            time.sleep(1)
+            time.sleep(2)
 
 lora = mylora(verbose=False)
 lora.set_freq(866)

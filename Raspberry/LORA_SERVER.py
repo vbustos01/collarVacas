@@ -18,7 +18,7 @@ class mylora(LoRa):
         direccion = int(paquete[0])
         if direccion == 0:#El paquete es para nodo central?
             comando =int(paquete[1])
-            mensaje = paquete[2:].decode()
+            mensaje = paquete.decode()[2:]
             print("se recibio el siguiente mensaje:")
             print(mensaje)
             print(comando)
@@ -53,7 +53,7 @@ class mylora(LoRa):
         while True:
             while (self.var==0):
                 print ("Se envio: 10 0 93")
-                self.write_payload([10, 0, 93]) # Send INF
+                self.write_payload([10, 0, 93]) # Send comando 
                 self.set_mode(MODE.TX)
                 while (self.get_irq_flags()['tx_done'] == 0):#Espera que se envie el paquete
                     pass;

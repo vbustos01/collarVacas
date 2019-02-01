@@ -14,15 +14,15 @@ class mylora(LoRa):
     def on_rx_done(self):
         #BOARD.led_on()
         #print("\nRxDone")
+        paquete = self.read_payload(nocheck=True)
+        direccion = int(paquete[0])
+        if direccion == 0:#El paquete es para nodo central?
+            comando =int(paquete[1])
+            mensaje = paquete[2:].decode()
+            print("se recibio el siguiente mensaje:")
+            print(mensaje)
+            print(comando)
         self.clear_irq_flags(RxDone=1)
-        payload = self.read_payload(nocheck=True)
-        print ("Receive: ")
-        print(bytes(payload).decode("utf-8",'ignore')) # Receive DATA
-        #BOARD.led_off()
-        #time.sleep(2) # Wait for the client be ready
-        #print ("Send: ACK")
-        #self.write_payload([255, 255, 0, 0, 65, 67, 75, 0]) # Send ACK
-        #self.set_mode(MODE.TX)
         self.var=1
 
     def on_tx_done(self):
@@ -81,8 +81,8 @@ lora.set_rx_crc(True)
 #lora.set_lna_gain(GAIN.G1)
 lora.set_preamble(8)
 lora.set_implicit_header_mode(False)
-print(lora.get_all_registers())
-print(lora.get_freq())
+#print(lora.get_all_registers())
+#print(lora.get_freq())
 #lora.set_low_data_rate_optim(True)
 #  Medium Range  Defaults after init are 434.0MHz, Bw = 125 kHz, Cr = 4/5, Sf = 128chips/symbol, CRC on 13 dBm
 #lora.set_pa_config(pa_select=1)

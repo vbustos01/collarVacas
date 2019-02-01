@@ -21,7 +21,6 @@ class mylora(LoRa):
             mensaje = bytes(paquete[2:]).decode()
             print("se recibio el siguiente mensaje:")
             print(mensaje)
-            print(comando)
         self.clear_irq_flags(RxDone=1)
         self.var=1
 
@@ -51,9 +50,10 @@ class mylora(LoRa):
 
     def start(self):
         while True:
-            while (self.var==0):
-                print ("Se envio: 10 0 93")
-                self.write_payload([10, 0, 93]) # Send comando 
+            for direccionador in range(10,12):
+                #while (self.var==0):
+                print ("Se envio: {0} 0 93".format(direccionador))
+                self.write_payload([direccionador, 0, 93]) # Send comando 
                 self.set_mode(MODE.TX)
                 while (self.get_irq_flags()['tx_done'] == 0):#Espera que se envie el paquete
                     pass;
@@ -64,10 +64,10 @@ class mylora(LoRa):
                 while (time.time() - start_time < .5): # wait until receive data or 10s
                     pass;
             
-            self.var=0
-            self.reset_ptr_rx()
-            self.set_mode(MODE.RXCONT) # Receiver mode
-            time.sleep(0.05)
+                self.var=0
+                self.reset_ptr_rx()
+                self.set_mode(MODE.RXCONT) # Receiver mode
+                time.sleep(0.05)
 
 lora = mylora(verbose=False)
 lora.set_freq(866)

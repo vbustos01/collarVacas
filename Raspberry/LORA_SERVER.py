@@ -67,7 +67,7 @@ class mylora(LoRa):
             self.var=0
             self.reset_ptr_rx()
             self.set_mode(MODE.RXCONT) # Receiver mode
-            time.sleep(0.2)
+            time.sleep(0.05)
 
 lora = mylora(verbose=False)
 lora.set_freq(866)

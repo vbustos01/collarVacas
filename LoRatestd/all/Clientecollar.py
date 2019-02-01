@@ -9,13 +9,17 @@ def collar(lora):
     sda=Pin(4,Pin.OUT,Pin.PULL_UP)
     i2c = I2C(sda=sda,scl=scl,freq=450000)
     display = ssd1306.SSD1306_I2C(128, 64, i2c)
+    display.fill(0)
+    display.text("Lora Receiver",0,0)
+    display.show()
     while True:
         if lora.receivedPacket():
+            print("Paquete recibido")
             try:
                 paquete = lora.read_payload()
-                direccion = int(paquete[0])
+                direccion = paquete[0]
                 if direccion == dirCollar:
-                    comando =int(paquete[1])
+                    comando = paquete[1]
                     mensaje = paquete[2:].decode()
                     display.fill(0)
                     display.text("Recibi esto:",0,10)

@@ -18,7 +18,7 @@ class mylora(LoRa):
         direccion = int(paquete[0])
         if direccion == 0:#El paquete es para nodo central?
             comando =int(paquete[1])
-            mensaje = paquete.decode()[2:]
+            mensaje = bytes(paquete[2:]).decode()
             print("se recibio el siguiente mensaje:")
             print(mensaje)
             print(comando)

@@ -18,6 +18,8 @@ def collar(lora):
             try:
                 paquete = lora.read_payload()
                 direccion = paquete[0]
+                print(direccion)
+                print(dirCollar)
                 if direccion == dirCollar:
                     comando = paquete[1]
                     mensaje = paquete[2:].decode()

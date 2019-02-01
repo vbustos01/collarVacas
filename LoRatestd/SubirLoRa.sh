@@ -44,13 +44,13 @@ case $var1 in
                 read var2
                 cd maincollar
                 sudo ampy -p /dev/ttyUSB${var2} put main.py
-                echo 'server subido ...'
+                echo 'main subido ...'
                 cd ..
                 sudo ampy -p /dev/ttyUSB${var2} put all/Clientecollar.py
                 echo 'Clientecollar subido ...'
 		echo 'Ingrese Numero ID collar'
 		read var3
-		echo 'dirCollar = '${var3} > direccionCollar.py
+		echo 'dirCollar = '${var3} > all/direccionCollar.py
 		sudo ampy -p /dev/ttyUSB${var2} put all/direccionCollar.py
 		echo 'Direccion de collar subida ...'
 		;;

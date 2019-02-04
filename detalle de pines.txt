@@ -10,3 +10,8 @@ detalle de pines:
 	Acelerometro:
 		- scl: 15
 		- sda: 4
+
+	Microfono:
+		- bclk: 25
+		- dout: 26
+		- lrcl: 27

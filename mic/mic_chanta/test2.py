@@ -1,4 +1,5 @@
 from machine import Pin, I2C, ADC, SPI
+import utime
 import ssd1306
 import sdcard
 import micropython
@@ -28,18 +29,33 @@ sd = sdcard.SDCard(spi, Pin(2,Pin.OUT))
 oled.text('SD...OK', 0, 16)
 oled.show()
 
-n_ventanas = 0
+# pin del led
+led = Pin(25, Pin.OUT)
+
+
 while 1:
 	oled.fill(0)
+	oled.show()
 	os.mount(sd, '/fc')
+
 	win_width = 1000
-	for i in range(win_width):
-		aux[i] = str(adc.read())
+	aux = []
+	muestras = 0
+	tiempo_b = utime.ticks_ms()
+	while muestras<win_width:
+		if utime.ticks_diff(utime.ticks_ms(), tiempo_b)>=12.5:
+			aux.append(adc.read())
+			tiempo_b = utime.ticks_ms()
+#			oled.fill(0)
+#			oled.text('muestra: {}'.format(muestras), 0, 0)
+#			oled.show()
+			muestras = muestras + 1
+	oled.text('muestras...ok', 0, 0)
+	oled.show()
 	filename = '/fc/audio.txt'
 	for i in range(win_width):
+		led.value(1)
 		with open(filename,'a') as f:
 			n = f.write('{},'.format(aux[i]))
-		n_ventanas = n_ventanas + 1
-		if(n_ventanas==5):
-			break
+		led.value(0)
 	os.umount('/fc')

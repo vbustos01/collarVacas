@@ -37,6 +37,7 @@ media_profile = media.GetProfiles()[0] # profile
 peticion = ptz.create_type('GetConfigurationOptions')
 peticion.ConfigurationToken = media_profile.PTZConfiguration._token
 ptz_config = ptz.GetConfigurationOptions(peticion)
+
 peticion = ptz.create_type('ContinuousMove')
 peticion.ProfileToken = media_profile._token
 ptz.Stop({'ProfileToken': media_profile._token})
@@ -48,8 +49,8 @@ YMAX = ptz_config.Spaces.ContinuousPanTiltVelocitySpace[0].YRange.Max
 YMIN = ptz_config.Spaces.ContinuousPanTiltVelocitySpace[0].YRange.Min
 
 # movimiento
-peticion.Velocity.PanTilt._x = XMAX
-peticion.Velocity.PanTilt._y = 0
+peticion.Velocity.PanTilt._x = 0#XMAX
+peticion.Velocity.PanTilt._y = -YMAX
 ptz.ContinuousMove(peticion)
 sleep(2)
 ptz.Stop({'ProfileToken': peticion.ProfileToken})

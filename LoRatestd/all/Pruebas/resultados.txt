@@ -20,14 +20,18 @@ RSSI: TX -164 RX
 objeto=SX127x(name = 'LoRa1',parameters = {'frequency': 866E6, 'tx_power_level': 14, 'signal_bandwidth': 62.5E3,'spreading_factor': 7, 'coding_rate':5, 'preamble_length': 8,'implicitHeader': False, 'sync_word': 0x12, 'enable_CRC':True})
 Resultados :
 10% PERDIDA RSSI:-110
+
 objeto=SX127x(name = 'LoRa1',parameters = {'frequency': 866E6, 'tx_power_level': 14, 'signal_bandwidth': 500E3,'spreading_factor': 12, 'coding_rate':8, 'preamble_length': 8,'implicitHeader': False, 'sync_word': 0x12, 'enable_CRC':True})
 Resultados :
 32% PERDIDA RSSI:-105
+
 objeto=SX127x(name = 'LoRa1',parameters = {'frequency': 866E6, 'tx_power_level': 17 , 'signal_bandwidth': 125E3,'spreading_factor': 8, 'coding_rate': 5, 'preamble_length': 8,'implicitHeader': False, 'sync_word': 0x12, 'enable_CRC': True})
 Resultados :
 5% PERDIDA RSSI:-102
+
 objeto=SX127x(name = 'LoRa1',parameters = {'frequency': 866E6, 'tx_power_level': 14, 'signal_bandwidth': 500E3,'spreading_factor': 10, 'coding_rate':5, 'preamble_length': 8,'implicitHeader': False, 'sync_word': 0x12, 'enable_CRC':True})
 13% PERDIDA RSSI:-103
+
 objeto=SX127x(name = 'LoRa1',parameters = {'frequency': 866E6, 'tx_power_level': 14, 'signal_bandwidth': 125E3,'spreading_factor': 10, 'coding_rate':5, 'preamble_length': 8,'implicitHeader': False, 'sync_word': 0x12, 'enable_CRC':True})
 26% PERDIDA RSSI:-108
 

@@ -2,6 +2,7 @@
 echo 'Ingrese opcion'
 echo '1.-Modo Emisor'
 echo '2.-Modo Receptor'
+echo '3.-Modo Collar'
 read var1
 #cd mainclient | sudo ampy -p /dev/ttyUSB0 put main.py
 
@@ -34,6 +35,25 @@ case $var1 in
 		sudo ampy -p /dev/ttyUSB${var2} put all/LoRaReceiver.py
 		echo 'LoRaReciver subido ...'
 		;;
+        3)
+                echo 'Ingrese Puerto'
+                echo '0.-/dev/ttyUSB0'
+                echo '1.-/dev/ttyUSB1'
+                echo '2.-/dev/ttyUSB2'
+                echo '3.-/dev/ttyUSB3'
+                read var2
+                cd maincollar
+                sudo ampy -p /dev/ttyUSB${var2} put main.py
+                echo 'main subido ...'
+                cd ..
+                sudo ampy -p /dev/ttyUSB${var2} put all/Clientecollar.py
+                echo 'Clientecollar subido ...'
+		echo 'Ingrese Numero ID collar'
+		read var3
+		echo 'dirCollar = '${var3} > all/direccionCollar.py
+		sudo ampy -p /dev/ttyUSB${var2} put all/direccionCollar.py
+		echo 'Direccion de collar subida ...'
+		;;
 	*)
 		echo "Opcion Desconocida!"
 		exit 1
@@ -50,4 +70,3 @@ sudo ampy -p /dev/ttyUSB${var2} put all/sx127x.py
 echo 'sx127x subido ...'
 sudo ampy -p /dev/ttyUSB${var2} put all/ssd1306.py
 echo 'Pantalla_i2c subido ...'
-

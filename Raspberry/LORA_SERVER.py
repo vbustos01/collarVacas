@@ -75,7 +75,7 @@ class mylora(LoRa):
                 print ("Se envio: {0} 0 ".format(direccionador))
                 self.paqueteSync = [direccionador, 0]
                 self.paqueteACK = [direccionador, 1]
-                self.Enviar(paqueteSync)
+                self.Enviar(self.paqueteSync)
                 self.reset_ptr_rx()
                 self.set_mode(MODE.RXSINGLE) # Modo de recepcion de un solo paquete para uso de timeOut
                 while intentos < INTENTOS:

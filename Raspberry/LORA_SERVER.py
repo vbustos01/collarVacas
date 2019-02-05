@@ -82,7 +82,7 @@ class mylora(LoRa):
                     if self.TimeOut:
                         intentos += 1
                         self.TimeOut = False
-                        self.Enviar(paqueteSync)#Se reenvia el paquete de sincronización
+                        self.Enviar(self.paqueteSync)#Se reenvia el paquete de sincronización
                         self.reset_ptr_rx()
                         self.set_mode(MODE.RXSINGLE)
                     if self.Recibido:

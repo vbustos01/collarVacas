@@ -35,6 +35,7 @@ class mylora(LoRa):
             self.clear_irq_flags(RxDone=1)
         else:
             self.clear_irq_flags(RxDone=1)
+            self.clear_irq_flags(PayloadCrcError=1)
             print('ERROR EN PAYLOAD')
 
     def on_tx_done(self):

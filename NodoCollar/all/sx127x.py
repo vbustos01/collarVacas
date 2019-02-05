@@ -56,6 +56,7 @@ PA_BOOST = 0x80
 # IRQ masks
 IRQ_TX_DONE_MASK = 0x08
 IRQ_PAYLOAD_CRC_ERROR_MASK = 0x20
+IRQ_VALID_HEAD_MASK = 0x10
 IRQ_RX_DONE_MASK = 0x40
 IRQ_RX_TIME_OUT_MASK = 0x80
 
@@ -94,7 +95,6 @@ class SX127x:
                 init_try = False;
         if version != 0x12:
             raise Exception('Invalid version.')
-
         # put in LoRa and sleep mode
         self.sleep()
 
@@ -373,7 +373,7 @@ class SX127x:
         elif symbTimeout > 255:
             symbTimeout = 255
 
-        writeRegister(REG_SYMB_TIMEOUTLSB , symbTimeout)
+        self.writeRegister(REG_SYMB_TIMEOUTLSB,symbTimeout)
         self._onTimeout = callback #Recepcion de la Funcion a ejecutar en cada interrupcion
 
         if self.pin_RxTimeout:
@@ -413,21 +413,21 @@ class SX127x:
     def handleOnReceive(self, event_source):#Esta funcion se ejecuta en la interrupcion para devolver el paquete 
         self.aquire_lock(True)              # lock until TX_Done
         irqFlags = self.getIrqFlags()#esta funcion reinicia los valores
-        print('entre a la funcion de la interrupcion')
-        print(irqFlags)
-        print(IRQ_RX_DONE_MASK)
-        if ((irqFlags & IRQ_RX_DONE_MASK) == IRQ_RX_DONE_MASK):  # RX_DONE only, irqFlags should be 0x40
-            print('entre al if')
+        if (irqFlags == (IRQ_RX_DONE_MASK | IRQ_VALID_HEAD_MASK) ):  # RX_DONE only, irqFlags should be 0x40
             # automatically standby when RX_DONE
             if self._onReceive:
                 payload = self.read_payload()#Se devuelve un payload en la funcion _onReceive 
-                self._onReceive(self, payload,dataOK)
+                self._onReceive(self, payload)
+        else : 
+            if self._onReceive:
+                payload = None #Se devuelve un payload en la funcion _onReceive 
+                self._onReceive(self, payload)
 
-        elif self.readRegister(REG_OP_MODE) != (MODE_LONG_RANGE_MODE | MODE_RX_SINGLE):
-            # no packet received.
-            # reset FIFO address / # enter single RX mode
-            self.writeRegister(REG_FIFO_ADDR_PTR, FifoRxBaseAddr)
-            self.writeRegister(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_RX_SINGLE)
+        # elif self.readRegister(REG_OP_MODE) != (MODE_LONG_RANGE_MODE | MODE_RX_SINGLE):
+        #     # no packet received.
+        #     # reset FIFO address / # enter single RX mode
+        #     self.writeRegister(REG_FIFO_ADDR_PTR, FifoRxBaseAddr)
+        #     self.writeRegister(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_RX_SINGLE)
 
         self.aquire_lock(False)             # unlock in any case.
         self.collect_garbage()

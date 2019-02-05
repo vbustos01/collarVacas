@@ -17,7 +17,7 @@ paqueteSync = False
 def collar(lora):
     print("LoRa Collar")
     lora.onReceive(on_receive)#Habilita la interrupcion del pin DIO0
-    lora.onTimeout(on_timeout,20)#Habilita la interrupcion del pin DIO1
+    lora.onTimeout(on_timeout,40)#Habilita la interrupcion del pin DIO1
     global display
     global paqueteActual
     paqueteActual = bytes([0,2]) + b'mensaje DE NODO PRUEBA 123456789' 
@@ -28,16 +28,16 @@ def collar(lora):
     while True:
         pass;
 
-def on_receive(lora,paquete,dataOK):
+def on_receive(lora,paquete):
     global intentos
     global display
     global paqueteActual
     global paqueteSync
     global paqueteEnviar
     display.fill(0)
-    if dataOK:
+    if paquete:
         direccion = paquete[0]
-        if direccion = dirCollar:
+        if direccion == dirCollar:
             comando = paquete[1]
             #mensaje = paquete[2:].decode()
             display.text("Recibi:",0,10)

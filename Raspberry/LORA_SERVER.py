@@ -9,6 +9,7 @@ NODOS = 2 #cantidad de Nodos Clientes
 TIME_SAMP = 60 #tiempo de muestreo en segundos
 INTENTOS = 3 #cantidad de intentos para comunicarse con un Nodo
 TIEMPO_CORD = TIME_SAMP*1.0/NODOS
+SYMB_TIME_OUT = 40
 
 class mylora(LoRa):
     def __init__(self, verbose=False):
@@ -22,15 +23,18 @@ class mylora(LoRa):
 
     def on_rx_done(self):
         paquete = self.read_payload(nocheck=False)
-        if paquete == None:
-            direccion = int(paquete[0])
+        if paquete != None:
+            direccion = paquete[0]
             if direccion == 0:#El paquete es para nodo central?
-                comando =int(paquete[1])
-                mensaje = bytes(paquete[2:]).decode()
-                print("se recibio el siguiente mensaje:")
-                print(mensaje)
+                comando =paquete[1]
+                if len(paquete)>2:
+                    mensaje = bytes(paquete[2:]).decode()
+                    print("se recibio el siguiente mensaje:")
+                    print(mensaje)
                 self.Recibido = True
             self.clear_irq_flags(RxDone=1)
+        else:
+            print('ERROR EN PAYLOAD')
 
     def on_tx_done(self):
         print("\nTxDone")
@@ -115,7 +119,7 @@ lora.set_rx_crc(True)
 #lora.set_lna_gain(GAIN.G1)
 lora.set_preamble(8)
 lora.set_implicit_header_mode(False)
-lora.set_symb_timeout(20)
+lora.set_symb_timeout(SYMB_TIME_OUT)
 #print(lora.get_all_registers())
 #print(lora.get_freq())
 #lora.set_low_data_rate_optim(True)

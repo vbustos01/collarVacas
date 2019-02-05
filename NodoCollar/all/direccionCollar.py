@@ -1,1 +1,1 @@
-dirCollar = 10
+dirCollar = 1

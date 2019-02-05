@@ -17,7 +17,7 @@ paqueteSync = False
 def collar(lora):
     print("LoRa Collar")
     lora.onReceive(on_receive)#Habilita la interrupcion del pin DIO0
-    lora.onTimeout(on_timeout,200)#Habilita la interrupcion del pin DIO1
+    lora.onTimeout(on_timeout,20)#Habilita la interrupcion del pin DIO1
     global display
     global paqueteActual
     paqueteActual = bytes([0,2]) + b'PRUEBA' 

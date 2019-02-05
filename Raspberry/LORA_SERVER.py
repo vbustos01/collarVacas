@@ -41,7 +41,7 @@ class mylora(LoRa):
         print(self.get_irq_flags())
 
     def on_rx_timeout(self):
-        print("\non_RxTimeout")
+        #print("TimeOut")
         self.TimeOut = True
         self.clear_irq_flags(RxTimeout=1)
         #print(self.get_irq_flags())
@@ -80,6 +80,7 @@ class mylora(LoRa):
                 self.set_mode(MODE.RXSINGLE) # Modo de recepcion de un solo paquete para uso de timeOut
                 while intentos < INTENTOS:
                     if self.TimeOut:
+                        print("TimeOut")
                         intentos += 1
                         self.TimeOut = False
                         self.Enviar(self.paqueteSync)#Se reenvia el paquete de sincronización

@@ -23,7 +23,7 @@ class mylora(LoRa):
 
     def on_rx_done(self):
         paquete = self.read_payload(nocheck=False)
-        if paquete != None:
+        if paquete:
             direccion = paquete[0]
             if direccion == 0:#El paquete es para nodo central?
                 comando =paquete[1]
@@ -36,6 +36,7 @@ class mylora(LoRa):
         else:
             self.clear_irq_flags(RxDone=1)
             self.clear_irq_flags(PayloadCrcError=1)
+            self.Recibido = False
             print('ERROR EN PAYLOAD')
 
     def on_tx_done(self):

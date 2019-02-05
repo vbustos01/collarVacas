@@ -20,7 +20,7 @@ def collar(lora):
     lora.onTimeout(on_timeout,200)#Habilita la interrupcion del pin DIO1
     global display
     global paqueteActual
-    paqueteActual = bytes([0,2]) + b'mensaje DE NODO PRUEBA 123456789' 
+    paqueteActual = bytes([0,2]) + b'PRUEBA' 
     display.fill(0)
     display.text("LoRa Collar",0,0)
     display.show()
@@ -41,7 +41,7 @@ def on_receive(lora,paquete):
             comando = paquete[1]
             #mensaje = paquete[2:].decode()
             display.text("Recibi:",0,10)
-            if (not paqueteSync) and (comando == 0):
+            if comando ==0:
                 paqueteSync = True#llego un paquete de sincronización
                 lora.bytesprintln(paqueteActual)
                 paqueteEnviar = paqueteActual
@@ -56,6 +56,7 @@ def on_receive(lora,paquete):
             display.text("Direccion Diferente",0,10)
     else :
         display.text("Paquete con Error",0,10)
+        lora.receive()
     if paqueteSync:
         lora.receiveSingle()
     display.text("RSSI:{0}".format(lora.packetRssi()),0,30)

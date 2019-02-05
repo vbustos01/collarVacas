@@ -381,10 +381,9 @@ class SX127x:
                 self.writeRegister(REG_DIO_MAPPING_1, 0x00)
                 self.pin_RxTimeout.set_handler_for_irq_on_rising_edge(handler = self.handleOnTimeout)#el pin de interrupcion se habilita como rising edge
             else:
-                self.pin_RxTimeout.detach_irq()
-    
+                self.pin_RxTimeout.detach_irq() 
 
-    def handleOnTimeout(self):#Esta funcion se ejecuta en la interrupcion para devolver el paquete 
+    def handleOnTimeout(self,event_source):#Esta funcion se ejecuta en la interrupcion para devolver el paquete 
         self.aquire_lock(True)              # lock until TX_Done
         irqFlags = self.getIrqFlags()#esta funcion reinicia los valores
         if ((irqFlags & IRQ_RX_TIME_OUT_MASK) == IRQ_RX_TIME_OUT_MASK):  # RX_DONE only, irqFlags should be 0x40

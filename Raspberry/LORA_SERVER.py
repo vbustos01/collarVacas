@@ -22,7 +22,7 @@ class mylora(LoRa):
         self.paqueteACK = bytes([0])
 
     def on_rx_done(self):
-        paquete = self.read_payload(nocheck=False)
+        paquete = self.read_payload(nocheck=True)
         if paquete:
             direccion = paquete[0]
             if direccion == 0:#El paquete es para nodo central?

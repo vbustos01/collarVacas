@@ -354,7 +354,7 @@ class SX127x:
             self.writeRegister(REG_MODEM_CONFIG_1, config)
 
 
-    def onReceive(self, callback):
+    def onReceive(self, callback): #Esta funcion permite habilitar las interrupciones
         self._onReceive = callback
 
         if self.pin_RxDone:

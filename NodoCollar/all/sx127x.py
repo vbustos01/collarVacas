@@ -29,6 +29,7 @@ REG_PKT_RSSI_VALUE = 0x1a
 REG_PKT_SNR_VALUE = 0x1b
 REG_MODEM_CONFIG_1 = 0x1d
 REG_MODEM_CONFIG_2 = 0x1e
+REG_SYMB_TIMEOUTLSB = 0x1f 
 REG_PREAMBLE_MSB = 0x20
 REG_PREAMBLE_LSB = 0x21
 REG_PAYLOAD_LENGTH = 0x22
@@ -76,6 +77,7 @@ class SX127x:
         self.name = name
         self.parameters = parameters
         self._onReceive = onReceive
+        self._onTimeout = None
         self._lock = False
 
 
@@ -354,35 +356,72 @@ class SX127x:
             self.writeRegister(REG_MODEM_CONFIG_1, config)
 
 
-    def onReceive(self, callback):
-        self._onReceive = callback
+    def onReceive(self, callback):#Esta funcion permite activar la interrupcion para el pin DIO0 de LoRa (txDone)
+        self._onReceive = callback#Recepcion de la Funcion a ejecutar en cada interrupcion
 
         if self.pin_RxDone:
-            if callback:
+            if callback:#si hay una funcion
                 self.writeRegister(REG_DIO_MAPPING_1, 0x00)
-                self.pin_RxDone.set_handler_for_irq_on_rising_edge(handler = self.handleOnReceive)
+                self.pin_RxDone.set_handler_for_irq_on_rising_edge(handler = self.handleOnReceive)#el pin de interrupcion se habilita como rising edge
             else:
                 self.pin_RxDone.detach_irq()
+    
+    def onTimeout(self,callback,symbTimeout):#Esta funcion permite activar la interrupcion para el pin DIO1 de LoRa (Timeout)
+        # symbTimeout 4 - 255
+        if symbTimeout < 4:
+            symbTimeout = 4
+        elif symbTimeout > 255:
+            symbTimeout = 255
 
+        writeRegister(REG_SYMB_TIMEOUTLSB , symbTimeout)
+        self._onTimeout = callback #Recepcion de la Funcion a ejecutar en cada interrupcion
+
+        if self.pin_RxTimeout:
+            if callback:#si hay una funcion
+                self.writeRegister(REG_DIO_MAPPING_1, 0x00)
+                self.pin_RxTimeout.set_handler_for_irq_on_rising_edge(handler = self.handleOnTimeout)#el pin de interrupcion se habilita como rising edge
+            else:
+                self.pin_RxTimeout.detach_irq()
+    
+
+    def handleOnTimeout(self):#Esta funcion se ejecuta en la interrupcion para devolver el paquete 
+        self.aquire_lock(True)              # lock until TX_Done
+        irqFlags = self.getIrqFlags()#esta funcion reinicia los valores
+        if ((irqFlags & IRQ_RX_TIME_OUT_MASK) == IRQ_RX_TIME_OUT_MASK):  # RX_DONE only, irqFlags should be 0x40
+            # automatically standby when RX_DONE
+            if self._onTimeout:
+                self._onTimeout(self)
+        self.aquire_lock(False)             # unlock in any case.
+        self.collect_garbage() 
+        return True
 
     def receive(self, size = 0):
-        self.implicitHeaderMode(size > 0)
-        if size > 0: self.writeRegister(REG_PAYLOAD_LENGTH, size & 0xff)
-
+        self.implicitHeaderMode(size > 0) #Esto permite activar el modo Cabecera Implicita en el caso que se conosca el tamaño del paquete
+        if size > 0: self.writeRegister(REG_PAYLOAD_LENGTH, size & 0xff)#si es modo implicito el tamaño del payload es necesario conocerlo
         # The last packet always starts at FIFO_RX_CURRENT_ADDR
         # no need to reset FIFO_ADDR_PTR
+        #en modo continuo no es necesario reiniciar la direccion de memoria FIFO
         self.writeRegister(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_RX_CONTINUOUS)
+    
+    def receiveSingle(self,size = 0):
+        self.implicitHeaderMode(size > 0) #Esto permite activar el modo Cabecera Implicita en el caso que se conosca el tamaño del paquete
+        if size > 0: self.writeRegister(REG_PAYLOAD_LENGTH, size & 0xff)#si es modo implicito el tamaño del payload es necesario conocerlo
+        self.writeRegister(REG_FIFO_ADDR_PTR, FifoRxBaseAddr)
+        self.writeRegister(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_RX_SINGLE)
+            
 
-
-    def handleOnReceive(self, event_source):
+    def handleOnReceive(self, event_source):#Esta funcion se ejecuta en la interrupcion para devolver el paquete 
         self.aquire_lock(True)              # lock until TX_Done
-        irqFlags = self.getIrqFlags()
-
-        if (irqFlags == IRQ_RX_DONE_MASK):  # RX_DONE only, irqFlags should be 0x40
+        irqFlags = self.getIrqFlags()#esta funcion reinicia los valores
+        print('entre a la funcion de la interrupcion')
+        print(irqFlags)
+        print(IRQ_RX_DONE_MASK)
+        if ((irqFlags & IRQ_RX_DONE_MASK) == IRQ_RX_DONE_MASK):  # RX_DONE only, irqFlags should be 0x40
+            print('entre al if')
             # automatically standby when RX_DONE
             if self._onReceive:
-                payload = self.read_payload()
-                self._onReceive(self, payload)
+                payload = self.read_payload()#Se devuelve un payload en la funcion _onReceive 
+                self._onReceive(self, payload,dataOK)
 
         elif self.readRegister(REG_OP_MODE) != (MODE_LONG_RANGE_MODE | MODE_RX_SINGLE):
             # no packet received.

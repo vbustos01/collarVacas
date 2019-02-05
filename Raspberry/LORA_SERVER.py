@@ -2,27 +2,35 @@ import time
 from SX127x.LoRa import *
 #from SX127x.LoRaArgumentParser import LoRaArgumentParser
 from SX127x.board_config import BOARD
+
 BOARD.setup()
 BOARD.reset()
+NODOS = 2 #cantidad de Nodos Clientes
+TIME_SAMP = 60 #tiempo de muestreo en segundos
+INTENTOS = 3 #cantidad de intentos para comunicarse con un Nodo
+TIEMPO_CORD = TIME_SAMP*1.0/NODOS
+
 class mylora(LoRa):
     def __init__(self, verbose=False):
         super(mylora, self).__init__(verbose)
         self.set_mode(MODE.SLEEP)
         self.set_dio_mapping([0] * 6)
-        self.var=0
+        self.Recibido = False
+        self.TimeOut = False
+        self.paqueteSync = bytes([0])
+        self.paqueteACK = bytes([0])
 
     def on_rx_done(self):
-        #BOARD.led_on()
-        #print("\nRxDone")
-        paquete = self.read_payload(nocheck=True)
-        direccion = int(paquete[0])
-        if direccion == 0:#El paquete es para nodo central?
-            comando =int(paquete[1])
-            mensaje = bytes(paquete[2:]).decode()
-            print("se recibio el siguiente mensaje:")
-            print(mensaje)
-        self.clear_irq_flags(RxDone=1)
-        self.var=1
+        paquete = self.read_payload(nocheck=False)
+        if paquete == None:
+            direccion = int(paquete[0])
+            if direccion == 0:#El paquete es para nodo central?
+                comando =int(paquete[1])
+                mensaje = bytes(paquete[2:]).decode()
+                print("se recibio el siguiente mensaje:")
+                print(mensaje)
+                self.Recibido = True
+            self.clear_irq_flags(RxDone=1)
 
     def on_tx_done(self):
         print("\nTxDone")
@@ -34,7 +42,9 @@ class mylora(LoRa):
 
     def on_rx_timeout(self):
         print("\non_RxTimeout")
-        print(self.get_irq_flags())
+        self.TimeOut = True
+        self.clear_irq_flags(RxTimeout=1)
+        #print(self.get_irq_flags())
 
     def on_valid_header(self):
         print("\non_ValidHeader")
@@ -47,27 +57,50 @@ class mylora(LoRa):
     def on_fhss_change_channel(self):
         print("\non_FhssChangeChannel")
         print(self.get_irq_flags())
+        #RXSINGLE
+    def Enviar(self,paquete):
+        self.write_payload(paquete) # Send comando 
+        self.set_mode(MODE.TX)
+        while (self.get_irq_flags()['tx_done'] == 0):#Espera que se envie el paquete
+            pass;
+        self.clear_irq_flags(TxDone=1)#Reinicio la interrupcion TxDone
 
     def start(self):
         while True:
-            for direccionador in range(10,12):
-                #while (self.var==0):
-                print ("Se envio: {0} 0 93".format(direccionador))
-                self.write_payload([direccionador, 0, 93]) # Send comando 
-                self.set_mode(MODE.TX)
-                while (self.get_irq_flags()['tx_done'] == 0):#Espera que se envie el paquete
-                    pass;
-                self.clear_irq_flags(TxDone=1)#Reinicio la interrupcion TxDone
+            for direccionador in range(1,NODOS+1):
+                
+                self.TimeOut = False
+                self.Recibido = False
+                intentos = 0
+                print ("Se envio: {0} 0 ".format(direccionador))
+                self.paqueteSync = [direccionador, 0]
+                self.paqueteACK = [direccionador, 1]
+                self.Enviar(paqueteSync)
                 self.reset_ptr_rx()
-                self.set_mode(MODE.RXCONT) # Receiver mode
-                start_time = time.time()
-                while (time.time() - start_time < .5): # wait until receive data or 10s
-                    pass;
-            
-                self.var=0
-                self.reset_ptr_rx()
-                self.set_mode(MODE.RXCONT) # Receiver mode
-                time.sleep(0.05)
+                self.set_mode(MODE.RXSINGLE) # Modo de recepcion de un solo paquete para uso de timeOut
+                while intentos < INTENTOS:
+                    if self.TimeOut:
+                        intentos += 1
+                        self.TimeOut = False
+                        self.Enviar(paqueteSync)#Se reenvia el paquete de sincronización
+                        self.reset_ptr_rx()
+                        self.set_mode(MODE.RXSINGLE)
+                    if self.Recibido:
+                        self.Recibido = False
+                        self.Enviar(self.paqueteACK)#Se envia un ACK despues de recibir datos
+                        self.reset_ptr_rx()
+                        self.set_mode(MODE.RXSINGLE)
+                        while not self.TimeOut:
+                            if self.Recibido:
+                                self.Recibido = False
+                                self.Enviar(self.paqueteACK)
+                                self.reset_ptr_rx()
+                                self.set_mode(MODE.RXSINGLE)
+                        break;
+                # start_time = time.time()
+                # while (time.time() - start_time < .5): # wait until receive data or 10s
+                #     pass;
+
 
 lora = mylora(verbose=False)
 lora.set_freq(866)
@@ -81,6 +114,7 @@ lora.set_rx_crc(True)
 #lora.set_lna_gain(GAIN.G1)
 lora.set_preamble(8)
 lora.set_implicit_header_mode(False)
+lora.set_symb_timeout(20)
 #print(lora.get_all_registers())
 #print(lora.get_freq())
 #lora.set_low_data_rate_optim(True)

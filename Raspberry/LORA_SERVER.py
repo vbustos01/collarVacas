@@ -9,7 +9,7 @@ NODOS = 10 #cantidad de Nodos Clientes
 TIME_SAMP = 60 #tiempo de muestreo en segundos
 INTENTOS = 3 #cantidad de intentos para comunicarse con un Nodo
 TIEMPO_CORD = TIME_SAMP*1.0/NODOS
-SYMB_TIME_OUT = 20
+SYMB_TIME_OUT = 25
 
 class mylora(LoRa):
     def __init__(self, verbose=False):
@@ -22,7 +22,7 @@ class mylora(LoRa):
         self.paqueteACK = bytes([0])
 
     def on_rx_done(self):
-        paquete = self.read_payload(nocheck=True)
+        paquete = self.read_payload(nocheck=False)
         if paquete:
             direccion = paquete[0]
             if direccion == 0:#El paquete es para nodo central?

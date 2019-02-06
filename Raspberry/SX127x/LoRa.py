@@ -248,7 +248,8 @@ class LoRa(object):
         :rtype: bool
         """
         flags = self.get_irq_flags()
-        return not any([flags[s] for s in ['valid_header', 'crc_error', 'rx_done', 'rx_timeout']])
+        return not any([flags[s] for s in [not 'valid_header', 'crc_error']])
+        #return not any([flags[s] for s in ['valid_header', 'crc_error', 'rx_done', 'rx_timeout']])
 
     def read_payload(self , nocheck = False):
         """ Read the payload from FIFO

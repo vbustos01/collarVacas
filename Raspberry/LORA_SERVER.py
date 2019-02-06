@@ -116,8 +116,8 @@ class mylora(LoRa):
                                 self.reset_ptr_rx()
                                 self.set_mode(MODE.RXSINGLE)
                         break;
-            tiempo_final = time.time()
-            print(tiempo_actual-tiempo_final)
+                tiempo_final = time.time()
+                print(tiempo_final-tiempo_actual)
             if direccionador == NODOS :
                 direccionador = 0
 

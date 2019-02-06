@@ -5,7 +5,7 @@ from SX127x.board_config import BOARD
 BOARD.setup()#Mapeo de pines de la raspberry
 BOARD.reset()#Reseteo de los pines
 
-NODOS = 200 # Cantidad de Nodos Clientes
+NODOS = 20 # Cantidad de Nodos Clientes
 TIME_SAMP = 60 # Tiempo de muestreo en segundos
 INTENTOS = 3 # Cantidad de intentos para comunicarse con un Nodo cliente 
 TIEMPO_CORD = TIME_SAMP*1.0/NODOS # Intervalo de tiempo para comunicarse con el Nodo cliente
@@ -116,8 +116,10 @@ class mylora(LoRa):
                                 self.reset_ptr_rx()
                                 self.set_mode(MODE.RXSINGLE)
                         break;
-                if direccionador == NODOS :
-                    direccionador = 0
+            tiempo_final = time.time()
+            print(tiempo_actual-tiempofinal)
+            if direccionador == NODOS :
+                direccionador = 0
 
 lora = mylora(verbose=False)
 lora.set_freq(866)

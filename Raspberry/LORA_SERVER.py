@@ -34,7 +34,8 @@ class mylora(LoRa):
                 self.Recibido = True
             self.clear_irq_flags(RxDone=1)
         else:
-            self.clear_irq_flags(PayloadCrcError=1,RxDone=1)
+            self.clear_irq_flags(RxDone=1)
+            self.clear_irq_flags(PayloadCrcError=1)
             self.Recibido = False
             print('ERROR EN PAYLOAD')
             self.reset_ptr_rx()

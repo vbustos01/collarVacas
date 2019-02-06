@@ -28,7 +28,8 @@ class mylora(LoRa):
             if direccion == 0:#El paquete es para nodo central?
                 comando =paquete[1]
                 if len(paquete)>2:
-                    mensaje = bytes(paquete[2:]).decode()
+                    mensaje = paquete[2:]
+                    mensaje = mensaje[0]<<24 | mensaje[1]<<16 | mensaje[2]<<8 | mensaje[3]
                     print("se recibio el siguiente mensaje:")
                     print(mensaje)
                 self.Recibido = True

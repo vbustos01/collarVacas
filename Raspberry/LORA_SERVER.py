@@ -80,6 +80,7 @@ class mylora(LoRa):
 
     def start(self):
         direccionador = 0
+        tiempo_anterior = 0
         while True:
             tiempo_actual = time.time()
             if ( (tiempo_actual - tiempo_anterior) >= TIEMPO_CORD):

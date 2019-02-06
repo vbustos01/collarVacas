@@ -1,25 +1,25 @@
 import time
 from SX127x.LoRa import *
-#from SX127x.LoRaArgumentParser import LoRaArgumentParser
 from SX127x.board_config import BOARD
 
-BOARD.setup()
-BOARD.reset()
-NODOS = 10 #cantidad de Nodos Clientes
-TIME_SAMP = 60 #tiempo de muestreo en segundos
-INTENTOS = 3 #cantidad de intentos para comunicarse con un Nodo
-TIEMPO_CORD = TIME_SAMP*1.0/NODOS
-SYMB_TIME_OUT = 200
+BOARD.setup()#Mapeo de pines de la raspberry
+BOARD.reset()#Reseteo de los pines
+
+NODOS = 2 # Cantidad de Nodos Clientes
+TIME_SAMP = 60 # Tiempo de muestreo en segundos
+INTENTOS = 3 # Cantidad de intentos para comunicarse con un Nodo cliente 
+TIEMPO_CORD = TIME_SAMP*1.0/NODOS # Intervalo de tiempo para comunicarse con el Nodo cliente
+SYMB_TIME_OUT = 200 # Cantidad de simbolos a esperar para detectar un preambulo
 
 class mylora(LoRa):
     def __init__(self, verbose=False):
         super(mylora, self).__init__(verbose)
         self.set_mode(MODE.SLEEP)
         self.set_dio_mapping([0] * 6)
-        self.Recibido = False
-        self.TimeOut = False
-        self.paqueteSync = bytes([0])
-        self.paqueteACK = bytes([0])
+        self.Recibido = False # Flag de paquete recibido
+        self.TimeOut = False # Flag para detectar Timeout
+        self.paqueteSync = bytes([0]) # paquete de sincronización y utilizado para solicitar un dato del Nodo Cliente
+        self.paqueteACK = bytes([0]) # paquete ACK utilizado para indicar la llegada de un mensaje
 
     def on_rx_done(self):
         paquete = self.read_payload(nocheck=True)
@@ -71,17 +71,21 @@ class mylora(LoRa):
     def Enviar(self,paquete):
         self.write_payload(paquete) # Send comando 
         self.set_mode(MODE.TX)
-        tiempo_anterior = time.time()
+        #tiempo_anterior = time.time()
         while (self.get_irq_flags()['tx_done'] == 0):#Espera que se envie el paquete
             pass;
-        tiempo_actual= time.time()
-        print(tiempo_actual - tiempo_anterior)
+        #tiempo_actual= time.time()
+        #print(tiempo_actual - tiempo_anterior)
         self.clear_irq_flags(TxDone=1)#Reinicio la interrupcion TxDone
 
     def start(self):
+        direccionador = 0
         while True:
-            for direccionador in range(1,NODOS+1):
-                
+            tiempo_actual = time.time()
+            if ( (tiempo_actual - tiempo_anterior) >= TIEMPO_CORD):
+                tiempo_anterior = tiempo_actual
+            #for direccionador in range(1,NODOS+1):
+                direccionador += 1
                 self.TimeOut = False
                 self.Recibido = False
                 intentos = 0
@@ -111,10 +115,8 @@ class mylora(LoRa):
                                 self.reset_ptr_rx()
                                 self.set_mode(MODE.RXSINGLE)
                         break;
-                # start_time = time.time()
-                # while (time.time() - start_time < .5): # wait until receive data or 10s
-                #     pass;
-
+                if direccionador == NODOS :
+                    direccionador = 0
 
 lora = mylora(verbose=False)
 lora.set_freq(866)
@@ -129,8 +131,7 @@ lora.set_rx_crc(True)
 lora.set_preamble(8)
 lora.set_implicit_header_mode(False)
 lora.set_symb_timeout(SYMB_TIME_OUT)
-#print(lora.get_all_registers())
-#print(lora.get_freq())
+print(lora.str())
 #lora.set_low_data_rate_optim(True)
 #  Medium Range  Defaults after init are 434.0MHz, Bw = 125 kHz, Cr = 4/5, Sf = 128chips/symbol, CRC on 13 dBm
 #lora.set_pa_config(pa_select=1)

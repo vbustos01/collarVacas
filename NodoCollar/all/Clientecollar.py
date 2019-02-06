@@ -30,7 +30,8 @@ def collar(lora):
     display.show()
     lora.receive()
     while True:
-        paqueteActual = bytes([0,2]) +bytes([(int(time())>>24)&0xff,( int(time()) >> 16 ) & 0xff,(int(time())>>8)&0xff,int(time())&0xff])
+        tiempo=int(time())
+        paqueteActual = bytes([0,2]) +bytes([(tiempo>>24)&0xff,(tiempo >> 16) & 0xff,(tiempo>>8)&0xff,tiempo & 0xff])
 
         # led.value(1)
         # time.sleep(0.1)

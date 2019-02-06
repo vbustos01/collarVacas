@@ -71,8 +71,11 @@ class mylora(LoRa):
     def Enviar(self,paquete):
         self.write_payload(paquete) # Send comando 
         self.set_mode(MODE.TX)
+        tiempo_anterior = time.time()
         while (self.get_irq_flags()['tx_done'] == 0):#Espera que se envie el paquete
             pass;
+        tiempo_actual= time.time()
+        print(tiempo_actual - tiempo_anterior)
         self.clear_irq_flags(TxDone=1)#Reinicio la interrupcion TxDone
 
     def start(self):

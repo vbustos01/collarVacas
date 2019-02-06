@@ -4,7 +4,7 @@ from direccionCollar import *
 import time
 
 Pin(16,Pin.OUT,value=1)
-led = Pin(14,Pin.OUT,value=1)
+led = Pin(25,Pin.OUT,value=1)
 scl = Pin(15,Pin.OUT,Pin.PULL_UP)
 sda = Pin(4,Pin.OUT,Pin.PULL_UP)
 i2c = I2C(sda=sda,scl=scl,freq=450000)
@@ -15,7 +15,7 @@ paqueteActual = bytes(0)
 intentosACK = 2
 intentos = 0
 paqueteSync = False
-SYMB_TIME_OUT = 20
+SYMB_TIME_OUT = 100
 
 
 def collar(lora):
@@ -25,12 +25,16 @@ def collar(lora):
     global display
     global paqueteActual
     global led
-    paqueteActual = bytes([0,2]) + b'PRUEBA' 
+    paqueteActual = bytes([0,2]) + b'ASDASDASDASDASDASDASDASD12DJIQWJEI1I2312390392GASDASDASDASDASDASDASDASD12DJIQWJEI1I2312390392G+WOR SDASDASDAOSDKQOW12145487858787ASDASDASDASDASDASDASDASD12DJIQWJEI1I2312390392G+WOR SDASDASDAOSDKQOW12145487858787' 
     display.fill(0)
     display.text("LoRa Collar",0,0)
     display.show()
     lora.receive()
     while True:
+        led.value(1)
+        time.sleep(0.1)
+        led.value(0)
+        time.sleep(0.1)
         pass;
 
 def on_receive(lora,paquete):

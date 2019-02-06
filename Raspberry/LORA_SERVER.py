@@ -9,7 +9,7 @@ NODOS = 10 #cantidad de Nodos Clientes
 TIME_SAMP = 60 #tiempo de muestreo en segundos
 INTENTOS = 3 #cantidad de intentos para comunicarse con un Nodo
 TIEMPO_CORD = TIME_SAMP*1.0/NODOS
-SYMB_TIME_OUT = 25
+SYMB_TIME_OUT = 200
 
 class mylora(LoRa):
     def __init__(self, verbose=False):

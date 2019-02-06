@@ -15,7 +15,7 @@ paqueteActual = bytes(0)
 intentosACK = 2
 intentos = 0
 paqueteSync = False
-SYMB_TIME_OUT = 100
+SYMB_TIME_OUT = 200
 
 
 def collar(lora):
@@ -25,7 +25,7 @@ def collar(lora):
     global display
     global paqueteActual
     global led
-    paqueteActual = bytes([0,2]) + b'.,.,.,,.ASDASDASDASDASDASDASDASD12DJIQWJEI1I2312390392GASDASDASDASDASDASDASDASD12DJIQWJ123456789' 
+    paqueteActual = bytes([0,2]) + b'.,.,.,,.ASDASDASDASDASDASDASDASD12DJIQWJEI1I2319' 
     display.fill(0)
     display.text("LoRa Collar",0,0)
     display.show()

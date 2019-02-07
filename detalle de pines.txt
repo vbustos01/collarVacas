@@ -21,10 +21,13 @@ Detalle de pines:
 		- lrcl: 27
 		
 	LoRa - SPI - 3.3V : 
-		- MISO: 
-		- MOSI: 
-		- SCL: 
-		- CS:
+		- MISO:19 
+		- MOSI: 27
+		- SCL: 5
+		- CS:18
+		- Lora reset:14
+		- Lora IRQ
+		- DIO2 (1): 35 
 	
 	Voltajes Bateria- ADC:
 		- ADC	    :13

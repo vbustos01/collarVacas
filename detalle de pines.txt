@@ -1,17 +1,41 @@
-detalle de pines:
-	Modulo SD:
-		- miso: 14
-		- mosi: 13
-		- sck: 23
-		- cs: 2
-	Modulo GPS:
-		- tx: 17
-		- rx: 5
-	Acelerometro:
-		- scl: 15
-		- sda: 4
+Detalle de pines:
 
-	Microfono:
+	Módulo SD - SPI - 5V:
+		- MISO: 14
+		- MOSI: 13
+		- SCL: 23
+		- CS: 2
+		
+	Módulo GPS- UART - 5V:
+		- Tx: 17
+		- Rx: 5
+		
+	Acelerometro- I2C-5V:
+		- SCL: 15
+		- SDA: 4
+		- Interrupción
+
+	Microfono -I2S-3.3V:
 		- bclk: 25
-		- dout: 26
+		- dout: 35
 		- lrcl: 27
+		
+	LoRa - SPI - 3.3V : 
+		-
+		-
+		-
+		-
+	
+	Voltajes Bateria- ADC:
+		- ADC	    :13
+		- PULL-UP   :220K
+		- PULL-DOWN :100K
+		- Habilitador Voltaje Ext = 21
+		
+	Pantalla OLED -I2C - 3.3V
+		- SCL : 15
+		- SDA : 4 
+		
+	LED PLACA :
+	        - LED Blanco : 25 
+	

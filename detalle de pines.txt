@@ -21,10 +21,10 @@ Detalle de pines:
 		- lrcl: 27
 		
 	LoRa - SPI - 3.3V : 
-		-
-		-
-		-
-		-
+		- MISO: 
+		- MOSI: 
+		- SCL: 
+		- CS:
 	
 	Voltajes Bateria- ADC:
 		- ADC	    :13

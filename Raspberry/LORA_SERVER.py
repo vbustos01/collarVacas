@@ -1,7 +1,8 @@
 import time
 from SX127x.LoRa import *
 from SX127x.board_config import BOARD
-
+from angles import deci2sexa, sexa2deci
+"""Es necesario instalar la libreria angles "pip install angles"""
 BOARD.setup()#Mapeo de pines de la raspberry
 BOARD.reset()#Reseteo de los pines
 

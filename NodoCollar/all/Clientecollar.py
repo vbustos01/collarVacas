@@ -4,7 +4,7 @@ from direccionCollar import *
 from time import time
 
 Pin(16,Pin.OUT,value=1)
-led = Pin(25,Pin.OUT,value=1)
+#led = Pin(25,Pin.OUT,value=1)
 scl = Pin(15,Pin.OUT,Pin.PULL_UP)
 sda = Pin(4,Pin.OUT,Pin.PULL_UP)
 i2c = I2C(sda=sda,scl=scl,freq=450000)

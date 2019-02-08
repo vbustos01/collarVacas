@@ -146,16 +146,16 @@ ZMIN = ptz_config.Spaces.ContinuousZoomVelocitySpace[0].XRange.Min    # -1
 
 #REVIEW POSICIONES CAMARA 
 
-while True:
-
+x=int(input("cuantas iteraciones : "))
+for i in range(x):
     #move_left(ptz,peticion)
     #move_up(ptz,peticion)
 
-    status(ptz,peticion)
+#    status(ptz,peticion)
 
-    zoom_in(ptz,peticion)
-
-
+#    zoom_out(ptz,peticion)
+    move_left(ptz,peticion)
+#    move_down(ptz,peticion)
 
 
 #request=search.create_type('FindPTZPosition')

@@ -12,7 +12,7 @@ from angles import sexa2deci
 #    't_unix':4294967295,'bateria':4095,'C_close':True}              #
 ######################################################################
 # Credenciales servidor
-host = "localhost"
+host = "192.168.0.101"
 usuario = "phpmyadmin"
 clave = "66662841"
 base_de_datos = "Vacas"

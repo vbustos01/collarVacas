@@ -65,7 +65,7 @@ cam.devicemgmt.SetHostname(params)
 time_params = cam.devicemgmt.create_type('SetSystemDateAndTime')
 time_params.DateTimeType = 'Manual'
 time_params.DaylightSavings = True
-time_params.TimeZone.TZ = 'CST+03:00:00'
+time_params.TimeZone.TZ = 'CST+00:00:00'
 time_params.UTCDateTime.Date.Year = 2000+int(fecha[6:8])
 time_params.UTCDateTime.Date.Month = int(fecha[0:2])
 time_params.UTCDateTime.Date.Day = int(fecha[3:5])

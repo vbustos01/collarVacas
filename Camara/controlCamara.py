@@ -17,7 +17,7 @@ giros:
 ###############################################
 """
 from onvif import ONVIFCamera
-from time import sleep
+from time import sleep,strftime
 from math import sqrt,sin,cos,asin,pi,acos,degrees,atan2,hypot
 import sys
 import random
@@ -86,6 +86,25 @@ def status(ptz,peticion,timeout=0.01):
 
     return positionX,positionY,zoom
 
+def actualizarFecha(cam):
+	fecha=strftime("%x")
+	hora=strftime("%X")
+	params = cam.devicemgmt.create_type('SetHostname')
+	params.Hostname = 'NewHostName'
+	cam.devicemgmt.SetHostname(params)
+
+	time_params = cam.devicemgmt.create_type('SetSystemDateAndTime')
+	time_params.DateTimeType = 'Manual'
+	time_params.DaylightSavings = True
+	time_params.TimeZone.TZ = 'CST+00:00:00'
+	time_params.UTCDateTime.Date.Year = 2000+int(fecha[6:8])
+	time_params.UTCDateTime.Date.Month = int(fecha[0:2])
+	time_params.UTCDateTime.Date.Day = int(fecha[3:5])
+	time_params.UTCDateTime.Time.Hour = int(hora[0:2])
+	time_params.UTCDateTime.Time.Minute = int(hora[3:5])
+	time_params.UTCDateTime.Time.Second = int(hora[6:8])
+	cam.devicemgmt.SetSystemDateAndTime(time_params)
+
 def mod(a):
 	return sqrt(a**2)
 
@@ -101,11 +120,6 @@ def haversine(lat1,lon1,lat2,lon2):
 		return distancia
 #funcion para ingresar coordenadas gps y convertir a las coordenadas propias de la camara ptz
 def input_conversion():
-	#izq=-38.745928, -72.622241
-	#der=-38.746170, -72.608136
-	#arriba=-38.740820, -72.614887
-	#abajo=	-38.751436, -72.615096
-	#lat,lon=latlon(-38.751436,-38.740820,-72.622241,-72.608136)
 	lat, lon=-38.746830, -72.615908
 	print lat,lon
 	latCam,lonCam=-38.746171, -72.615092 #posicion fija de la camara
@@ -145,17 +159,18 @@ def input_conversion():
 	refz=0.5
 
 	return refx,refy,refz
-
-
+######################################################################################################################################################
 
 # instanciacion del objeto onvif
 # _token = "Profile_1"
+
 ip = '192.168.0.64'
 port = 80
 user = 'admin'
 passwd = 'fondef18I10360'
 cam = ONVIFCamera(ip, port, user, passwd, '/home/pedroc/Escritorio/python-onvif/wsdl')
 
+actualizarFecha(cam)
 # informacion de la camara
 info = cam.devicemgmt.GetHostname()
 fecha = cam.devicemgmt.GetSystemDateAndTime()
@@ -208,39 +223,40 @@ ZMIN = speed*ptz_config.Spaces.ContinuousZoomVelocitySpace[0].XRange.Min    # -1
 ###############################################################
 ########################## MAIN ###############################
 ############################################################### 
-
-positionX,positionY,zoom =status(ptz,peticion) #posicion actual de la camara
-refx,refy,refz=input_conversion() #posicion del objetivo
-
-#########
-
-#
-if (refx==0) and (refy!=0):
-	refx=0.001
-if (refy==0) and (refx!=0):
-	refy=0.001
-
-#error maaximo x
-
-if refx>=0.95:
-	refx=0.95
-	move_left(ptz,peticion)
-
-if refx<=-0.95:
-	refx=-0.95
-
-if refy>1:
-	refy=1
-
-print "\n"
-
 try:
+#while True:
+	positionX,positionY,zoom =status(ptz,peticion) #posicion actual de la camara
+	refx,refy,refz=input_conversion() #posicion del objetivo
+
+	#########
+
+	#
+	if (refx==0) and (refy!=0):
+		refx=0.001
+	if (refy==0) and (refx!=0):
+		refy=0.001
+
+	#error maaximo x
+
+	if refx>=0.95:
+		refx=0.95
+		move_left(ptz,peticion)
+
+	if refx<=-0.95:
+		refx=-0.95
+
+	if refy>1:
+		refy=1
+
+	print "\n"
+
+
 	"""
-funcionamiento busqueda:
-	-el programa cuenta con 16 posibles estados de las cuatro variables de interes (posicion camara= pan y tilt y posicion objetivo= pan y tilt)
-	-tambien cuenta con 5 estados adicionales en donde el tilt tiende a ser maximo o la posicion del objetivo es el (0,0) de la camara
-	-cada estado esta tomado de tal forma de cumplir con las peticiones 
-	-se intento cubrir la mayoria de problemas presentados tales como el origen y en los maximos de pan y tilt
+	funcionamiento busqueda:
+		-el programa cuenta con 16 posibles estados de las cuatro variables de interes (posicion camara= pan y tilt y posicion objetivo= pan y tilt)
+		-tambien cuenta con 5 estados adicionales en donde el tilt tiende a ser maximo o la posicion del objetivo es el (0,0) de la camara
+		-cada estado esta tomado de tal forma de cumplir con las peticiones 
+		-se intento cubrir la mayoria de problemas presentados tales como el origen y en los maximos de pan y tilt
 	
 	"""
 	while positionX<refx-0.1 or positionX>refx+0.1 or positionY<refy-0.1 or positionY>refy+0.1 : 
@@ -290,7 +306,6 @@ funcionamiento busqueda:
 					positionX,positionY,zoom =status(ptz,peticion)				
 				if positionX>refx-.1 and positionX<refx+.1 and positionY>refy-.1 and positionY<refy+.1:
 					break
-
 				
 	##############      TODOS NEGATIVOS   #############################	
 		if (positionX<0) and (refx<0) and (positionY<0) and (refy<0):
@@ -323,7 +338,6 @@ funcionamiento busqueda:
 					move_up(ptz,peticion)
 				positionX,positionY,zoom =status(ptz,peticion)
 				
-
 	############# CAMX Y REFY POSITIVOS ##################################
 		if (positionX>0) and (refx<0) and (positionY<0) and (refy>0):
 			print 'CAMx y refy POSITIVO'
@@ -395,7 +409,6 @@ funcionamiento busqueda:
 				if positionY<refy-0.1 or positionY>refy+0.1:
 					move_up(ptz,peticion)
 				positionX,positionY,zoom =status(ptz,peticion)
-
 
 		############# SOLO refx POSITIVA ####################################
 		if (positionX<0) and (refx>0) and (positionY<0) and (refy<0):

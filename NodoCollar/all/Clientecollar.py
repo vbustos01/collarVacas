@@ -28,7 +28,7 @@ def collar(lora):
     global led
     sensors = {'GPS':True,'IMU':False,'SD':True,'MIC':False}          
     pre_frame ={'address':255,'cmd':7,                                
-                'sensors':sensors,'location':[1,42,85.45,-1,72,14.25], 
+                'sensors':sensors,'location':"3844.7556,S,07236.9213,W", 
                 't_unix':454545454,'bateria':1024,'C_close':True}
     display.fill(0)
     display.text("LoRa Collar",0,0)

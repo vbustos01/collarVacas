@@ -1,13 +1,13 @@
 import time
+from subirDatosServidor import *
 from SX127x.LoRa import *
 from SX127x.board_config import BOARD
 from data_frame import *
-from angles import deci2sexa, sexa2deci
 """Es necesario instalar la libreria angles "pip install angles"""
 BOARD.setup()#Mapeo de pines de la raspberry
 BOARD.reset()#Reseteo de los pines
 
-NODOS = 20 # Cantidad de Nodos Clientes
+NODOS = 4 # Cantidad de Nodos Clientes
 TIME_SAMP = 60 # Tiempo de muestreo en segundos
 INTENTOS = 3 # Cantidad de intentos para comunicarse con un Nodo cliente 
 TIEMPO_CORD = TIME_SAMP*1.0/NODOS # Intervalo de tiempo para comunicarse con el Nodo cliente
@@ -126,7 +126,7 @@ class mylora(LoRa):
                 print(tiempo_final-tiempo_actual)
                 if (paqueteRecibidoC != paqueteRecibidoAntes) and len(paqueteRecibidoC)>1 :
                     paqueteRecibidoAntes = paqueteRecibidoC
-                    desempaquetar(paqueteRecibidoC)
+                    subirdatosVacas(desempaquetar(paqueteRecibidoC))
             if direccionador == NODOS :
                 direccionador = 0
 

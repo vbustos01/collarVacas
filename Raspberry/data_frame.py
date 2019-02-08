@@ -1,5 +1,6 @@
 """Modulo utilizado para paquetes de Información Red LoRa"""
 
+
 ###Ejemplo diccionario a empaquetar##################################
 # sensors = {'GPS':True,'IMU':False,'SD':True,'MIC':False}			#
 # pre_frame ={'address':255,'cmd':7,								#

@@ -12,7 +12,7 @@ TIME_SAMP = 60 # Tiempo de muestreo en segundos
 INTENTOS = 3 # Cantidad de intentos para comunicarse con un Nodo cliente 
 TIEMPO_CORD = TIME_SAMP*1.0/NODOS # Intervalo de tiempo para comunicarse con el Nodo cliente
 SYMB_TIME_OUT = 200 # Cantidad de simbolos a esperar para detectar un preambulo
-
+paqueteRecibidoC=bytes(0)
 class mylora(LoRa):
     def __init__(self, verbose=False):
         super(mylora, self).__init__(verbose)
@@ -24,17 +24,19 @@ class mylora(LoRa):
         self.paqueteACK = bytes([0]) # paquete ACK utilizado para indicar la llegada de un mensaje
 
     def on_rx_done(self):
+        global paqueteRecibidoC
         paquete = self.read_payload(nocheck=True)
         if paquete:
-            direccion = paquete[0]
-            if direccion == 0:#El paquete es para nodo central?
-                comando =paquete[1]
-                if len(paquete)>2:
-                    mensaje = paquete[2:]
-                    mensaje = mensaje[0]<<24 | mensaje[1]<<16 | mensaje[2]<<8 | mensaje[3]
-                    print("se recibio el siguiente mensaje:")
-                    print(mensaje)
-                self.Recibido = True
+            #direccion = paquete[0]
+        #if direccion == 0:#El paquete es para nodo central?
+            #comando =paquete[1]
+            if len(paquete)>5:
+                paqueteRecibidoC=paquete
+                #mensaje = paquete[2:]
+                #mensaje = mensaje[0]<<24 | mensaje[1]<<16 | mensaje[2]<<8 | mensaje[3]
+                #print("se recibio el siguiente mensaje:")
+                #print(mensaje)
+            self.Recibido = True
             self.clear_irq_flags(RxDone=1)
         else:
             self.clear_irq_flags(RxDone=1)
@@ -81,8 +83,10 @@ class mylora(LoRa):
         self.clear_irq_flags(TxDone=1)#Reinicio la interrupcion TxDone
 
     def start(self):
+        paqueteRecibidoAntes=bytes(0)
         direccionador = 0
         tiempo_anterior = 0
+        global paqueteRecibidoC
         while True:
             tiempo_actual = time.time()
             if ( (tiempo_actual - tiempo_anterior) >= TIEMPO_CORD):
@@ -120,6 +124,9 @@ class mylora(LoRa):
                         break;
                 tiempo_final = time.time()
                 print(tiempo_final-tiempo_actual)
+                if paqueteRecibidoC != paqueteRecibidoAntes
+                    paqueteRecibidoAntes = paqueteRecibidoC
+                    desempaquetar(paqueteRecibidoC)
             if direccionador == NODOS :
                 direccionador = 0
 

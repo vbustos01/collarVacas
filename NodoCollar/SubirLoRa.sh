@@ -28,3 +28,5 @@ sudo ampy -p /dev/ttyUSB${var2} put all/sx127x.py
 echo 'sx127x subido ...'
 sudo ampy -p /dev/ttyUSB${var2} put all/ssd1306.py
 echo 'Pantalla_i2c subido ...'
+sudo ampy -p /dev/ttyUSB${var2} put all/data_frame.py
+echo 'Pantalla_i2c subido ...'

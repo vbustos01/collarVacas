@@ -2,6 +2,7 @@ import ssd1306
 from machine import Pin, I2C
 from direccionCollar import *
 from time import time
+from data_frame import *
 
 Pin(16,Pin.OUT,value=1)
 #led = Pin(25,Pin.OUT,value=1)
@@ -25,14 +26,16 @@ def collar(lora):
     global display
     global paqueteActual
     global led
+    sensors = {'GPS':True,'IMU':False,'SD':True,'MIC':False}          
+    pre_frame ={'address':255,'cmd':7,                                
+                'sensors':sensors,'location':[1,42,85.45,-1,72,14.25], 
+                't_unix':454545454,'bateria':1024,'C_close':True}
     display.fill(0)
     display.text("LoRa Collar",0,0)
     display.show()
     lora.receive()
+    paqueteActual =empaquetar(pre_frame)
     while True:
-        tiempo=int(time())
-        paqueteActual = bytes([0,2]) +bytes([(tiempo>>24)&0xff,(tiempo >> 16) & 0xff,(tiempo>>8)&0xff,tiempo & 0xff])
-
         # led.value(1)
         # time.sleep(0.1)
         # led.value(0)

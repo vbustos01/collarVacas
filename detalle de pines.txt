@@ -1,7 +1,7 @@
 Detalle de pines:
 
 	Módulo SD - SPI - 5V:
-		- MISO: 14
+		- MISO: 12
 		- MOSI: 13
 		- SCL: 23
 		- CS: 2

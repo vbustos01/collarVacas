@@ -1,4 +1,18 @@
 """Modulo utilizado para paquetes de Información Red LoRa"""
+
+###Ejemplo diccionario a empaquetar##################################
+# sensors = {'GPS':True,'IMU':False,'SD':True,'MIC':False}			#
+# pre_frame ={'address':255,'cmd':7,								#
+# 			'sensors':sensors,'location':"9000.0000,N,18000.0000,E",#
+# 			't_unix':4294967295,'bateria':4095,'C_close':True}		#
+#####################################################################
+###Ejemplo diccionario obtenido al desempaquetar#####################
+# sensors = {'GPS':True,'IMU':False,'SD':True,'MIC':False}			#
+# pre_frame ={'address':255,'cmd':7,								#
+# 			'sensors':sensors,'location':[1,42,85.45,-1,72,14.25],  #
+# 			't_unix':4294967295,'bateria':4095,'C_close':True}		#
+#####################################################################
+
 def empaquetar(pre_frame):
 
 	location = pre_frame['location'].split(',')
@@ -55,9 +69,3 @@ def desempaquetar(paquete):
 	
 	
 
-sensors = {'GPS':True,'IMU':True,'SD':True,'MIC':True}
-pre_frame ={'address':10,'cmd':0,
-			'sensors':sensors,'location':"4212.7845,N,7845.4122,W",
-			't_unix':1549624324,'bateria':145,'C_close':True}
-dato=empaquetar(pre_frame)
-print(desempaquetar(dato))

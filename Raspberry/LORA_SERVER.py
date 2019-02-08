@@ -124,7 +124,7 @@ class mylora(LoRa):
                         break;
                 tiempo_final = time.time()
                 print(tiempo_final-tiempo_actual)
-                if paqueteRecibidoC != paqueteRecibidoAntes:
+                if (paqueteRecibidoC != paqueteRecibidoAntes) and len(paqueteRecibidoC)>1 :
                     paqueteRecibidoAntes = paqueteRecibidoC
                     desempaquetar(paqueteRecibidoC)
             if direccionador == NODOS :

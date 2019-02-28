@@ -1,4 +1,4 @@
-cd /home/vitocosmic/code/Python/collarVacas
+
 ampy -p /dev/ttyUSB0 put acelerometro/mpu6050.py
 ampy -p /dev/ttyUSB0 put acelerometro/constants.py
 ampy -p /dev/ttyUSB0 put acelerometro/cfilter.py

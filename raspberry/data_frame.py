@@ -1,6 +1,4 @@
 """Modulo utilizado para paquetes de Información Red LoRa"""
-
-
 ###Ejemplo diccionario a empaquetar##################################
 # sensors = {'GPS':True,'IMU':False,'SD':True,'MIC':False}			#
 # pre_frame ={'address':255,'cmd':7,								#
@@ -22,7 +20,7 @@ def empaquetar(pre_frame):
 	Latitud = int(float(location[0])*10000)#(27bits)
 	Longitud = int (float(location[2])*10000)#(28bits)
 	paquete=bytearray(15)
-	paquete[0]=pre_frame['address'] & 0xff #1 BYTE de direccion del collar
+	paquete[0]=pre_frame['address'] & 0xff #1 BYTE de dirección del collar
 	paquete[1]=(pre_frame['cmd'] & 0x07)# 3 bits de Comandos
 	x = 3
 	for i in pre_frame['sensors'].values():

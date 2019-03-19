@@ -4,6 +4,7 @@ import numpy as np
 
 # camara hikvision
 cam = cv2.VideoCapture()
+#rtsp://admin:ufro_ufro_ufro@192.168.1.108
 #ip = 'rtsp://admin:fondef18I10360@192.168.0.64:554/1'
 cam.open("rtsp://admin:fondef18I10360@192.168.0.64:554/Streaming/channels/2/")
 #cv2.imshow('camara 2', cam)

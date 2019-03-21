@@ -12,11 +12,11 @@ def mov_arriba(ptz, dist, peticion, tiempo):
 	mover(ptz, peticion, tiempo)
 
 def movimiento_continuo():
-	ip = '192.168.0.64'
+	ip = '192.168.1.109'
 	port = 80
 	user = 'admin'
-	passwd = 'fondef18I10360'
-	cam = ONVIFCamera(ip, port, user, passwd, '/home/vitocosmic/Escritorio/python-onvif/wsdl')
+	passwd = 'ufro_ufro_ufro'
+	cam = ONVIFCamera(ip, port, user, passwd, '/home/victor/collarvacas/camara/python-onvif/wsdl')
 	
 	media = cam.create_media_service()
 	ptz = cam.create_ptz_service()

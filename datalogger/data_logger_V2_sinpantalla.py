@@ -20,7 +20,7 @@ gps = UART(2, 115200)
 gps.init(9600,bits=8,parity=None,stop=1,tx=17,rx=5)
 #objeto SPI
 Pin(18,Pin.OUT,value=1) #para desactivar LoRa
-spi = SPI(sck=Pin(23),miso=Pin(14),mosi=Pin(13))
+spi = SPI(sck=Pin(23),miso=Pin(12),mosi=Pin(14))
 #objeto SD
 sd = sdcard.SDCard(spi, Pin(2,Pin.OUT))
 ################################################loop################################################

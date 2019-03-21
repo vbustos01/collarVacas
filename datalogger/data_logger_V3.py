@@ -36,7 +36,7 @@ gps = UART(2, 115200)
 gps.init(9600,bits=8,parity=None,stop=1,tx=17,rx=5)
 #objeto SPI
 Pin(18,Pin.OUT,value=1) #para desactivar LoRa
-spi = SPI(sck=Pin(23),miso=Pin(14),mosi=Pin(13))
+spi = SPI(sck=Pin(23),miso=Pin(14),mosi=Pin(12))
 #objeto SD
 sd = sdcard.SDCard(spi, Pin(2,Pin.OUT))
 ###################################Control de tiempo de muestreo####################################
@@ -59,12 +59,12 @@ while 1:
             n = f.write('{}\n'.format(gps_data))
         # INFORMACION MODULO ACELEROMETRO
         aux = mpu.read_sensors_scaled()
-        aux = aux[0] + aux[1] + aux[2]
-        accelerometer_data = str(aux)
+        aux = str(aux[0]) + "," + str(aux[1]) + "," + str(aux[2])
+        accelerometer_data = aux
         filename = '/fc/accelerometer_data.txt'
         # el parametro 'a' deriva de 'append' (adjuntar)
         with open(filename,'a') as f:
-            n = f.write('{},'.format(accelerometer_data))
+            n = f.write('{};'.format(accelerometer_data))
         # escribe informacion sobre el tiempo
         filename = '/fc/time_data.txt'
         with open(filename, 'a') as f:

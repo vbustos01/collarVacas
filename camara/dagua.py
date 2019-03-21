@@ -94,23 +94,27 @@ def continuous_move():
 	XMIN = ptz_configuration_options.Spaces.ContinuousPanTiltVelocitySpace[0].XRange.Min
 	YMAX = ptz_configuration_options.Spaces.ContinuousPanTiltVelocitySpace[0].YRange.Max
 	YMIN = ptz_configuration_options.Spaces.ContinuousPanTiltVelocitySpace[0].YRange.Min
+
+	return [ptz,request]
+
 	# move right
-	move_right(ptz, request)
+	#move_right(ptz, request)
 	# move left
-	move_left(ptz, request)
+	#move_left(ptz, request)
 	# Move up
-	move_up(ptz, request)
+	#move_up(ptz, request)
     # move down
-	move_down(ptz, request)
+	#move_down(ptz, request)
 ##########################################################################################
 
 
 # video
-video_signal()
+#video_signal()
 
 # movimiento
 continuous_move()
 
+move_right(ptz, request)
 # f(x) check
 #for i in dir(ptz):
 #	print i

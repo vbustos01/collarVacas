@@ -164,13 +164,13 @@ def input_conversion():
 # instanciacion del objeto onvif
 # _token = "Profile_1"
 
-ip = '192.168.0.64'
+ip = '192.168.1.109'
 port = 80
 user = 'admin'
-passwd = 'fondef18I10360'
-cam = ONVIFCamera(ip, port, user, passwd, '/home/pedroc/Escritorio/python-onvif/wsdl')
+passwd = 'ufro_ufro_ufro'
+cam = ONVIFCamera(ip, port, user, passwd, '/home/victor/collarvacas/camara/python-onvif/wsdl')
 
-actualizarFecha(cam)
+#actualizarFecha(cam)
 # informacion de la camara
 info = cam.devicemgmt.GetHostname()
 fecha = cam.devicemgmt.GetSystemDateAndTime()

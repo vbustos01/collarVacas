@@ -9,4 +9,5 @@ cam = ONVIFCamera(ip, port, user, passwd, '/home/victor/collarvacas/camara/pytho
 # media objects
 media = cam.create_media_service()
 ptz = cam.create_ptz_service()
+
 media_profile = media.GetProfiles()[0]

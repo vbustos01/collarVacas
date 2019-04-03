@@ -7,7 +7,7 @@ from time import sleep
 def video_signal():
 	import cv2
 	cam = cv2.VideoCapture()
-	cam.open("rtsp://admin:ufro_ufro_ufro@192.168.1.109:554")
+	cam.open("rtsp://admin:ufro_ufro_ufro@192.168.1.108:554")
 	try:
 		while True:
 		    r, f = cam.read()
@@ -72,7 +72,7 @@ def move_left(ptz, request, timeout=1):
     perform_move(ptz, request, timeout)
 #######################################################################################
 def continuous_move():
-	ip = '192.168.1.109'
+	ip = '192.168.1.108'
 	port = 80
 	user = 'admin'
 	passwd = 'ufro_ufro_ufro'
@@ -115,9 +115,10 @@ def continuous_move():
 #video_signal()
 
 # movimiento
-continuous_move()
+[ptz, request] = continuous_move()
 
 move_right(ptz, request)
+
 # f(x) check
 #for i in dir(ptz):
 #	print i

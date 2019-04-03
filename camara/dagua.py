@@ -1,6 +1,9 @@
 from onvif import ONVIFCamera
 from time import sleep
 
+# ejemplo de las coordenadas:
+# 3844.7556,S,07236.9213,W
+
 def video_signal():
 	import cv2
 	cam = cv2.VideoCapture()

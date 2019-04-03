@@ -1,6 +1,5 @@
 """Modulo utilizado para paquetes de Información Red LoRa"""
 def empaquetar(pre_frame):
-
 	location = pre_frame['location'].split(',')
 	simbLatitud = location[1] == 'S'
 	simbLongitud= location[3] == 'W'

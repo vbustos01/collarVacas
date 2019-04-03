@@ -3,7 +3,7 @@ from time import sleep
 import ssd1306
 
 
-class Gps_upy(UART):
+class Gps_upy():
 	def __init__(self):
 #		print 'Modulo gps inicializado'
 		pass

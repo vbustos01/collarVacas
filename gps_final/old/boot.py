@@ -13,16 +13,18 @@ i2c = I2C(scl=scl, sda=sda, freq=450000)
 oled = ssd1306.SSD1306_I2C(128, 64, i2c, addr=0x3c)
 Pin(21, Pin.OUT, value=1)
 
-# inicializacion de GPS:
+# inicializacion de GPS
 uart = UART(2, 9600)
 uart.init(9600, bits=8, parity=None, stop=1,tx=17,rx=5) # se escogen dichos pines para no tener conflicto con oled
 
-# trucazo:
 rst = Pin(16, Pin.OUT)
 rst.value(1)
 
+oled.fill(0)
+oled.text('Gps...ok', 0, 0)
+oled.show()
 
-# adquisicion (esto debe realizarse cada 15 min):
+# adquisicion (esto debe realizarse cada 15 min)
 while 1:
 	posicion = uart.readline()
 	if(posicion==None):
@@ -37,3 +39,4 @@ oled.fill(0)
 oled.text(posicion[2], 0, 0)
 oled.show()
 
+	

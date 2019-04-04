@@ -9,9 +9,9 @@ echo 'dirCollar = ' ${var_id} > direccionCollar.py
 #-----DRIVERS-----#
 
 ##DRIVERS IMU
-ampy put acelerometro/mpu6050.py drivers/mpu6050.py
-ampy put acelerometro/constants.py drivers/constants.py
-ampy put acelerometro/cfilter.py drivers/cfilter.py
+ampy put imu/mpu6050.py drivers/mpu6050.py
+ampy put imu/constants.py drivers/constants.py
+ampy put imu/cfilter.py drivers/cfilter.py
 
 ##DRIVERS SD
 ampy put sd/sdcard.py drivers/sdcard.py

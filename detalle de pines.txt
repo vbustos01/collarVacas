@@ -27,7 +27,7 @@ Detalle de pines:
 		- CS:18
 		- Lora reset:14
 		- Lora IRQ :26
-		- DIO2 (1): 35 
+		- DIO1 (1): 35 
 	
 	Voltajes Bateria- ADC:
 		- ADC	    :13

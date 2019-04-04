@@ -4,6 +4,8 @@
 #from controller_esp32 import ESP32Controller as controller
 import inputwithtimeout as iwt
 
+print("Por favor ingrese una opción")
+print("Si no desea realizar test, espere 5 s")
 text=iwt.inputread()
 
 

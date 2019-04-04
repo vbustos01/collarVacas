@@ -9,8 +9,7 @@ PROGRAMA SEGUIRA SU CURSO LUEGO DEL TIMEOUT.
 from machine import Timer, reset
 
 FILENAME = "timeout_state.config" #nombre del archivo de configuracion
-TIMEOUT = 10000 #(ms)
-reading=None
+DEFAULT_TIMEOUT = 5000 #(ms)
 
 """
 Este metodo se llama cuando no se presiona ninguna 
@@ -32,17 +31,15 @@ Se comporta igual a input(), si la placa se inicia con el flag=1
 salta y devuelve None, en caso contrario retorna el texto ingresado
 por el usuario.
 """
-def inputread():
+def inputread(timeout=DEFAULT_TIMEOUT):
+	reading=None
 	if getlasttimeoutstate()==b'0':
-		print("leo la entrada de teclado")
 		timer = Timer(-1)
-		timer.init(period=TIMEOUT, mode=Timer.ONE_SHOT, callback=lambda t:inputtimeout(reading))
+		timer.init(period=timeout, mode=Timer.ONE_SHOT, callback=lambda t:inputtimeout(reading))
 		reading = input()
 	else:
 		reading=None
-		print("asigno none a reading")
-	
-	print("retorno : "+str(reading))
+		
 	return reading
 
 """

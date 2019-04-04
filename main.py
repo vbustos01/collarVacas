@@ -4,10 +4,10 @@
 #from controller_esp32 import ESP32Controller as controller
 import inputwithtimeout as iwt
 
-text=iwt.input();
+text=iwt.inputread()
 
 
-if option != None:
+if text != None:
 	print("se escribio: "+text)
 	#  
 else:

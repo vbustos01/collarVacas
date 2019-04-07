@@ -1,25 +1,15 @@
 import ssd1306
-from machine import Pin, I2C, UART
+from machine import Pin, I2C
 from direccionCollar import *
-from time import time,sleep
+from time import time
 from data_frame import *
 
-vext = Pin(21, Pin.OUT)
-vext.value(0)
-sleep(0.2)
-rst = Pin(16, Pin.OUT)
-rst.value(1)
-sleep(1)
 Pin(16,Pin.OUT,value=1)
 #led = Pin(25,Pin.OUT,value=1)
 scl = Pin(15,Pin.OUT,Pin.PULL_UP)
 sda = Pin(4,Pin.OUT,Pin.PULL_UP)
 i2c = I2C(sda=sda,scl=scl,freq=450000)
 display = ssd1306.SSD1306_I2C(128, 64, i2c)
-
-# inicializacion de GPS:
-uart = UART(2, 9600)
-uart.init(9600, bits=8, parity=None, stop=1,tx=17,rx=5) # se escogen dichos pines para no tener conflicto con oled
 
 paqueteEnviar = bytes(0)
 paqueteActual = bytes(0)
@@ -44,17 +34,12 @@ def collar(lora):
     display.text("LoRa Collar",0,0)
     display.show()
     lora.receive()
-    paqueteActual = empaquetar(pre_frame)
+    paqueteActual =empaquetar(pre_frame)
     while True:
-        posicion = uart.readline()
-        if(posicion==None):
-            continue
-        posicion = posicion.decode("utf-8") # esto es equivalente a str() en py2
-        indicador = posicion.split(',')
-        if(indicador[0]=='$GPGGA'):
-            posicion=posicion[3:6]
-        if(indicador[0]=='$GPRMC'):
-            posicion=posicion[2:5]
+        # led.value(1)
+        # time.sleep(0.1)
+        # led.value(0)
+        # time.sleep(0.1)
         pass;
 
 def on_receive(lora,paquete):

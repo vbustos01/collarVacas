@@ -19,7 +19,7 @@ display = ssd1306.SSD1306_I2C(128, 64, i2c)
 
 # inicializacion de GPS:
 uart = UART(2, 9600)
-uart.init(9600, bits=8, parity=None, stop=1,tx=17,rx=5) # se escogen dichos pines para no tener conflicto con oled
+uart.init(9600, bits=8, parity=None, stop=1,tx=17,rx=36) # se escogen dichos pines para no tener conflicto con oled
 
 paqueteEnviar = bytes(0)
 paqueteActual = bytes(0)
@@ -39,23 +39,29 @@ def collar(lora):
     sensors = {'GPS':True,'IMU':False,'SD':True,'MIC':False}          
     pre_frame ={'address':255,'cmd':7,                                
                 'sensors':sensors,'location':"3844.7556,S,07236.9213,W", 
-                't_unix':454545454,'bateria':1024,'C_close':True}
+                't_unix':454545666,'bateria':1024,'C_close':True}
     display.fill(0)
     display.text("LoRa Collar",0,0)
     display.show()
     lora.receive()
     paqueteActual = empaquetar(pre_frame)
+    # Datos de Gps
     while True:
-        posicion = uart.readline()
-        if(posicion==None):
+        try:
+            posicion = uart.readline()
+            if(posicion==None):
+                continue
+            posicion = posicion.decode("utf-8") # esto es equivalente a str() en py2
+            indicador = posicion.split(',')
+            if(indicador[0]=='$GPGGA'):
+                posicion=posicion[18:42]
+            if(indicador[0]=='$GPRMC'):
+                posicion=posicion[20:44]
+            pre_frame['location'] = posicion
+            print(pre_frame)
+        except:
             continue
-        posicion = posicion.decode("utf-8") # esto es equivalente a str() en py2
-        indicador = posicion.split(',')
-        if(indicador[0]=='$GPGGA'):
-            posicion=posicion[3:6]
-        if(indicador[0]=='$GPRMC'):
-            posicion=posicion[2:5]
-        pass;
+
 
 def on_receive(lora,paquete):
     global intentos

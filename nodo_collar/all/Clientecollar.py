@@ -1,15 +1,17 @@
 import ssd1306
-from machine import Pin, I2C
+from machine import Pin, I2C, UART
 from direccionCollar import *
 from time import time
 from data_frame import *
 
-Pin(16,Pin.OUT,value=1)
-#led = Pin(25,Pin.OUT,value=1)
-scl = Pin(15,Pin.OUT,Pin.PULL_UP)
-sda = Pin(4,Pin.OUT,Pin.PULL_UP)
-i2c = I2C(sda=sda,scl=scl,freq=450000)
-display = ssd1306.SSD1306_I2C(128, 64, i2c)
+vext = Pin(21, Pin.OUT)
+vext.value(0)
+rst = Pin(16, Pin.OUT)
+rst.value(1)
+scl = Pin(15, Pin.OUT, Pin.PULL_UP)
+sda = Pin(4, Pin.OUT, Pin.PULL_UP)
+i2c = I2C(scl=scl, sda=sda, freq=450000)
+display = ssd1306.SSD1306_I2C(128, 64, i2c, addr=0x3c)
 
 # inicializacion de GPS:
 uart = UART(2, 9600)
@@ -40,6 +42,7 @@ def collar(lora):
     lora.receive()
     paqueteActual = empaquetar(pre_frame)
     # Datos de Gps
+    """
     while True:
         try:
             posicion = uart.readline()
@@ -55,7 +58,7 @@ def collar(lora):
             print(pre_frame)
         except:
             continue
-
+    """
 
 def on_receive(lora,paquete):
     global intentos

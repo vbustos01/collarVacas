@@ -1,7 +1,7 @@
 #!/bin/bash
 echo 'Script para subir modulos micropython a Esp32'
 echo 'Ingrese la opcion del puerto en donde se encuentra el dispositivo'
-#cd mainclient | sudo ampy -p /dev/ttyUSB0 put main.py
+#cd mainclient | ampy -p /dev/ttyUSB0 put main.py
 echo '0.-/dev/ttyUSB0'
 echo '1.-/dev/ttyUSB1'
 echo '2.-/dev/ttyUSB2'

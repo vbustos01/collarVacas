@@ -6,6 +6,7 @@ import ssd1306
 class Gps_upy():
 	def __init__(self):
 #		print 'Modulo gps inicializado'
+
 		pass
 	def decode_gps(self, frame):
 		######################################################
@@ -59,6 +60,7 @@ class Gps_upy():
 			# La cabecera es GPGSA (GPS DOP and active satellites )
 			# no contiene info relevante para el proyecto (PREGUNTAR)
 			pass
+	def start_mode()
 
 
 # pruebas objeto

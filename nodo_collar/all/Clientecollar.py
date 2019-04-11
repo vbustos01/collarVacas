@@ -16,7 +16,7 @@ class LoRa:
                                'implicitHeader': False, 'sync_word': 0x12, 'enable_CRC': True},
                  intentosACK=2,
                  time_out_Symb = 200):
-        controller = ESP32Controller()
+        controller = ESP32Controller()#llamado a mapeo de pines ESP32
         objeto=SX127x(name,parameters)
         self.lora = controller.add_transceiver(objeto,
                                           pin_id_ss = ESP32Controller.PIN_ID_FOR_LORA_SS,
@@ -24,12 +24,12 @@ class LoRa:
                                           pin_id_RxTimeout= ESP32Controller.PIN_ID_FOR_LORA_DIO1)
         self.paqueteEnviar = bytearray()
         self.paqueteActual = bytearray()
-        self.intentosACK = 2
+        self.intentosACK = intentosACK
         self.intentos = 0
         self.paqueteSync = False
         self.SYMB_TIME_OUT = time_out_Symb
 
-    def setup(self):
+    def beginIRQ(self):
         #print("LoRa Collar")
         self.lora.onReceive(on_receive)#Asigna una función para la interrupcion del pin DIO0
         self.lora.onTimeout(on_timeout,SYMB_TIME_OUT)#Asigna una función para la interrupcion del pin DIO1 y asigna un Timeout
@@ -38,40 +38,43 @@ class LoRa:
         #             'sensors':sensors,'location':"3844.7556,S,07236.9213,W", 
         #             't_unix':454545666,'bateria':1024,'C_close':True}
         self.lora.receive()
-        self.paqueteActual = empaquetar(pre_frame)
+        #self.paqueteActual = empaquetar(pre_frame)
 
     def on_receive(self,paquete):
         if paquete:
             direccion = paquete[0]
-            if direccion == dirCollar:
+            if direccion == self.direccionCollar:
                 comando = paquete[1]
                 #mensaje = paquete[2:].decode()
                 print("Recibi:")
                 if comando == 0:
                     paqueteSync = True#llego un paquete de sincronización
-                    lora.bytesprintln(self.paqueteActual)
+                    self.lora.bytesprintln(self.paqueteActual)
                     self.paqueteEnviar = self.paqueteActual
                     print("Sync")
-                    lora.receiveSingle()
+                    self.lora.receiveSingle()
                 elif paqueteSync and (comando == 1):
                     paqueteSync = False
                     print("ACK")
                     self.intentos = 0
-                    lora.receive()
+                    self.lora.receive()
             else:
                 print("Direccion Diferente")
         else :
             print("Paquete con Error")
-            lora.receive()
+            self.lora.receive()
         if paqueteSync:
-            lora.receiveSingle()
+            self.lora.receiveSingle()
         print("RSSI:{0}".format(lora.packetRssi()))
     
-    def on_timeout(lora):
+    def on_timeout(self,lora):
         self.intentos += 1
-        if self.intentos <= intentosACK:
+        if self.intentos <= self.intentosACK:
             if paqueteSync:
                 self.lora.bytesprintln(paqueteEnviar)
                 self.lora.receiveSingle()#se espera nuevamente un ACK
         else:
             self.lora.receive()#intentos no cumplidos
+    
+    def setMensaje(self,preframe)
+        

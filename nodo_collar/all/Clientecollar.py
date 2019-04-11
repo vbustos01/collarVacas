@@ -38,7 +38,7 @@ class LoRa:
         #             'sensors':sensors,'location':"3844.7556,S,07236.9213,W", 
         #             't_unix':454545666,'bateria':1024,'C_close':True}
         self.lora.receive()
-        paqueteActual = empaquetar(pre_frame)
+        self.paqueteActual = empaquetar(pre_frame)
 
     def on_receive(self,paquete):
         if paquete:
@@ -46,17 +46,17 @@ class LoRa:
             if direccion == dirCollar:
                 comando = paquete[1]
                 #mensaje = paquete[2:].decode()
-                display.text("Recibi:",0,10)
+                print("Recibi:")
                 if comando == 0:
                     paqueteSync = True#llego un paquete de sincronización
-                    lora.bytesprintln(paqueteActual)
-                    paqueteEnviar = paqueteActual
+                    lora.bytesprintln(self.paqueteActual)
+                    self.paqueteEnviar = self.paqueteActual
                     print("Sync")
                     lora.receiveSingle()
                 elif paqueteSync and (comando == 1):
                     paqueteSync = False
                     print("ACK")
-                    intentos = 0
+                    self.intentos = 0
                     lora.receive()
             else:
                 print("Direccion Diferente")
@@ -68,13 +68,10 @@ class LoRa:
         print("RSSI:{0}".format(lora.packetRssi()))
     
     def on_timeout(lora):
-        global intentosACK
-        global paqueteEnviar
-        global intentos
-        intentos += 1
-        if intentos <= intentosACK:
+        self.intentos += 1
+        if self.intentos <= intentosACK:
             if paqueteSync:
-                lora.bytesprintln(paqueteEnviar)
-                lora.receiveSingle()#se espera nuevamente un ACK
+                self.lora.bytesprintln(paqueteEnviar)
+                self.lora.receiveSingle()#se espera nuevamente un ACK
         else:
-            lora.receive()#intentos no cumplidos
+            self.lora.receive()#intentos no cumplidos

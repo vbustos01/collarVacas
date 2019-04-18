@@ -16,6 +16,7 @@ class LoRa:
                                'implicitHeader': False, 'sync_word': 0x12, 'enable_CRC': True},
                  intentosACK=2,
                  time_out_Symb = 200):
+        self.
         controller = ESP32Controller()#llamado a mapeo de pines ESP32
         objeto=SX127x(name,parameters)
         self.lora = controller.add_transceiver(objeto,
@@ -24,42 +25,41 @@ class LoRa:
                                           pin_id_RxTimeout= ESP32Controller.PIN_ID_FOR_LORA_DIO1)
         self.paqueteEnviar = bytearray()
         self.paqueteActual = bytearray()
+        self.direccionCollar=dirCollar
         self.intentosACK = intentosACK
         self.intentos = 0
         self.paqueteSync = False
         self.SYMB_TIME_OUT = time_out_Symb
 
     def beginIRQ(self):
-        #print("LoRa Collar")
+        #print("interrupciones activas")
         self.lora.onReceive(on_receive)#Asigna una función para la interrupcion del pin DIO0
         self.lora.onTimeout(on_timeout,SYMB_TIME_OUT)#Asigna una función para la interrupcion del pin DIO1 y asigna un Timeout
         # sensors = {'GPS':True,'IMU':False,'SD':True,'MIC':False}          
         # pre_frame ={'address':255,'cmd':7,                                
         #             'sensors':sensors,'location':"3844.7556,S,07236.9213,W", 
         #             't_unix':454545666,'bateria':1024,'C_close':True}
-        self.lora.receive()
-        #self.paqueteActual = empaquetar(pre_frame)
+        self.lora.sleep()#modo sleep
+
 
     def on_receive(self,paquete):
-        if paquete:
-            direccion = paquete[0]
-            if direccion == self.direccionCollar:
+        if paquete: 
+            if paquete[0] == self.direccionCollar:
                 comando = paquete[1]
-                #mensaje = paquete[2:].decode()
-                print("Recibi:")
+                print("Paquete recibido:")
                 if comando == 0:
                     paqueteSync = True#llego un paquete de sincronización
                     self.lora.bytesprintln(self.paqueteActual)
                     self.paqueteEnviar = self.paqueteActual
                     print("Sync")
-                    self.lora.receiveSingle()
+                    self.lora.receiveSingle()#necesario ya que despues de un envio la radio cambia a mod sleep
                 elif paqueteSync and (comando == 1):
-                    paqueteSync = False
+                    paqueteSync = False#llego un paquete ACK
                     print("ACK")
                     self.intentos = 0
                     self.lora.receive()
             else:
-                print("Direccion Diferente")
+                print("Direccion no corresponde")
         else :
             print("Paquete con Error")
             self.lora.receive()
@@ -75,6 +75,20 @@ class LoRa:
                 self.lora.receiveSingle()#se espera nuevamente un ACK
         else:
             self.lora.receive()#intentos no cumplidos
+
+    def setMsn(self,preframe)
+        self.paqueteActual=empaquetar(pre_frame)
     
-    def setMensaje(self,preframe)
+    def setModoContinuoRx(self)
+        self.lora.receive()
+
+    def setModoSingle(self)
+        self.lora.receiveSingle()
+    
+    def setModoSleep(self)
+        self.lora.sleep()
+
+    def setModoSTBY(self)
+        self.lora.standby()
+
         

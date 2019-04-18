@@ -6,30 +6,25 @@ from time import sleep
 
 class Gps_upy(UART):
 	def __init__(self):
-		# inicializacion del modulo gps
-		#uart = UART(2, 115200)
-		#uart.init(115200, bits=8, parity=None, stop=1,tx=17,rx=5) # se escogen dichos pines para no tener conflicto con oled
 		super(Gps_upy, self).__init__(2, 9600)
-		super().init(9600, bits=8, parity=None, stop=1,tx=17,rx=5)
+		super().init(9600, bits=8, parity=None, stop=2,tx=17,rx=5)
+		# configurar gps a 9600 baud
+		#super().write(b'$PMTK251,9600*27\r\n')
 
+	def leer_parasiempre(self):
+		for i in range(1,12):
+			print(super().read())
+			sleep(2)
+
+	# Metodo para decodificar las sentencias
 	def decode_gps(self):
 		data = super().readline()
 		data = str(frame).split(',')
 		if(data[0]=='$GPRMC'):
-			# la cabecera es GPRMC (Recommended minimum specific GPS/Transit data)
-			sellodetiempo = data[1]
-			if(data[2]=='A'):
-				# Informacion sobre la posicion
-				self.latitud = data[3]
-				self.ref_latitud = data[4]
-				self.longitud = data[5]
-				self.ref_longitud = data[6]
-				# Fecha ddmma
-				self.dia = data[9][:2]
-				self.mes = data[9][2:4]
-				self.year = data[9][4:6]
-			else:
-				print("paquete erroneo")
+			self.latitud = data[3]
+			self.ref_latitud = data[4]
+			self.longitud = data[5]
+			self.ref_longitud = data[6]
 		if(data[0]=='$GPGGA'):
 			# informacion sobre la posicion
 			self.latitud = data[2]
@@ -37,27 +32,43 @@ class Gps_upy(UART):
 			self.longitud = data[4]
 			self.ref_longitud = data[5]
 
-	def power_mode():
+	# modos de arranque (time to first fix)
+	def cold_start(self):
+		# modo por defecto del gps
+		# busca almanaque
+		super().write(b'$PMTK103*30\r\n')
+	def full_cold_start(self):
+		super().write(b'$PMTK104*37\r\n')
+	def warm_start(self):
+		# obtiene efemerides
+		super().write(b'$PMTK102*31\r\n')
+	def hot_start(self):
 		# hot start
-		#gps.write(b'$PMTK101*32\r\n')
+		super().write(b'$PMTK101*32\r\n')
 
-		# warm start
-		#gps.write(b'$PMTK102*31\r\n')
-
-		# cold start
-		gps.write(b'$PMTK103*30\r\n')
-
-		# full cold start
-		#gps.write(b'$PMTK104*37\r\n')
-
+	# Modos sin testear
+	def periodic_mode(self):
 		#periodic mode
-		#gps.write(b'$PMTK225,2,3000,12000,18000,72000\r\n')
+		super().write(b'$PMTK225,2,3000,12000,18000,72000\r\n')
 
+	def nmea_out(self):
+		# configuracion de la frecuencia de salida de las sentencias
+		super().write(b'$PMTK314,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0*29\r\n')
+		# resetear por defecto
+		#super().write(b'$PMTK314,-1*04\r\n')
 
+	def sleep_mode(self):
+		# Sleep mode: In this mode the receiver stays at full on power state. This mode can be waken up by the host
+		# sending the command through the communication interface or external interrupt.
+		pass
 
+	def position_fix_interval(self):
+		# este parametro controla la tasa de obtencion de posicion de gps (position fix freq)
+		super().write(b'$PMTK500,1000,0,0,0,0*1A\r\n')
+	def request_efemerides(self):
+		# busca en las efemerides 1800 seg atras
+		super().write(b'$PMTK660,1800*17\r\n');
+		#sleep()
+		#return super().read()
 
-# lineas de prueba (comentar)
-#gps = Gps_upy()
-#sentencia_prueba = b'$GPRMC,140014.000,A,3844.7685,S,07236.9229,W,1.87,189.76,110119,,,A*60\r\n'
-#gps.decode_gps(sentencia_prueba)
-#print latitud
+#		super().write(b'')

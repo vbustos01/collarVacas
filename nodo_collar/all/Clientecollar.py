@@ -16,7 +16,6 @@ class LoRa:
                                'implicitHeader': False, 'sync_word': 0x12, 'enable_CRC': True},
                  intentosACK=2,
                  time_out_Symb = 200):
-        self.
         controller = ESP32Controller()#llamado a mapeo de pines ESP32
         objeto=SX127x(name,parameters)
         self.lora = controller.add_transceiver(objeto,

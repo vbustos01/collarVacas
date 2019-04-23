@@ -23,12 +23,12 @@
 # it needs to be copied to the filesystem using a tool such as rshell or ampy
 
 import uos
-import sdcard
+from drivers import sdcard
 from machine import I2S
 from machine import I2C
 from machine import Pin
 from machine import SPI
-import ssd1306
+from drivers import ssd1306
 
 SDCARD_SECTOR_SIZE = 512                    # typical sector size for SDCards, in bytes
 SAMPLE_BLOCK_SIZE = SDCARD_SECTOR_SIZE * 4  #  
@@ -39,7 +39,7 @@ RECORD_TIME_IN_SECONDS = 4
 
 
 Pin(21, Pin.OUT, value = 0)
-
+Pin(16, Pin.OUT, value = 1)
 scl = Pin(15, Pin.OUT, Pin.PULL_UP)
 sda = Pin(4, Pin.OUT, Pin.PULL_UP)
 i2c = I2C(scl=scl, sda=sda, freq=450000)
@@ -87,7 +87,7 @@ sdin_pin = Pin(35)
 audio_out = I2S(I2S.NUM0, bck=bck_pin, ws=ws_pin, sdin=sdin_pin, 
               standard=I2S.PHILIPS, mode=I2S.MASTER_RX,
               dataformat=I2S.B32, channelformat=I2S.ONLY_RIGHT,
-              samplerate=SAMPLES_PER_SECOND,
+              samplerate=SAMPLES_PER_SECOND*2,
               dmacount=8, dmalen=256)
 
 Pin(18,Pin.OUT, value=1)

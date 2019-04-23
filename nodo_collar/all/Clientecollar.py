@@ -48,13 +48,13 @@ class LoRa:
                 comando = paquete[1]
                 print("Paquete recibido:")
                 if comando == 0:
-                    paqueteSync = True#llego un paquete de sincronización
+                    self.paqueteSync = True#llego un paquete de sincronización
                     self.lora.bytesprintln(self.paqueteActual)
                     self.paqueteEnviar = self.paqueteActual
                     print("Sync")
                     self.lora.receiveSingle()#necesario ya que despues de un envio la radio cambia a mod sleep
-                elif paqueteSync and (comando == 1):
-                    paqueteSync = False#llego un paquete ACK
+                elif self.paqueteSync and (comando == 1):
+                    self.paqueteSync = False#llego un paquete ACK
                     print("ACK")
                     self.intentos = 0
                     self.lora.receive()
@@ -63,21 +63,21 @@ class LoRa:
         else :
             print("Paquete con Error")
             self.lora.receive()
-        if paqueteSync:
+        if self.paqueteSync:
             self.lora.receiveSingle()
-        print("RSSI:{0}".format(lora.packetRssi()))
+        print("RSSI:{0}".format(self.lora.packetRssi()))
     
-    def on_timeout(self,lora):
+    def on_timeout(self):
         self.intentos += 1
         if self.intentos <= self.intentosACK:
-            if paqueteSync:
-                self.lora.bytesprintln(paqueteEnviar)
+            if self.paqueteSync:
+                self.lora.bytesprintln(self.paqueteEnviar)
                 self.lora.receiveSingle()#se espera nuevamente un ACK
         else:
             self.lora.receive()#intentos no cumplidos
     
     def setMsn(self,preframe):
-        self.paqueteActual=empaquetar(pre_frame)
+        self.paqueteActual=empaquetar(preframe)
     
     def setModoContinuoRx(self):
         self.lora.receive()

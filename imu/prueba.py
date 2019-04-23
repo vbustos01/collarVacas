@@ -1,6 +1,6 @@
 from machine import Pin, I2C
-import mpu6050
-import ssd1306
+from drivers import mpu6050
+from drivers import ssd1306
 import time
 
 rst = Pin(16, Pin.OUT)

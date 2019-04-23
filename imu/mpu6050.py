@@ -4,8 +4,8 @@ import time
 import micropython
 from ustruct import unpack
 
-from constants import *
-import cfilter
+from . constants import *
+from . import cfilter
 
 micropython.alloc_emergency_exception_buf(100)
 
@@ -91,8 +91,8 @@ class MPU(object):
 
     def init_pins(self):
         print('* initializing pins')
-        self.pin_sda = Pin(self.sda)
-        self.pin_scl = Pin(self.scl)
+        self.pin_sda = Pin(self.sda, pull=Pin.PULL_UP)
+        self.pin_scl = Pin(self.scl, pull=Pin.PULL_UP)
         self.pin_intr = Pin(self.intr, mode=Pin.IN)
         self.pin_led = PWM(Pin(self.led, mode=Pin.OUT))
 

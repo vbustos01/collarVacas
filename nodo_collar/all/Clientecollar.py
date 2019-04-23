@@ -52,15 +52,9 @@ class LoRa:
                     self.lora.bytesprintln(self.paqueteActual)
                     self.paqueteEnviar = self.paqueteActual
                     print("Sync")
-<<<<<<< HEAD
                     self.lora.receiveSingle()#necesario ya que despues de un envio la radio cambia a mod sleep
                 elif self.paqueteSync and (comando == 1):
                     self.paqueteSync = False#llego un paquete ACK
-=======
-                    self.lora.receiveSingle()
-                elif paqueteSync and (comando == 1):
-                    paqueteSync = False
->>>>>>> 1b75c3910223e86d7a28d8a2ea99709da9e6169d
                     print("ACK")
                     self.intentos = 0
                     self.lora.receive()
@@ -82,7 +76,6 @@ class LoRa:
         else:
             self.lora.receive()#intentos no cumplidos
     
-<<<<<<< HEAD
     def setMsn(self,preframe):
         self.paqueteActual=empaquetar(preframe)
     
@@ -98,7 +91,5 @@ class LoRa:
     def setModoSTBY(self):
         self.lora.standby()
 
-=======
     def setMensaje(self,preframe)
->>>>>>> 1b75c3910223e86d7a28d8a2ea99709da9e6169d
         

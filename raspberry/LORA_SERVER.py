@@ -1,5 +1,5 @@
 import time
-from subirDatosServidor import *
+#from subirDatosServidor import *
 from SX127x.LoRa import *
 from SX127x.board_config import BOARD
 from data_frame import *
@@ -7,11 +7,11 @@ from data_frame import *
 BOARD.setup()#Mapeo de pines de la raspberry
 BOARD.reset()#Reseteo de los pines
 
-NODOS = 4 # Cantidad de Nodos Clientes
-TIME_SAMP = 60 # Tiempo de muestreo en segundos
+NODOS =  2# Cantidad de Nodos Clientes
+TIME_SAMP = 30#Tiempo de muestreo en segundos
 INTENTOS = 3 # Cantidad de intentos para comunicarse con un Nodo cliente 
 TIEMPO_CORD = TIME_SAMP*1.0/NODOS # Intervalo de tiempo para comunicarse con el Nodo cliente
-SYMB_TIME_OUT = 200 # Cantidad de simbolos a esperar para detectar un preambulo
+SYMB_TIME_OUT = 100 # Cantidad de simbolos a esperar para detectar un preambulo
 paqueteRecibidoC=bytes(0)
 class mylora(LoRa):
     def __init__(self, verbose=False):
@@ -126,7 +126,8 @@ class mylora(LoRa):
                 print(tiempo_final-tiempo_actual)
                 if (paqueteRecibidoC != paqueteRecibidoAntes) and len(paqueteRecibidoC)>1 :
                     paqueteRecibidoAntes = paqueteRecibidoC
-                    subirdatosVacas(desempaquetar(paqueteRecibidoC))
+                    print(desempaquetar(paqueteRecibidoC))
+                    #subirdatosVacas(desempaquetar(paqueteRecibidoC))
             if direccionador == NODOS :
                 direccionador = 0
 

@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # objeto gps del cual se puede extraer info sobre la posicion
-# ademas inicializa el modulo gps
-from machine import UART, Pin, I2C
+# ademas inicializa la comunicacion via UART con el gps
+
+from machine import UART
 from time import sleep
 
 class Gps_upy(UART):
@@ -16,7 +17,7 @@ class Gps_upy(UART):
 			print(super().read())
 			sleep(2)
 
-	# Metodo para decodificar las sentencias
+	# Metodo para decodificar las sentencias GPRMC y GPGGA
 	def decode_gps(self):
 		data = super().readline()
 		data = str(frame).split(',')
@@ -46,25 +47,30 @@ class Gps_upy(UART):
 		# hot start
 		super().write(b'$PMTK101*32\r\n')
 
-	# Modos sin testear
+	# Modos de energia
+	def standby_mode(self):
+		super().write(b'$PMTK161,0*28\r\n')
+	def sleep_mode(self):
+		super().write(b'$PMTK161,1*29\r\n')
 	def periodic_mode(self):
-		#periodic mode
-		super().write(b'$PMTK225,2,3000,12000,18000,72000\r\n')
-
+		# ejemplo del data
+		#super().write(b'$PMTK225,2,3000,12000,18000,72000*15\r\n')
+		# my setup
+		super().write(b'$PMTK225,2,7000,60000,0,0*18\r\n')
+	# Modos sin testear
 	def nmea_out(self):
 		# configuracion de la frecuencia de salida de las sentencias
 		super().write(b'$PMTK314,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0*29\r\n')
 		# resetear por defecto
 		#super().write(b'$PMTK314,-1*04\r\n')
 
-	def sleep_mode(self):
-		# Sleep mode: In this mode the receiver stays at full on power state. This mode can be waken up by the host
-		# sending the command through the communication interface or external interrupt.
-		pass
-
 	def position_fix_interval(self):
 		# este parametro controla la tasa de obtencion de posicion de gps (position fix freq)
 		super().write(b'$PMTK500,1000,0,0,0,0*1A\r\n')
+
+	def kill_data(self):
+		super().write(b'$PMTK120*31\r\n')
+
 	def request_efemerides(self):
 		# busca en las efemerides 1800 seg atras
 		super().write(b'$PMTK660,1800*17\r\n');

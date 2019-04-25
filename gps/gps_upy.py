@@ -20,7 +20,7 @@ class Gps_upy(UART):
 	# Metodo para decodificar las sentencias GPRMC y GPGGA
 	def decode_gps(self):
 		data = super().readline()
-		data = str(frame).split(',')
+		data = str(data).split(',')
 		if(data[0]=='$GPRMC'):
 			self.latitud = data[3]
 			self.ref_latitud = data[4]
@@ -55,15 +55,20 @@ class Gps_upy(UART):
 	def periodic_mode(self):
 		# ejemplo del data
 		#super().write(b'$PMTK225,2,3000,12000,18000,72000*15\r\n')
-		# my setup
-		super().write(b'$PMTK225,2,7000,60000,0,0*18\r\n')
-	# Modos sin testear
+
+		# my setup (7 segundos activo, 1 min dormido)
+		#super().write(b'$PMTK225,2,7000,60000,0,0*18\r\n')
+
+		# my setup 2.0 ()
+		super().write(b'$PMTK225,8,7000,14000,0,0*11\r\n')
+
 	def nmea_out(self):
-		# configuracion de la frecuencia de salida de las sentencias
+		# solo GPRMC
 		super().write(b'$PMTK314,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0*29\r\n')
 		# resetear por defecto
 		#super().write(b'$PMTK314,-1*04\r\n')
 
+	# Modos sin testear
 	def position_fix_interval(self):
 		# este parametro controla la tasa de obtencion de posicion de gps (position fix freq)
 		super().write(b'$PMTK500,1000,0,0,0,0*1A\r\n')

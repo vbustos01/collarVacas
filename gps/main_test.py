@@ -1,11 +1,17 @@
 from gps_upy import Gps_upy
-import _thread
-
+from time import sleep
 a = Gps_upy()
 
-_thread.start_new_thread(a.leer_parasiempre, ())
-_thread.start_new_thread(a.request_efemerides, ())
+#a.standby_mode()
+a.kill_data()
+sleep(1)
+# modo de inicio
+a.full_cold_start()
+#a.cold_start()
+sleep(1)
 
-# dt
-#super().write(b'$PMTK514,1,1,1,1,1,5,1,1,1,1,1,1,0,1,1,1,1,1,1*2A\r\n')
-		
+a.nmea_out()
+sleep(1)
+
+while 1:
+	a.readline()

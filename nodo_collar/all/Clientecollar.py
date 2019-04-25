@@ -11,7 +11,7 @@ class LoRa:
 
     def __init__(self,
                  name = 'SX127x',
-                 parameters = {'frequency': 866E6, 'tx_power_level': 17, 'signal_bandwidth': 125E3,
+                 parameters = {'frequency': 866E6, 'tx_power_level': 10, 'signal_bandwidth': 125E3,
                                'spreading_factor': 8, 'coding_rate': 5, 'preamble_length': 8,
                                'implicitHeader': False, 'sync_word': 0x12, 'enable_CRC': True},
                  intentosACK=2,
@@ -28,6 +28,7 @@ class LoRa:
         self.intentos = 0
         self.paqueteSync = False
         self.SYMB_TIME_OUT = time_out_Symb
+        self.MapPinCAD=False #[False=>DI0:RxDone,DI1:TimeOut,True=DIO:CAD]
 
     def beginIRQ(self):
         #print("LoRa Collar")
@@ -39,6 +40,10 @@ class LoRa:
         #             't_unix':454545666,'bateria':1024,'C_close':True}
         self.lora.receive()
         #self.paqueteActual = empaquetar(pre_frame)
+
+    def CAD_Done(self):
+                
+    def CAD_Detected(self):
 
     def on_receive(self,paquete):
         if paquete:
@@ -90,6 +95,7 @@ class LoRa:
 
     def setModoSTBY(self):
         self.lora.standby()
+    def setModoCAD(self,on=False):
+        if on:
 
-    def setMensaje(self,preframe)
         

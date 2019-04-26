@@ -44,6 +44,10 @@ class LoRa:
     def CAD_Done(self):
                 
     def CAD_Detected(self):
+    
+    def Rx_Done(self, paquete):
+
+    def Rx_TimeOut(self):
 
     def on_receive(self,paquete):
         if paquete:
@@ -95,7 +99,8 @@ class LoRa:
 
     def setModoSTBY(self):
         self.lora.standby()
-    def setModoCAD(self,on=False):
-        if on:
+
+    def setModoCAD(self):
+        self.lora.CAD()
 
         

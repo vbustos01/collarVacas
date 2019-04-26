@@ -457,8 +457,8 @@ class SX127x:
                     payload = self.read_payload()                
                     self._onReceive(self, payload)
         else:
-            if self._CADDetected:
-                self._CADDetected(self)
+            if self._CADDone:
+                self._CADDone(self)
 
     def funcionPinDI1(self,event_source):#Esta funcion se ejecuta en la interrupcion para devolver el paquete 
         if not(self.CAD_ON):

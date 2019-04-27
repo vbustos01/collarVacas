@@ -1,17 +1,14 @@
 from gps_upy import Gps_upy
-from time import sleep
-a = Gps_upy()
+import _thread
 
-#a.standby_mode()
-a.kill_data()
-sleep(1)
-# modo de inicio
-a.full_cold_start()
-#a.cold_start()
-sleep(1)
+gps = Gps_upy()
+def treadsito():
+	while 1:
+		if gps.any() != None:
+		gps_payload[] = gps.req_position()
+		if gps_payload[0]:
+			pos = gps_payload[1]
+			break
 
-a.nmea_out()
-sleep(1)
-
-while 1:
-	a.readline()
+gps.periodic_mode()
+_thread.start_new_thread(treadsito, ())

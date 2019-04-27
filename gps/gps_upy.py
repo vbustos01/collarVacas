@@ -4,35 +4,59 @@
 
 from machine import UART
 from time import sleep
+from uos import *
 
 class Gps_upy(UART):
 	def __init__(self):
 		super(Gps_upy, self).__init__(2, 9600)
-		super().init(9600, bits=8, parity=None, stop=2,tx=17,rx=5)
+		super().init(9600, bits=8, parity=None, stop=2, tx=17, rx=5)
 		# configurar gps a 9600 baud
 		#super().write(b'$PMTK251,9600*27\r\n')
 
-	def leer_parasiempre(self):
-		for i in range(1,12):
-			print(super().read())
-			sleep(2)
+	def req_pos(self):
+		super().write(b'$PMTK314,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0*29\r\n')
+		sleep(1)
+
+		while 1:
+			self.frame = super().readline()
+			self.pos = str(self.frame).split(',')
+			try:
+				if self.pos[2]=='A':
+					break
+			except IndexError:
+				continue
+			except:
+				print('error desconocido')
+
+		#self.pack = self.pos[3:7]
+		self.pack = self.pos[3]+','+self.pos[4]+','+self.pos[5]+','+self.pos[6]
+		print('data a escribir(GPS):')
+		print(self.pack)
+		# escritura en sd
+		if self.sd is not None:
+			mount(self.sd, "/")
+			filename = '/gps_data.txt'
+			with open(filename,'a') as f:
+				n = f.write('{}\n'.format(self.pack))
+			umount("/")
+		else:
+			print('sd no detectada')
 
 	# Metodo para decodificar las sentencias GPRMC y GPGGA
-	def decode_gps(self):
-		data = super().readline()
-		data = str(data).split(',')
+	def decode(self, data):
 		if(data[0]=='$GPRMC'):
 			self.latitud = data[3]
 			self.ref_latitud = data[4]
 			self.longitud = data[5]
 			self.ref_longitud = data[6]
-		if(data[0]=='$GPGGA'):
+		elif(data[0]=='$GPGGA'):
 			# informacion sobre la posicion
 			self.latitud = data[2]
 			self.ref_latitud = data[3]
 			self.longitud = data[4]
 			self.ref_longitud = data[5]
-
+		else:
+			pass
 	# modos de arranque (time to first fix)
 	def cold_start(self):
 		# modo por defecto del gps
@@ -59,9 +83,15 @@ class Gps_upy(UART):
 		# my setup (7 segundos activo, 1 min dormido)
 		#super().write(b'$PMTK225,2,7000,60000,0,0*18\r\n')
 
-		# my setup 2.0 ()
-		super().write(b'$PMTK225,8,7000,14000,0,0*11\r\n')
+		# my setup 2.0 (7 seg on 14 seg off)
+		#super().write(b'$PMTK225,8,7000,14000,0,0*11\r\n')
 
+		# setup 3 (5 min on 15 min off)
+		super().write(b'$PMTK225,2,180000,900000,0,0*29\r\n')
+
+
+	def attachSD(self, sd):
+		self.sd = sd
 	def nmea_out(self):
 		# solo GPRMC
 		super().write(b'$PMTK314,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0*29\r\n')

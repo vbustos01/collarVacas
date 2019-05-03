@@ -7,7 +7,7 @@ from controller_esp32 import ESP32Controller
 
 #{'frequency': 866E6, 'tx_power_level': 2, 'signal_bandwidth': 125E3,'spreading_factor': 8, 'coding_rate': 5, 'preamble_length': 8,'implicitHeader': False, 'sync_word': 0x12, 'enable_CRC': False}
 
-class LoRa:
+class LoRa():
 
     def __init__(self,
                  name = 'SX127x',
@@ -32,8 +32,8 @@ class LoRa:
 
     def beginIRQ(self):
         #print("LoRa Collar")
-        self.lora.onReceive(on_receive)#Asigna una función para la interrupcion del pin DIO0
-        self.lora.onTimeout(on_timeout,SYMB_TIME_OUT)#Asigna una función para la interrupcion del pin DIO1 y asigna un Timeout
+        self.lora.onReceive(self.on_receive)#Asigna una función para la interrupcion del pin DIO0
+        self.lora.onTimeout(self.on_timeout, self.SYMB_TIME_OUT)#Asigna una función para la interrupcion del pin DIO1 y asigna un Timeout
         # sensors = {'GPS':True,'IMU':False,'SD':True,'MIC':False}          
         # pre_frame ={'address':255,'cmd':7,                                
         #             'sensors':sensors,'location':"3844.7556,S,07236.9213,W", 
@@ -42,17 +42,17 @@ class LoRa:
         #self.paqueteActual = empaquetar(pre_frame)
 
     def CAD_Done(self):
-                
+        pass
     def CAD_Detected(self):
-    
+        pass
     def Rx_Done(self, paquete):
-
+        pass
     def Rx_TimeOut(self):
-
+        pass
     def on_receive(self,paquete):
         if paquete:
             direccion = paquete[0]
-            if direccion == self.direccionCollar:
+            if direccion == dirCollar:
                 comando = paquete[1]
                 #mensaje = paquete[2:].decode()
                 print("Recibi:")

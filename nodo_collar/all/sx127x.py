@@ -440,11 +440,11 @@ class SX127x:
             # automatically standby when RX_DONE
             if self._onReceive:
                 payload = self.read_payload()#Se devuelve un payload en la funcion _onReceive 
-                self._onReceive(self, payload)
+                self._onReceive(payload)
         else : 
             if self._onReceive:
                 payload = None #Se devuelve un payload en la funcion _onReceive 
-                self._onReceive(self, payload)
+                self._onReceive(payload)
         self.aquire_lock(False)             # unlock in any case.
         self.collect_garbage()
         return True

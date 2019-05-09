@@ -34,6 +34,13 @@ ampy put nodo_collar/all/data_frame.py drivers/data_frame.py
 ampy put main.py
 ampy put boot.py
 
+#-----CLASES-----#
+ampy put sd.py
+ampy put mic.py
+ampy put imu.py
+ampy put menu.py
+ampy put gps.py
+#falta agregar lo correspondiente a la clase lora
 
 ##
 #ampy put LoRa/LoRaReceiver.py

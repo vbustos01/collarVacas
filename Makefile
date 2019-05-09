@@ -39,11 +39,11 @@ deploy:
 	ampy put boot.py
 
 	#-----CLASES-----#
-	ampy put sd.py
-	ampy put mic.py
-	ampy put imu.py
-	ampy put menu.py
-	ampy put gps.py
+	ampy put clases/sd.py
+	ampy put clases/mic.py
+	ampy put clases/imu.py
+	ampy put clases/menu.py
+	ampy put clases/gps.py
 	#falta agregar lo correspondiente a la clase lora
 	##
 	#ampy put LoRa/LoRaReceiver.py

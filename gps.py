@@ -13,7 +13,8 @@ class Gps_upy(UART):
 		# configurar gps a 9600 baud
 		#super().write(b'$PMTK251,9600*27\r\n')
 
-	def req_pos(self):
+	def write2sd(self):
+		# Metodo utilizado para guardar la posicion actual en la sd
 		super().write(b'$PMTK314,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0*29\r\n')
 		sleep(1)
 
@@ -32,7 +33,7 @@ class Gps_upy(UART):
 		self.pack = self.pos[3]+','+self.pos[4]+','+self.pos[5]+','+self.pos[6]
 		print('data a escribir(GPS):')
 		print(self.pack)
-		# escritura en sd
+		# Escritura en tarjeta SD
 		if self.sd is not None:
 			mount(self.sd, "/")
 			filename = '/gps_data.txt'
@@ -42,8 +43,25 @@ class Gps_upy(UART):
 		else:
 			print('sd no detectada')
 
-	# Metodo para decodificar las sentencias GPRMC y GPGGA
+	def req_pos():
+		super().write(b'$PMTK314,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0*29\r\n')
+		sleep(1)
+
+		while 1:
+			self.frame = super().readline()
+			self.pos = str(self.frame).split(',')
+			try:
+				if self.pos[2]=='A':
+					break
+			except IndexError:
+				continue
+			except:
+				print('error desconocido')
+		self.pack = self.pos[3]+','+self.pos[4]+','+self.pos[5]+','+self.pos[6]		
+		return self.pack
+
 	def decode(self, data):
+	# Metodo para decodificar las sentencias GPRMC y GPGGA
 		if(data[0]=='$GPRMC'):
 			self.latitud = data[3]
 			self.ref_latitud = data[4]

@@ -6,7 +6,7 @@ def initSD():
 	vext_pin = Pin(21, Pin.OUT, value = 0)
 	#cs_lora = Pin(18,Pin.OUT,value=1) #para desactivar LoRa
 	while counter < 3:
-		spi = SPI(sck=Pin(23), mosi=Pin(27), miso=Pin(19))
+		spi = SPI(sck=Pin(5), mosi=Pin(27), miso=Pin(19))
 		try:
 			sd = sdcard.SDCard(spi, Pin(2,Pin.OUT))
 			return sd

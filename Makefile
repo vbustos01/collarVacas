@@ -38,23 +38,34 @@ deploy:
 	ampy put main.py
 	ampy put boot.py
 
-
+	#-----CLASES-----#
+	ampy put clases/sd.py
+	ampy put clases/mic.py
+	ampy put clases/imu.py
+	ampy put clases/menu.py
+	ampy put clases/gps.py
+	#falta agregar lo correspondiente a la clase lora
 	##
 	#ampy put LoRa/LoRaReceiver.py
 	#ampy put LoRa/LoRaSender.py
 
 erase:
-	ampy rm drivers/mpu6050.py
-	ampy rm drivers/constants.py
-	ampy rm drivers/cfilter.py
-	ampy rm drivers/sdcard.py
-	ampy rm drivers/ssd1306.py
-	ampy rm drivers/config_lora.py
-	ampy rm drivers/controller.py
-	ampy rm drivers/controller_esp32.py
-	ampy rm drivers/sx127x.py
-	ampy rm drivers/direccionCollar.py
-	ampy rm drivers/data_frame.py
-	ampy rm drivers
-	ampy rm main.py
-	ampy rm boot.py
+	-ampy rm drivers/mpu6050.py
+	-ampy rm drivers/constants.py
+	-ampy rm drivers/cfilter.py
+	-ampy rm drivers/sdcard.py
+	-ampy rm drivers/ssd1306.py
+	-ampy rm drivers/config_lora.py
+	-ampy rm drivers/controller.py
+	-ampy rm drivers/controller_esp32.py
+	-ampy rm drivers/sx127x.py
+	-ampy rm drivers/direccionCollar.py
+	-ampy rm drivers/data_frame.py
+	-ampy rm drivers
+	-ampy rm main.py
+	-ampy rm boot.py
+	-ampy rm sd.py
+	-ampy rm mic.py
+	-ampy rm imu.py
+	-ampy rm menu.py
+	-ampy rm gps.py

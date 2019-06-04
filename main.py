@@ -1,28 +1,36 @@
-# inicializacion antena lora
-#import Clientecollar, config_lora
-#from sx127x import SX127x
-#from controller_esp32 import ESP32Controller as controller
-import inputwithtimeout as iwt
+from gps import Gps_upy
+import _thread
+from sd import *
+from imu import *
+from time import sleep
+from machine import Timer, deepsleep, Pin, ADC
+import uos
+#from Clientecollar import LoRa
+LOW_BAT_LEVEL = 1600
 
-print("Por favor ingrese una opción")
-print("Si no desea realizar test, espere 5 s")
-text=iwt.inputread()
 
+pinvext = Pin(21, Pin.OUT)
+pinvext.value(0)
 
-if text != None:
-	print("se escribio: "+text)
-	#  
-else:
-	pass
-	# aqui va el codigo principal que se ejecuta en caso de haber ocurrido el timeout
+adc = ADC(Pin(32))
+adc.atten(adc.ATTN_11DB)
+read = adc.read()
+read = adc.read()
+	
+if read < LOW_BAT_LEVEL:
+	deepsleep()
 
-#{'frequency': 866E6, 'tx_power_level': 2, 'signal_bandwidth': 125E3,'spreading_factor': 8, 'coding_rate': 5, 'preamble_length': 8,'implicitHeader': False, 'sync_word': 0x12, 'enable_CRC': False}
-"""
-objeto=SX127x(name = 'LoRa1',parameters = {'frequency': 866E6, 'tx_power_level': 17 , 'signal_bandwidth': 125E3,'spreading_factor': 8, 'coding_rate': 5, 'preamble_length': 8,'implicitHeader': False, 'sync_word': 0x12, 'enable_CRC': True})
+sd = initSD()
 
-lora = controller.add_transceiver(objeto,
-                                  pin_id_ss = ESP32Controller.PIN_ID_FOR_LORA_SS,
-                                  pin_id_RxDone = ESP32Controller.PIN_ID_FOR_LORA_DIO0,
-                                  pin_id_RxTimeout= ESP32Controller.PIN_ID_FOR_LORA_DIO1)
-Clientecollar.collar(lora)
-"""
+# Modulo GPS
+gps = Gps_upy()
+gps.attachSD(sd)
+gps.write2sd(120000)
+
+# Modulo IMU
+imu = IMU()
+imu.attachSD(sd)
+imu.writesamples()
+
+################### MODO SLEEP ##################
+deepsleep(60000)

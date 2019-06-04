@@ -39,22 +39,6 @@ def collar(lora):
     display.show()
     lora.receive()
     paqueteActual = empaquetar(pre_frame)
-    # Datos de Gps
-    while True:
-        try:
-            posicion = uart.readline()
-            if(posicion==None):
-                continue
-            posicion = posicion.decode("utf-8") # esto es equivalente a str() en py2
-            indicador = posicion.split(',')
-            if(indicador[0]=='$GPGGA'):
-                posicion=posicion[18:42]
-            if(indicador[0]=='$GPRMC'):
-                posicion=posicion[20:44]
-            pre_frame['location'] = posicion
-            print(pre_frame)
-        except:
-            continue
 
 
 def on_receive(lora,paquete):

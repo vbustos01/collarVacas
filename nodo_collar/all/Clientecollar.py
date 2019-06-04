@@ -7,11 +7,11 @@ from controller_esp32 import ESP32Controller
 
 #{'frequency': 866E6, 'tx_power_level': 2, 'signal_bandwidth': 125E3,'spreading_factor': 8, 'coding_rate': 5, 'preamble_length': 8,'implicitHeader': False, 'sync_word': 0x12, 'enable_CRC': False}
 
-class LoRa:
+class LoRa():
 
     def __init__(self,
                  name = 'SX127x',
-                 parameters = {'frequency': 866E6, 'tx_power_level': 17, 'signal_bandwidth': 125E3,
+                 parameters = {'frequency': 866E6, 'tx_power_level': 10, 'signal_bandwidth': 125E3,
                                'spreading_factor': 8, 'coding_rate': 5, 'preamble_length': 8,
                                'implicitHeader': False, 'sync_word': 0x12, 'enable_CRC': True},
                  intentosACK=2,
@@ -28,11 +28,12 @@ class LoRa:
         self.intentos = 0
         self.paqueteSync = False
         self.SYMB_TIME_OUT = time_out_Symb
+        self.MapPinCAD=False #[False=>DI0:RxDone,DI1:TimeOut,True=DIO:CAD]
 
     def beginIRQ(self):
         #print("LoRa Collar")
-        self.lora.onReceive(on_receive)#Asigna una función para la interrupcion del pin DIO0
-        self.lora.onTimeout(on_timeout,SYMB_TIME_OUT)#Asigna una función para la interrupcion del pin DIO1 y asigna un Timeout
+        self.lora.onReceive(self.on_receive)#Asigna una función para la interrupcion del pin DIO0
+        self.lora.onTimeout(self.on_timeout, self.SYMB_TIME_OUT)#Asigna una función para la interrupcion del pin DIO1 y asigna un Timeout
         # sensors = {'GPS':True,'IMU':False,'SD':True,'MIC':False}          
         # pre_frame ={'address':255,'cmd':7,                                
         #             'sensors':sensors,'location':"3844.7556,S,07236.9213,W", 
@@ -40,10 +41,18 @@ class LoRa:
         self.lora.receive()
         #self.paqueteActual = empaquetar(pre_frame)
 
+    def CAD_Done(self):
+        pass
+    def CAD_Detected(self):
+        pass
+    def Rx_Done(self, paquete):
+        pass
+    def Rx_TimeOut(self):
+        pass
     def on_receive(self,paquete):
         if paquete:
             direccion = paquete[0]
-            if direccion == self.direccionCollar:
+            if direccion == dirCollar:
                 comando = paquete[1]
                 #mensaje = paquete[2:].decode()
                 print("Recibi:")
@@ -91,5 +100,7 @@ class LoRa:
     def setModoSTBY(self):
         self.lora.standby()
 
-    def setMensaje(self,preframe)
+    def setModoCAD(self):
+        self.lora.CAD()
+
         

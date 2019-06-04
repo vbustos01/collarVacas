@@ -7,8 +7,8 @@ from data_frame import *
 BOARD.setup()#Mapeo de pines de la raspberry
 BOARD.reset()#Reseteo de los pines
 
-NODOS =  2# Cantidad de Nodos Clientes
-TIME_SAMP = 30#Tiempo de muestreo en segundos
+NODOS =  1# Cantidad de Nodos Clientes
+TIME_SAMP = 3#Tiempo de muestreo en segundos
 INTENTOS = 3 # Cantidad de intentos para comunicarse con un Nodo cliente 
 TIEMPO_CORD = TIME_SAMP*1.0/NODOS # Intervalo de tiempo para comunicarse con el Nodo cliente
 SYMB_TIME_OUT = 100 # Cantidad de simbolos a esperar para detectar un preambulo

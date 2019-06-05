@@ -31,6 +31,7 @@ deploy:
 
 	ampy put nodo_collar/all/direccionCollar.py drivers/direccionCollar.py
 	ampy put nodo_collar/all/data_frame.py drivers/data_frame.py
+	ampy put nodo_collar/all/Clientecollar.py drivers/Clientecollar.py
 
 
 

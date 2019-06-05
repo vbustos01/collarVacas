@@ -1,5 +1,5 @@
 from machine import Pin, SPI, reset
-from controller import Controller
+from drivers.controller import Controller
 
 
 class ESP32Controller(Controller):

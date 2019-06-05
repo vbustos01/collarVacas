@@ -9,7 +9,20 @@ class IMU(object):
 
 	PWR_MGMT1_REG = 0x6B
 	PWR_MGMT2_REG = 0x6C
+	
 	fileCounter = 0
+	try:
+		f = open("fileCounterIMU.txt", "r")
+		fileCounter = int(f.read())
+		print(fileCounter)
+		f.close()
+	except OSError:
+		f = open("fileCounterIMU.txt", "w")
+		f.write("0")
+		f.close()
+		fileCounter = 0 
+
+
 
 	def __init__(self):
 		super(IMU, self).__init__()
@@ -44,10 +57,19 @@ class IMU(object):
 	def attachSD(self, sd):
 		self.sd = sd
 
+	def resetcounter(self):
+		f = open("fileCounterIMU.txt",'w')
+		f.write("0")
+		f.close()
+
 	def writesamples(self, duration=5, samplingrate=10):
 		if self.sd is not None:
-			mount(self.sd, "/")
 			IMU.fileCounter += 1
+			fc = open("fileCounterIMU.txt", "w")
+			print(str(IMU.fileCounter))
+			fc.write(str(IMU.fileCounter))
+			fc.close()
+			mount(self.sd, "/")
 			f = open("imu"+str(IMU.fileCounter)+".csv","w")
 			print("nombre archivo: imu"+str(IMU.fileCounter)+".csv")
 			now = ticks_ms()

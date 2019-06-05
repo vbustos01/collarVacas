@@ -1,0 +1,10 @@
+30/Mayo - Prueba de medición de voltaje con ADC
+Se hicieron pruebas con una fuente de voltaje conectada como bateria.
+Se encontro que cuando el ADC (pin 32 conectado al 13) lee bajo 1500, la placa se apaga.
+La formula para la conversion de lectura a voltaje es:
+  lectura = (4096/3.6)*v_pin13
+Además el voltaje de la bateria se puede estimar como:
+  v_bat = (16/5)*(v_pin13 - v_d*(11/16)) ; donde vd es el voltaje de caida del diodo en el MOSFET.
+Para mas detalles sobre estos calculos ver:
+	-WIFI_LoRa_32_V2(868-915), PDF esquemático de Heltec Electronics.
+	-http://docs.micropython.org/en/latest/esp32/quickref.html, guía rápida de micropython en el puerto ESP32.

@@ -11,8 +11,8 @@ from data_frame import *
 BOARD.setup()#Mapeo de pines de la raspberry
 BOARD.reset()#Reseteo de los pines
 
-NODOS =  1# Cantidad de Nodos Clientes
-TIME_SAMP = 3#Tiempo de muestreo en segundos
+nodos =  1# Cantidad de Nodos Clientes(maximo 255)
+t_sample= 1#Decenas de segundos(maximo 255)
 INTENTOS = 3 # Cantidad de intentos para comunicarse con un Nodo cliente 
 TIEMPO_CORD = TIME_SAMP*1.0/NODOS # Intervalo de tiempo para comunicarse con el Nodo cliente
 SYMB_TIME_OUT = 100 # Cantidad de simbolos a esperar para detectar un preambulo
@@ -25,7 +25,6 @@ class mylora(LoRa):
         self.set_dio_mapping([0] * 6)
         self.Recibido = False # Flag de paquete recibido
         self.TimeOut = False # Flag para detectar Timeout
-        self.paqueteSync = bytes([0]) # paquete de sincronización y utilizado para solicitar un dato del Nodo Cliente
         self.paqueteACK = bytes([0]) # paquete ACK utilizado para indicar la llegada de un mensaje
         self.Nodos_activos
         self.paqueteRecibidoC=bytes(0)
@@ -87,16 +86,25 @@ class mylora(LoRa):
             pass;
         #tiempo_actual= time.time()
         #print(tiempo_actual - tiempo_anterior)
-        self.clear_irq_flags(TxDone=1)#Reinicio la interrupcion TxDone      
+        self.clear_irq_flags(TxDone=1)#Reinicio la interrupcion TxDone  
+
     def start(self):
         self.set_mode(MODE.RXSINGLE)
         while True:
+            if self.Recibido:
+            self.Recibido=False
+                if dato=desempaquetar(self.paqueteRecibidoC):
+                    self.paqueteACK=[self.paqueteRecibidoC[0],nodos,t_sample]
+                    self.Enviar(self.paqueteACK)
+                    self.reset_ptr_rx()
+                    cola1.agregar(dato)
             #print("Ingrese Número de Nodos:")
-            os.system("clear")
+            #os.system("clear")
 def save_datLoRa(cola1)
     while cola1.vacia():
         pass;
-    print("se recibio")
+    os.system("clear")
+    print("Paquete Recibido:")
     cola1.extraer()
     
 cola1=cola.cola()#creación del objeto cola1
@@ -113,7 +121,7 @@ lora.set_rx_crc(True)
 lora.set_preamble(8)
 lora.set_implicit_header_mode(False)
 lora.set_symb_timeout(SYMB_TIME_OUT)
-#print(lora.__str__())
+print(lora.__str__())
 #lora.set_low_data_rate_optim(True)
 #lora.set_pa_config(pa_select=1)
 #assert(lora.get_agc_auto_on() == 1)

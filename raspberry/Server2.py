@@ -92,7 +92,7 @@ class mylora(LoRa):
         self.set_mode(MODE.RXSINGLE)
         while True:
             if self.Recibido:
-            self.Recibido=False
+                self.Recibido=False
                 if dato=desempaquetar(self.paqueteRecibidoC):
                     self.paqueteACK=[self.paqueteRecibidoC[0],nodos,t_sample]
                     self.Enviar(self.paqueteACK)

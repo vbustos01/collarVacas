@@ -1,4 +1,4 @@
-from gps import Gps_upy
+from gps import GPS
 import _thread
 from sd import *
 from imu import *
@@ -11,7 +11,7 @@ LOW_BAT_LEVEL = 1600
 
 pinvext = Pin(21, Pin.OUT)
 pinvext.value(0)
-
+"""
 adc = ADC(Pin(32))
 adc.atten(adc.ATTN_11DB)
 adc.read() # se consume la primera lectura, ya que da una medicion erronea 
@@ -28,7 +28,7 @@ if promedio < LOW_BAT_LEVEL:
 
 v_s = 3.6/4096*promedio
 v_bat = (v_s-0.7)*16/5+0.7
-
+"""
 sd = initSD()
 if sd is not None:
 	mount(sd, "/")
@@ -36,8 +36,9 @@ if sd is not None:
 	v.write("{},{},\n".format(promedio,v_bat))
 	v.close()
 	umount("/")
+
 # Modulo GPS
-gps = Gps_upy()
+gps = GPS()
 gps.attachSD(sd)
 gps.write2sd(120000)
 
@@ -48,4 +49,4 @@ imu.writesamples()
 
 
 ################### MODO SLEEP ##################
-deepsleep(60000)
+#deepsleep(60000)

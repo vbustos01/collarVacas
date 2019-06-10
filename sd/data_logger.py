@@ -85,3 +85,7 @@ while 1:
 oled.fill(0)
 oled.text('Fin, Todo OK', 5, 45)
 oled.show()
+
+v = open('v_bat','a')
+v.write('{}\n'.format(adc))
+v.close()

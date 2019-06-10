@@ -59,7 +59,7 @@ class GPS():
 			print('sd no detectada')
 
 	def req_pos():
-		self.uart.write(b'$PMTK314,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0*29\r\n')
+		self.uart.write(b'$PMTK314,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0*29\r\n') #GPRMC
 		sleep(1)
 
 		while 1:
@@ -74,6 +74,15 @@ class GPS():
 				print('error desconocido')
 		self.pack = self.pos[3]+','+self.pos[4]+','+self.pos[5]+','+self.pos[6]		
 		return self.pack
+
+	def req_time(self):
+		self.uart.write(b'$PMTK314,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0*29\r\n') #GPGGA
+		sleep(1)
+		frame = self.uart.readline()
+		self.time = str(frame).split(',')
+		# se le restan 4 horas al tiempo UTC
+		hora = (int(self.time[1][:2]) - 4, int(self.time[1][2:4]), int(self.time[1][4:6]))
+		return hora
 
 	def decode(self, data):
 	# Metodo para decodificar las sentencias GPRMC y GPGGA
@@ -90,6 +99,7 @@ class GPS():
 			self.ref_longitud = data[5]
 		else:
 			pass
+
 	# modos de arranque (time to first fix)
 	def cold_start(self):
 		# modo por defecto del gps
@@ -132,6 +142,10 @@ class GPS():
 		#self.uart.write(b'$PMTK314,-1*04\r\n')
 
 	# Modos sin testear
+	def restore_output():
+		# retorna la salida de nmea a su valor por defecto
+		self.uart.write(b'PMTK314,-1*04\r\n')
+
 	def position_fix_interval(self):
 		# este parametro controla la tasa de obtencion de posicion de gps (position fix freq)
 		self.uart.write(b'$PMTK500,1000,0,0,0,0*1A\r\n')

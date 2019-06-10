@@ -90,3 +90,25 @@ class IMU(object):
 			print("bytes escritos: "+str(numwrite))
 			f.close()
 			umount("/")
+
+	def fifo_enable(self):
+		# metodo para direccionar las muestras de los sensores hacia la fifo
+		# Registro 35 (FIFO_EN)
+		# MPU6050_RA_FIFO_EN = 0x23
+		self.imu.write_byte(0x23, 128)
+
+	def fifo_count(self):
+		# este metodo lee el registro 114 (FIFO_COUNT)
+		# este registro lleva la cuenta de las muestras actualmente en la fifo
+		# falta convertir el numero a su valor real
+		return (self.imu.read_byte(0x72), self.imu.read_byte(0x73))
+
+	def irq_enable(self):
+		# activa la interrupcion del registro 56 (INT_ENABLE)
+		#MPU6050_RA_INT_ENABLE                 = 0x38
+		# se deja en 1 para activar solo DATA_RDY_EN
+		self.imu.write_byte(0x38, 1)
+
+	def irq_status(self):
+		return self.imu.read_byte(0x3A)
+

@@ -29,7 +29,6 @@ class GPS():
 				continue
 			except:
 				print('error desconocido')
-
 		if ticks_diff(ticks_ms(), timestart) >= timeout:
 			print("timeout! : "+str(timeout)+" ms")
 			if self.sd is not None:
@@ -59,6 +58,7 @@ class GPS():
 			print('sd no detectada')
 
 	def req_pos():
+	# funcion para recoger el tiempo del gps y retornarlo
 		self.uart.write(b'$PMTK314,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0*29\r\n') #GPRMC
 		sleep(1)
 

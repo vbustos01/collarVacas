@@ -93,14 +93,14 @@ class mylora(LoRa):
         while True:
             if self.Recibido:
                 self.Recibido=False
-                if dato=desempaquetar(self.paqueteRecibidoC):
+                if len(self.paqueteRecibidoC) == 15:
                     self.paqueteACK=[self.paqueteRecibidoC[0],nodos,t_sample]
                     self.Enviar(self.paqueteACK)
                     self.reset_ptr_rx()
-                    cola1.agregar(dato)
+                    cola1.agregar(desempaquetar(self.paqueteRecibidoC))
             #print("Ingrese Número de Nodos:")
             #os.system("clear")
-def save_datLoRa(cola1)
+def save_datLoRa(cola1):
     while cola1.vacia():
         pass;
     os.system("clear")

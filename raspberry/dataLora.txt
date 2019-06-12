@@ -1,0 +1,4 @@
+{'location': [1, 90, 0.0, 1, 180, 0.0], 't_unix': 4294967295, 'C_close': 1, 'address': 1, 'sensors': {'GPS': False, 'MIC': True, 'IMU': True, 'SD': False}, 'cmd': 7, 'bateria': 4095}
+{'bateria': 4095, 'cmd': 7, 'location': [1, 90, 0.0, 1, 180, 0.0], 't_unix': 4294967295, 'address': 1, 'sensors': {'SD': False, 'IMU': True, 'MIC': True, 'GPS': False}, 'C_close': 1}
+{'bateria': 4095, 'cmd': 7, 'location': [1, 90, 0.0, 1, 180, 0.0], 't_unix': 4294967295, 'address': 1, 'sensors': {'SD': False, 'IMU': True, 'MIC': True, 'GPS': False}, 'C_close': 1}
+{'bateria': 4095, 'cmd': 7, 'location': [1, 90, 0.0, 1, 180, 0.0], 't_unix': 4294967295, 'address': 1, 'sensors': {'SD': False, 'IMU': True, 'MIC': True, 'GPS': False}, 'C_close': 1}

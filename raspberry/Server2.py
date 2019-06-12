@@ -13,10 +13,6 @@ BOARD.reset()#Reseteo de los pines
 
 nodos =  1# Cantidad de Nodos Clientes(maximo 255)
 t_sample= 1#Decenas de segundos(maximo 255)
-INTENTOS = 3 # Cantidad de intentos para comunicarse con un Nodo cliente 
-TIEMPO_CORD = TIME_SAMP*1.0/NODOS # Intervalo de tiempo para comunicarse con el Nodo cliente
-SYMB_TIME_OUT = 100 # Cantidad de simbolos a esperar para detectar un preambulo
-
 
 class mylora(LoRa):
     def __init__(self, verbose=False):
@@ -26,7 +22,6 @@ class mylora(LoRa):
         self.Recibido = False # Flag de paquete recibido
         self.TimeOut = False # Flag para detectar Timeout
         self.paqueteACK = bytes([0]) # paquete ACK utilizado para indicar la llegada de un mensaje
-        self.Nodos_activos
         self.paqueteRecibidoC=bytes(0)
     #Callbacks
     def on_rx_done(self):
@@ -49,7 +44,7 @@ class mylora(LoRa):
             self.Recibido = False
             print('ERROR EN PAYLOAD')
             self.reset_ptr_rx()
-            self.set_mode(MODE.RXSINGLE)
+            self.set_mode(MODE.RXCONT)
 
     def on_tx_done(self):
         print("\nTxDone")
@@ -89,26 +84,37 @@ class mylora(LoRa):
         self.clear_irq_flags(TxDone=1)#Reinicio la interrupcion TxDone  
 
     def start(self):
-        self.set_mode(MODE.RXSINGLE)
+        self.set_mode(MODE.RXCONT)
         while True:
             if self.Recibido:
+                print("Paquete Recibido:")
                 self.Recibido=False
                 if len(self.paqueteRecibidoC) == 15:
-                    self.paqueteACK=[self.paqueteRecibidoC[0],nodos,t_sample]
+                    self.paqueteACK=[self.paqueteRecibidoC[0],0]
                     self.Enviar(self.paqueteACK)
                     self.reset_ptr_rx()
                     cola1.agregar(desempaquetar(self.paqueteRecibidoC))
+                    self.set_mode(MODE.RXCONT)
             #print("Ingrese Número de Nodos:")
             #os.system("clear")
-def save_datLoRa(cola1):
-    while cola1.vacia():
-        pass;
-    os.system("clear")
-    print("Paquete Recibido:")
-    cola1.extraer()
+def save_datLoRa():
+    global cola1
+    print("entre al hilo")
+    while True:
+        while cola1.vacia():
+            time.sleep(0.4)
+        #os.system("clear")
+        dato=cola1.extraer()
+        ObjArchivo = open('dataLora.txt',mode='a', encoding='utf-8')
+        ObjArchivo.write(str(dato) + '\n')
+        ObjArchivo.close
+
+        time.sleep(0.4)
+
     
 cola1=cola.cola()#creación del objeto cola1
-save_data=threading.Thread(name="save_data",target=save_datLoRa,args=(1,cola1))#Creación del Hilo guardar
+save_data=threading.Thread(target=save_datLoRa)#Creación del Hilo guardar
+save_data.start()
 """configuraciones LoRa"""
 lora = mylora(verbose=False)
 lora.set_freq(866)
@@ -120,8 +126,8 @@ lora.set_rx_crc(True)
 #lora.set_lna_gain(GAIN.G1)
 lora.set_preamble(8)
 lora.set_implicit_header_mode(False)
-lora.set_symb_timeout(SYMB_TIME_OUT)
-print(lora.__str__())
+#lora.set_symb_timeout(SYMB_TIME_OUT)
+#print(lora.__str__())
 #lora.set_low_data_rate_optim(True)
 #lora.set_pa_config(pa_select=1)
 #assert(lora.get_agc_auto_on() == 1)

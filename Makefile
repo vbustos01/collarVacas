@@ -1,11 +1,31 @@
-export AMPY_PORT=/dev/ttyUSB0
+#export AMPY_PORT=/dev/ttyUSB0
 
 all:
 	@echo "Usa make deploy para subir todos los archivos"
 	@echo "Para borrar los archivos de la placa, usa make erase"
 	@echo "Por defecto, el puerto asociado es /dev/ttyUSBO"
 deploy:
-	@-ampy mkdir drivers
+	echo 'Ingrese puerto asociado a dispositivo'
+	echo '1.-/dev/ttyUSB*'
+	echo '2.-/dev/ttyS*'
+	read var1
+	case $var1 in
+		1)
+                        echo 'Ingrese el numero:'
+                        read var2
+			export AMPY_PORT=/dev/ttyUSB${var2}
+			;;
+		2)
+			echo 'Ingrese el numero:'
+			read var2
+			export AMPY_PORT=/dev/ttyS${var2}
+			;;
+		*)
+			echo 'por defecto'
+			export AMPY_PORT=/dev/ttyUSB0
+			;;
+	esac
+	@-ampy mkdir drivers > /dev/null  #de esta forma el warning generado cuando la carpeta ya existe se descarta
 	@echo 'Ingrese Numero ID collar'
 	@read var_id
 	@echo 'dirCollar = ' ${var_id} > direccionCollar.py
@@ -31,13 +51,26 @@ deploy:
 
 	ampy put nodo_collar/all/direccionCollar.py drivers/direccionCollar.py
 	ampy put nodo_collar/all/data_frame.py drivers/data_frame.py
-	ampy put nodo_collar/all/Clientecollar.py drivers/Clientecollar.py
+	ampy put nodo_collar/all/cola.py drivers/cola.py
 
 
 
 	#-----MAIN y BOOT-----#
-	ampy put main.py
-	ampy put boot.py
+	echo 'desea subir main'
+	echo '1.SI'
+	echo '2.NO'
+	read var1
+	case $var1 in
+		1)
+			ampy put boot.py
+			ampy put main.py
+			;;
+
+		2)
+			;;
+		*)
+			;;
+	esac
 
 	#-----CLASES-----#
 	ampy put clases/sd.py
@@ -45,10 +78,7 @@ deploy:
 	ampy put clases/imu.py
 	ampy put clases/menu.py
 	ampy put clases/gps.py
-	#falta agregar lo correspondiente a la clase lora
-	##
-	#ampy put LoRa/LoRaReceiver.py
-	#ampy put LoRa/LoRaSender.py
+	ampy put clases/lora.py
 
 erase:
 	-ampy rm drivers/mpu6050.py
@@ -62,7 +92,7 @@ erase:
 	-ampy rm drivers/sx127x.py
 	-ampy rm drivers/direccionCollar.py
 	-ampy rm drivers/data_frame.py
-	-ampy rm drivers
+	-ampy rmdir drivers
 	-ampy rm main.py
 	-ampy rm boot.py
 	-ampy rm sd.py
@@ -70,3 +100,4 @@ erase:
 	-ampy rm imu.py
 	-ampy rm menu.py
 	-ampy rm gps.py
+	-ampy rm lora.py

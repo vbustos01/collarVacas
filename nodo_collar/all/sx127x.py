@@ -414,7 +414,7 @@ class SX127x:
         if ((irqFlags & IRQ_RX_TIME_OUT_MASK) == IRQ_RX_TIME_OUT_MASK):  # RX_DONE only, irqFlags should be 0x40
             # automatically standby when RX_DONE
             if self._onTimeout:
-                self._onTimeout(self)
+                self._onTimeout()
         self.aquire_lock(False)             # unlock in any case.
         self.collect_garbage() 
         return True

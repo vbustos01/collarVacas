@@ -2,8 +2,9 @@ from gps import GPS
 import _thread
 from sd import *
 from imu import *
-from time import sleep
-from machine import Timer, deepsleep, Pin, ADC
+import lora
+from time import *
+from machine import Timer, deepsleep, Pin, ADC, RTC
 import uos
 #from Clientecollar import LoRa
 LOW_BAT_LEVEL = 1600
@@ -11,7 +12,7 @@ LOW_BAT_LEVEL = 1600
 
 pinvext = Pin(21, Pin.OUT)
 pinvext.value(0)
-"""
+
 adc = ADC(Pin(32))
 adc.atten(adc.ATTN_11DB)
 adc.read() # se consume la primera lectura, ya que da una medicion erronea 
@@ -28,7 +29,7 @@ if promedio < LOW_BAT_LEVEL:
 
 v_s = 3.6/4096*promedio
 v_bat = (v_s-0.7)*16/5+0.7
-"""
+
 sd = initSD()
 if sd is not None:
 	mount(sd, "/")
@@ -39,14 +40,22 @@ if sd is not None:
 
 # Modulo GPS
 gps = GPS()
-gps.attachSD(sd)
-gps.write2sd(120000)
+#gps.attachSD(sd)
+#gps.write2sd(120000)
+posicion = gps.req_pos()
 
 # Modulo IMU
 imu = IMU()
 imu.attachSD(sd)
 imu.writesamples()
 
+rtc = RTC()
+mktime(rtc.datetime())
 
+sensors = {'GPS':True,'IMU':False,'SD':True,'MIC':False} 
+pre_frame ={'address':255,'cmd':7,                                
+	'sensors':sensors,'location':posicion, 
+	't_unix':time(),'bateria':1024,'C_close':True}
+lora.lora_th.addMsn2cola(pre_frame)
 ################### MODO SLEEP ##################
-#deepsleep(60000)
+deepsleep(5000)

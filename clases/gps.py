@@ -57,7 +57,7 @@ class GPS():
 		else:
 			print('sd no detectada')
 
-	def req_pos():
+	def req_pos(self):
 	# funcion para recoger el tiempo del gps y retornarlo
 		self.uart.write(b'$PMTK314,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0*29\r\n') #GPRMC
 		sleep(1)

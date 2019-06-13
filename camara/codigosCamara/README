@@ -1,0 +1,22 @@
+
+
+archivos carpeta:
+
+1)ptz_cam.py
+2)funciones_cam.py
+3)main.py
+
+
+descripcion de archivos de acuerdo a la enumeracion:
+
+* primero que todo es instalar el repositorio de python-onvif, las instrucciones estan en ese github.
+	link repositorio onvif-python (2.x): 	https://github.com/quatanium/python-onvif
+	link para corregir el bug:	https://github.com/quatanium/python-onvif/issues/13
+
+1) este repositorio es donde se configura la camara, puedes obtener parametros internos y debes cambiar la ubicacion de la carpeta wsdl en el codigo ptz_cam para poder ocupar la camara.
+	informacion comandos de onvif: 	https://www.onvif.org/onvif/ver20/util/operationIndex.html 
+2)este archivo referente a las funciones a utilizar
+3)el archivo principal en donde estará el bucle de la camara.
+
+
+#disculpa la demora compañero cualquier cosa me preguntas.

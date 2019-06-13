@@ -2,7 +2,7 @@ import os
 import threading
 import time
 import cola
-#from subirDatosServidor import *
+from subirDatosServidor import *
 from SX127x.LoRa import *
 from SX127x.board_config import BOARD
 from data_frame import *
@@ -108,7 +108,7 @@ def save_datLoRa():
         ObjArchivo = open('dataLora.txt',mode='a', encoding='utf-8')
         ObjArchivo.write(str(dato) + '\n')
         ObjArchivo.close
-
+        subirdatosVacas(desempaquetar(dato))
         time.sleep(0.4)
 
     

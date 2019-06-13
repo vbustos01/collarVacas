@@ -6,6 +6,8 @@ from subirDatosServidor import *
 from SX127x.LoRa import *
 from SX127x.board_config import BOARD
 from data_frame import *
+import pickle
+from angles import sexa2deci
 
 """Es necesario instalar la libreria angles "pip install angles"""
 BOARD.setup()#Mapeo de pines de la raspberry
@@ -105,10 +107,10 @@ def save_datLoRa():
             time.sleep(0.4)
         #os.system("clear")
         dato=cola1.extraer()
-        ObjArchivo = open('dataLora.txt',mode='a', encoding='utf-8')
-        ObjArchivo.write(str(dato) + '\n')
-        ObjArchivo.close
-        subirdatosVacas(desempaquetar(dato))
+        Latitud=sexa2deci(dato['position'][0],dato['position'][1],dato['position'][2],0)
+        Longitud=sexa2deci(dato['position'][3],dato['position'][4],dato['position'][5],0)
+        ObjArchivo.dump({'Latitud':Latitud,'Longitud':Longitud},open("vaca_ID{}.dat".format(desempaquetar(dato)['address']),'wb'))
+        ObjArchivo.closewd
         time.sleep(0.4)
 
     

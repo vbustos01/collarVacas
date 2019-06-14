@@ -2,7 +2,7 @@ import os
 import threading
 import time
 import cola
-from subirDatosServidor import *
+#from subirDatosServidor import *
 from SX127x.LoRa import *
 from SX127x.board_config import BOARD
 from data_frame import *
@@ -89,31 +89,37 @@ class mylora(LoRa):
         self.set_mode(MODE.RXCONT)
         while True:
             if self.Recibido:
-                print("Paquete Recibido:")
                 self.Recibido=False
                 if len(self.paqueteRecibidoC) == 15:
                     self.paqueteACK=[self.paqueteRecibidoC[0],0]
                     self.Enviar(self.paqueteACK)
                     self.reset_ptr_rx()
-                    cola1.agregar(desempaquetar(self.paqueteRecibidoC))
+                    cola1.agregar(self.paqueteRecibidoC)
                     self.set_mode(MODE.RXCONT)
             #print("Ingrese Número de Nodos:")
             #os.system("clear")
 def save_datLoRa():
+    contador=0
     global cola1
-    print("entre al hilo")
+    global stop_th
     while True:
         while cola1.vacia():
-            time.sleep(0.4)
-        #os.system("clear")
-        dato=cola1.extraer()
+            if stop_th:
+                break      
+        if stop_th:
+            break
+        os.system("clear")
+        dato=desempaquetar(cola1.extraer())
         Latitud=sexa2deci(dato['position'][0],dato['position'][1],dato['position'][2],0)
         Longitud=sexa2deci(dato['position'][3],dato['position'][4],dato['position'][5],0)
         ObjArchivo.dump({'Latitud':Latitud,'Longitud':Longitud},open("vaca_ID{}.dat".format(desempaquetar(dato)['address']),'wb'))
         ObjArchivo.closewd
-        time.sleep(0.4)
+        contador += 1
+        print("Server2 Iniciado")
+        print("Radio LoRa encendida")
+        print("{contador} Paquetes Recibidos".format(contador))
 
-    
+stop_th=False
 cola1=cola.cola()#creación del objeto cola1
 save_data=threading.Thread(target=save_datLoRa)#Creación del Hilo guardar
 save_data.start()
@@ -134,14 +140,17 @@ lora.set_implicit_header_mode(False)
 #lora.set_pa_config(pa_select=1)
 #assert(lora.get_agc_auto_on() == 1)
 try:
-    print("Server2 Iniciado...")
+    print("Server2 Iniciado")
+    print("Radio LoRa encendida")
     lora.start()
 except KeyboardInterrupt:
+    stop_th=True
+    save_data.join()
     sys.stdout.flush()
-    print("Exit")
-    sys.stderr.write("KeyboardInterrupt\n")
+    print("Server2 Finalizado")
+    sys.stderr.write("Por interrupción de teclado\n")
 finally:
     sys.stdout.flush()
-    print("Exit")
+    print("Radio Lora modo Sleep")
     lora.set_mode(MODE.SLEEP)
     BOARD.teardown()

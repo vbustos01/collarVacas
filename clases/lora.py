@@ -1,3 +1,16 @@
+
+###########################################################################################################
+#################INTRUCCIONES##############################################################################
+#   1. Para utilizar esta clase se debe importar en el main.py de tal forma que se puede aprovechar       #
+#   el hilo "LoRa_thread()" el cual se encarga de transmitir datos en cola a travez de lora, para         #
+#   importarlo se recomienda "import lora".                                                               #
+#   2. Para agregar paquetes a la cola se debe crear un diccionario (pre_frame) el cual debe tener las    #
+#   caracteristicas descritas en el driver "data_frame.py" (collarVacas/nodo_collar/data_frame.py).       #
+#   3. El preframe creado se agrega a la cola como:                                                       #
+#   lora.lora_th.addMsn2cola(pre_frame)                                                                   #
+#   4. De esta forma se agregan mensajes a la cola los cuales se empaquetan y se transmiten por LoRa.     #
+###########################################################################################################
+ 
 import _thread
 import time
 from drivers.cola import cola 

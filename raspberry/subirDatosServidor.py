@@ -2,7 +2,7 @@
 
 import time
 import sys
-import MySQLdb
+import pymysql
 import datetime
 from angles import sexa2deci
 ###Ejemplo diccionario obtenido al desempaquetar######################
@@ -11,14 +11,8 @@ from angles import sexa2deci
 #            'sensors':sensors,'location':[1,42,85.45,-1,72,14.25],  #
 #    't_unix':4294967295,'bateria':4095,'C_close':True}              #
 ######################################################################
-# Credenciales servidor
-host = "172.22.120.192"
-usuario = "phpmyadmin"
-clave = "ufro_vacas"
-base_de_datos = "Vacas"
-
 # Abre la conexion con la base de datos
-db = MySQLdb.connect(host, usuario, clave, base_de_datos)
+db = pymysql.connect('localhost','root','ufro_vacas','Vacas')
 
 # Prepara un objeto de cursor para obtener datos usando el metodo cursor()
 cursor = db.cursor()
@@ -45,14 +39,14 @@ def subirdatosVacas(diccionario):
         creaTablaSiNoExiste(diccionario)
         global cursor
         global db
-        Latitud=sexa2deci(diccionario['position'][0],diccionario['position'][1],diccionario['position'][2],0)
-        Longitud=sexa2deci(diccionario['position'][3],diccionario['position'][4],diccionario['position'][5],0)
+        Latitud=sexa2deci(diccionario['location'][0],diccionario['location'][1],diccionario['location'][2],0)
+        Longitud=sexa2deci(diccionario['location'][3],diccionario['location'][4],diccionario['location'][5],0)
         tupla = (diccionario['address'],diccionario['t_unix'],diccionario['bateria'],
                 diccionario['sensors']['GPS'],diccionario['sensors']['IMU'],
                 diccionario['sensors']['SD'],diccionario['sensors']['MIC'],not diccionario['C_close'],
                 Latitud,Longitud) 
         # Inserta los datos a la base de datos
-        cursor.execute("INSERT INTO Vaca{0} (ID,Fecha,Nivel_Bateria,Datos_GPS,Datos_IMU,Estado_SD,Datos_Microfono,Collar_Abierto,Latitud, Longitud) VALUES (%s,%s,%s,%b,%b,%b,%b,%s,%f,%f)".format(diccionario['address']),tupla)
+        cursor.execute("INSERT INTO Vaca{0} (ID,Fecha,Nivel_Bateria,Datos_GPS,Datos_IMU,Estado_SD,Datos_Microfono,Collar_Abierto,Latitud, Longitud) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%f,%f)".format(diccionario['address']),tupla)
         db.commit()
         db.close()
 

@@ -4,10 +4,10 @@ all:
 	@echo "Para borrar los archivos de la placa, usa make erase"
 	@echo "Por defecto, el puerto asociado es /dev/ttyUSBO"
 deploy:
-	@-ampy mkdir drivers > /dev/null  #de esta forma el warning generado cuando la carpeta ya existe se descarta
-	@echo 'Ingrese Numero ID collar'
-	@read var_id
-	@echo 'dirCollar = ' ${var_id} > direccionCollar.py
+	@-ampy mkdir drivers > /dev/null
+	@echo 'Ingrese Numero ID collar';\
+	read var_id;\
+	echo 'dirCollar = '$$var_id > direccionCollar.py
 
 	#-----DRIVERS-----#
 
@@ -35,8 +35,8 @@ deploy:
 
 
 	#-----MAIN y BOOT-----#
-	ampy put boot.py
-	ampy put main.py
+	#ampy put boot.py
+	#ampy put main.py
 	#-----CLASES-----#
 	ampy put clases/sd.py
 	ampy put clases/mic.py

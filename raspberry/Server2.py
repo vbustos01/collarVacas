@@ -2,7 +2,7 @@ import os
 import threading
 import time
 import cola
-#from subirDatosServidor import *
+from subirDatosServidor import *
 from SX127x.LoRa import *
 from SX127x.board_config import BOARD
 from data_frame import *
@@ -110,10 +110,10 @@ def save_datLoRa():
             break
         os.system("clear")
         dato=desempaquetar(cola1.extraer())
-        Latitud=sexa2deci(dato['position'][0],dato['position'][1],dato['position'][2],0)
-        Longitud=sexa2deci(dato['position'][3],dato['position'][4],dato['position'][5],0)
-        ObjArchivo.dump({'Latitud':Latitud,'Longitud':Longitud},open("vaca_ID{}.dat".format(desempaquetar(dato)['address']),'wb'))
-        ObjArchivo.closewd
+        Latitud=sexa2deci(dato['location'][0],dato['location'][1],dato['location'][2],0)
+        Longitud=sexa2deci(dato['location'][3],dato['location'][4],dato['location'][5],0)
+        pickle.dump({'Latitud':Latitud,'Longitud':Longitud},open("vaca_ID{}.dat".format(dato['address']),'wb'))
+        subirdatosVacas(dato)
         contador += 1
         print("Server2 Iniciado")
         print("Radio LoRa encendida")

@@ -6,6 +6,7 @@ import lora
 from time import *
 from machine import Timer, deepsleep, Pin, ADC, RTC
 import uos
+from drivers.direccionCollar import *
 #from Clientecollar import LoRa
 LOW_BAT_LEVEL = 1600
 
@@ -53,7 +54,7 @@ rtc = RTC()
 mktime(rtc.datetime())
 
 sensors = {'GPS':True,'IMU':False,'SD':True,'MIC':False} 
-pre_frame ={'address':255,'cmd':7,                                
+pre_frame ={'address':dirCollar,'cmd':7,                                
 	'sensors':sensors,'location':posicion, 
 	't_unix':time(),'bateria':1024,'C_close':True}
 lora.lora_th.addMsn2cola(pre_frame)

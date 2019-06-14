@@ -14,12 +14,11 @@
 import _thread
 import time
 from drivers.cola import cola 
-from drivers.direccionCollar import *
 from drivers.data_frame import *
 import drivers.config_lora
 from drivers.sx127x import SX127x
 from drivers.controller_esp32 import ESP32Controller
-
+from drivers.direccionCollar import dirCollar
 #{'frequency': 866E6, 'tx_power_level': 2, 'signal_bandwidth': 125E3,'spreading_factor': 8, 'coding_rate': 5, 'preamble_length': 8,'implicitHeader': False, 'sync_word': 0x12, 'enable_CRC': False}
 
 class LoRa:

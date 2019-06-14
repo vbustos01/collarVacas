@@ -1,17 +1,19 @@
 """Modulo utilizado para paquetes de Información Red LoRa"""
 ###Ejemplo diccionario a empaquetar##################################
-# sensors = {'GPS':True,'IMU':False,'SD':True,'MIC':False}			#
-# pre_frame ={'address':255,'cmd':7,								#
+# sensors = {'GPS':True,'IMU':False,'SD':True,'MIC':False}          #
+# pre_frame ={'address':1,'cmd':7,                                  #
 # 			'sensors':sensors,'location':"9000.0000,N,18000.0000,E",#
-# 			't_unix':4294967295,'bateria':4095,'C_close':True}		#
+# 			't_unix':4294967295,'bateria':4095,'C_close':True}      #
 #####################################################################
 ###Ejemplo diccionario obtenido al desempaquetar#####################
-# sensors = {'GPS':True,'IMU':False,'SD':True,'MIC':False}			#
-# pre_frame ={'address':255,'cmd':7,								#
+# sensors = {'GPS':True,'IMU':False,'SD':True,'MIC':False}          #
+# pre_frame ={'address':255,'cmd':7,                                #
 # 			'sensors':sensors,'location':[1,42,85.45,-1,72,14.25],  #
-# 			't_unix':4294967295,'bateria':4095,'C_close':True}		#
+# 			't_unix':4294967295,'bateria':4095,'C_close':True}      #
 #####################################################################
-
+"""Importante"""
+"""Se deben modificar los datos correspondientes prestando atención a address que debe corresponder a la ID del collar"""
+"""Para el correcto funcionamiento de la Red Lora"""
 def empaquetar(pre_frame):
 	location = pre_frame['location'].split(',')
 	simbLatitud = location[1] == 'S'

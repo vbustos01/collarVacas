@@ -14,6 +14,7 @@
 """Importante"""
 """Se deben modificar los datos correspondientes prestando atención a address que debe corresponder a la ID del collar"""
 """Para el correcto funcionamiento de la Red Lora"""
+
 def empaquetar(pre_frame):
 	location = pre_frame['location'].split(',')
 	simbLatitud = location[1] == 'S'
@@ -23,14 +24,10 @@ def empaquetar(pre_frame):
 	paquete=bytearray(15)
 	paquete[0]=pre_frame['address'] & 0xff #1 BYTE de direccion del collar
 	paquete[1]=(pre_frame['cmd'] & 0x07)# 3 bits de Comandos
-	x = 3
-	for i in pre_frame['sensors'].values():
-		paquete[1] |= i << x #4 bits para estado de sensores
-		x += 1
-	
+	paquete[1] |= (pre_frame['sensors']['GPS'] << 3) | (pre_frame['sensors']['IMU'] << 4) | (pre_frame['sensors']['SD'] << 5) | (pre_frame['sensors']['MIC'] << 6)
 	paquete[1] |= simbLatitud << 7 #Simbolo de la Latitud 1 bit
 	for i in range(3):
-		paquete[2+i] = (Latitud>>i*8) & 0xff
+    		paquete[2+i] = (Latitud>>i*8) & 0xff
 
 	paquete[5] = ((Latitud >> 24) & 0x07) | (simbLongitud << 3) | ((Longitud & 0x0F) << 4)
 	for i in range(3):
@@ -42,19 +39,20 @@ def empaquetar(pre_frame):
 	return paquete
 
 def desempaquetar(paquete):
+	sensors     = {'GPS':None,'IMU':None,'SD':None,'MIC':None}
+	pre_frame   ={'address':None,'cmd':None,
+				'sensors':sensors,'location':None,
+				't_unix':None,'bateria':None,'C_close':None}
+
 	if len(paquete) == 15:
-		
-		sensors     = {'GPS':None,'IMU':None,'SD':None,'MIC':None}
-		pre_frame   ={'address':None,'cmd':None,
-					'sensors':sensors,'location':None,
-					't_unix':None,'bateria':None,'C_close':None}
 		
 		pre_frame['address'] = paquete[0]
 		pre_frame['cmd']     = paquete[1] & 0x07
-		x = 3
-		for i in pre_frame['sensors'].keys():
-			pre_frame['sensors'][i]=bool((paquete[1]>>x)&0x01) #4 bits para estado de sensores
-			x += 1
+		pre_frame['sensors']['GPS'] = (paquete[1] & 0x08) == 0x08 #bit 4
+		pre_frame['sensors']['IMU'] = (paquete[1] & 0x10) == 0x10 #bit 5
+		pre_frame['sensors']['SD']  = (paquete[1] & 0x20) == 0x20 #bit 6
+		pre_frame['sensors']['MIC'] = (paquete[1] & 0x40) == 0x40 #bit 7
+
 		Latitud = paquete[2] | (paquete[3] << 8) | (paquete[4] << 16) | ((paquete[5]&0x07) << 24)
 		Longitud = (paquete[5]>>4) | (paquete[6] << 4) | (paquete[7] << 12) | (paquete[8]<< 20)
 							  #signo							  #grados			    #minutos	
@@ -63,6 +61,6 @@ def desempaquetar(paquete):
 
 		pre_frame['t_unix']  = paquete[9]  | (paquete[10] << 8) | (paquete[11] << 16) | (paquete[12]<<24)
 		pre_frame['bateria'] = paquete[13] | ((paquete [14] & 0x0F) << 8)
-		pre_frame['C_close'] = paquete[14] >> 4
+		pre_frame['C_close'] =bool(paquete[14] >> 4)
 
 	return pre_frame

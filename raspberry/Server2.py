@@ -113,11 +113,12 @@ def save_datLoRa():
         Latitud=sexa2deci(dato['location'][0],dato['location'][1],dato['location'][2],0)
         Longitud=sexa2deci(dato['location'][3],dato['location'][4],dato['location'][5],0)
         pickle.dump({'Latitud':Latitud,'Longitud':Longitud},open("vaca_ID{}.dat".format(dato['address']),'wb'))
+        print(dato)
         subirdatosVacas(dato)
         contador += 1
         print("Server2 Iniciado")
         print("Radio LoRa encendida")
-        print("{contador} Paquetes Recibidos".format(contador))
+        print("{} Paquetes Recibidos".format(contador))
 
 stop_th=False
 cola1=cola.cola()#creación del objeto cola1

@@ -51,17 +51,20 @@ while True:
 	#posicion requerida a apuntar 
 	posicion=getData()
 	pan,distancia=seguimiento(posicion['Latitud'],posicion['Longitud'])#lat,lon
+	#pan, distancia=seguimiento(-38.837533, -72.704259)
 	zoom,tilt=controlTiltZoom(distancia)
+	#zoom,tilt=0,0.5
 	print "posicion referencia"
 	print 'pan:',pan
 	print 'tilt:',tilt
 	print 'zoom:',zoom
 
-	vaca1.move_abspantilt(pan,tilt,zoom,0.6) #la precision del desplazamiento depende de la velocidad.
+	vaca1.move_abspantilt(pan,tilt,zoom,0.3) #la precision del desplazamiento depende de la velocidad.
 
 	vaca1.stop()
 	#sleep(0.1)	
 
-	print 'camara detenida'
-
+	print 'tiempo espera'
+	sleep(15)
+	print'vuelta'
 	#Soli Deo Gloria

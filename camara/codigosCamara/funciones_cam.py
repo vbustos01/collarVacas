@@ -15,7 +15,7 @@ def haversine(lat1,lon1,lat2,lon2):
 
 def seguimiento(lat,lon):
 
-	latCam,lonCam = -38.835831, -72.702263 #coordenada fija de la camara
+	latCam,lonCam =-38.835684, -72.700900 #coordenada fija de la camara
 	latOrigen,lonOrigen = -38.837626, -72.704261 #coordenada donde apunta el origen de la camara
 	latm9,lonm9=-38.835339, -72.705240 #coordenada angulo -90 grados
 	lat, lon  #posicion llegada del collar
@@ -34,7 +34,7 @@ def seguimiento(lat,lon):
 	print 'distancia ->collar-ref2:',d
 	print 'distancia ->camara-ref2:',e
 
-
+	pan_ant=1
 	#pan
 	if c!=0:
 		beta=acos((-(e**2)+d**2+c**2)/(2*d*c)) #codicion
@@ -86,7 +86,7 @@ def controlTiltZoom(distancia):
 	if(a==8):
 		zoom,tilt=0.195312,0.412727
 	if(a==9):
-		zoom,tilt=0.234375,0.425455
+		zoom,tilt=0.234375,0.465455
 	if(a==10):
 		zoom,tilt=0.234375,0.443636
 	if(a==11):
@@ -105,19 +105,23 @@ def controlTiltZoom(distancia):
 		zoom,tilt=0.671875,0.503636
 	if(a==18):
 		zoom,tilt=1.0,0.507273
-	if(a==19):
-		zoom,tilt=1.0,0.510909 
+	if(a>=19):
+		zoom,tilt=1.0,0.530909 
+		print 'alerta, vaca robada'
 
 
-	print zoom,tilt
+	print 'anillo',a
+
+	return zoom,tilt
 
 
 def getData():
 	
-	archivo=open('/home/pi/collarVacas/raspberry/vaca_ID1.dat','rb')
+	archivo=open('vaca_ID1.dat','rb')
 	diccionario=pickle.load(archivo)
 	archivo.close
 	return diccionario
 
 
+#print haversine(-38.835755, -72.702552,-38.834438, -72.707096)
 

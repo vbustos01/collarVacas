@@ -117,7 +117,7 @@ def controlTiltZoom(distancia):
 
 def getData():
 	
-	archivo=open('vaca_ID1.dat','rb')
+	archivo=open('/home/pi/datos/vaca_ID1.dat','rb')
 	diccionario=pickle.load(archivo)
 	archivo.close
 	return diccionario

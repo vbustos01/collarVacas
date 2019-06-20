@@ -7,6 +7,15 @@ from time import sleep, ticks_diff, ticks_ms
 from uos import *
 
 class GPS():
+	"""
+		Modulo gps
+		
+		Clase encargada de inicializar el modulo gps para la operacion
+		en una ESP32
+
+		TODO:
+			- Crear un archivo de configuracion para distintos modos de operacion
+	"""
 	def __init__(self):
 		self.uart = UART(2, 9600)
 		self.uart.init(9600, bits=8, parity=None, stop=2, tx=17, rx=33)
@@ -15,20 +24,24 @@ class GPS():
 		#self.uart.write(b'$PMTK251,9600*27\r\n')
 
 	def write2sd(self, timeout):
-		# Metodo utilizado para guardar la posicion actual en la sd
+	# Metodo utilizado para obtener y guardar la posicion actual en la sd
 		self.uart.write(b'$PMTK314,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0*29\r\n')
 		sleep(1)
 		timestart = ticks_ms()
 		while ticks_diff(ticks_ms(), timestart) < timeout:
+		# iteracion para asegurar la posicion correcta
+		# en caso de superar el timeout graba el texto posicion indeterminada
 			self.frame = self.uart.readline()
 			self.pos = str(self.frame).split(',')
 			try:
 				if self.pos[2]=='A':
 					break
 			except IndexError:
+				# si la cadena esta vacia la informacion tambien es invalida
 				continue
 			except:
 				print('error desconocido')
+
 		if ticks_diff(ticks_ms(), timestart) >= timeout:
 			print("timeout! : "+str(timeout)+" ms")
 			if self.sd is not None:
@@ -40,12 +53,8 @@ class GPS():
 				umount("/")
 			else:
 				print('sd no detectada')
-			return
 
-		#self.pack = self.pos[3:7]
-		print('data a escribir(GPS):')
 		self.pack = self.pos[3]+','+self.pos[4]+','+self.pos[5]+','+self.pos[6]
-		print(self.pack)
 		# Escritura en tarjeta SD
 		if self.sd is not None:
 			mount(self.sd, "/")
@@ -58,7 +67,7 @@ class GPS():
 			print('sd no detectada')
 
 	def req_pos(self):
-	# funcion para recoger el tiempo del gps y retornarlo
+		"""req_pos es un metodo que revisa la posicion del gps hasta que esta es correcta la funcion retorna la posicion dentro de un string"""
 		self.uart.write(b'$PMTK314,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0*29\r\n') #GPRMC
 		sleep(1)
 
@@ -76,6 +85,8 @@ class GPS():
 		return self.pack
 
 	def req_time(self):
+	# req_time es un metodo para obtener la hora de una cadena GPGGA
+	# tambien transforma la hora UTC a la hora de chile la retorna en una lista
 		self.uart.write(b'$PMTK314,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0*29\r\n') #GPGGA
 		sleep(1)
 		frame = self.uart.readline()

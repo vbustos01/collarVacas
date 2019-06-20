@@ -38,9 +38,8 @@ def subirdatosVacas(diccionario):
         creaTablaSiNoExiste(diccionario,db,cursor)
         Latitud=sexa2deci(diccionario['location'][0],diccionario['location'][1],diccionario['location'][2],0)
         Longitud=sexa2deci(diccionario['location'][3],diccionario['location'][4],diccionario['location'][5],0)
-        v_s = 3.6/4096*diccionario['bateria']
-        v_bat = (v_s-0.7)*16/5+0.7
-        date = str(datetime.datetime.utcfromtimestamp(diccionario['t_unix']+timeESP32).strftime('%Y-%m-%d %H:%M:%S'))
+        v_bat = 3.6/4096*diccionario['bateria']
+        date = str(datetime.datetime.utcfromtimestamp(diccionario['t_unix']+timeESP32).strftime("%Y-%m-%d %H:%M:%S"))
         tupla = (date,v_bat,
                 (str(diccionario['sensors']['GPS'])).upper(),(str(diccionario['sensors']['IMU'])).upper(),
                 (str(diccionario['sensors']['SD'])).upper(),(str(diccionario['sensors']['MIC'])).upper(),
@@ -48,6 +47,6 @@ def subirdatosVacas(diccionario):
         # Inserta los datos a la base de datos
         cursor.execute("""INSERT INTO Vaca{} (Fecha,Nivel_Bateria,Datos_GPS,Datos_IMU,\
         Estado_SD,Datos_Microfono,Collar_Abierto,Latitud, Longitud)\
-         VALUES (%s,%f,%s,%s,%s,%s,%s,%f,%f)""".format(diccionario['address'])%tupla)
+         VALUES ('%s',%f,%s,%s,%s,%s,%s,%f,%f)""".format(diccionario['address'])%tupla)
         db.commit()
         db.close()

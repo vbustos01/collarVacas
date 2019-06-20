@@ -13,34 +13,55 @@ def haversine(lat1,lon1,lat2,lon2):
 		distancia=2*R*asin(sqrt(a))*1000 #metros
 		return distancia
 
-def seguimiento(lat,lon):
+def seguimiento(lat,lon,ip):
 
-	latCam,lonCam =-38.835684, -72.700900 #coordenada fija de la camara
-	latOrigen,lonOrigen = -38.837626, -72.704261 #coordenada donde apunta el origen de la camara
-	latm9,lonm9=-38.835339, -72.705240 #coordenada angulo -90 grados
-	lat, lon  #posicion llegada del collar
+	if(ip=='172.22.120.193'):
+		latCam,lonCam =-38.835684, -72.700900 #coordenada fija de la camara
+		latOrigen,lonOrigen = -38.837626, -72.704261 #coordenada donde apunta el origen de la camara
+		latm9,lonm9=-38.835339, -72.705240 #coordenada angulo -90 grados
+		lat, lon  #posicion llegada del collar
+
+		a=haversine(lat,lon,latOrigen,lonOrigen) #collar-origen
+		b=haversine(latCam,lonCam,latOrigen,lonOrigen) #camara-origen
+		c=haversine(latCam,lonCam,lat,lon) #camara-collar
+
+		#referencia -90 grados
+		d=haversine(latCam,lonCam,latm9,lonm9) #camara-ref2
+		e=haversine(lat,lon,latm9,lonm9) #collar-ref2
+		print 'distancia ->collar-origen:',a
+		print 'distancia ->camara-origen:',b
+		print 'distancia ->camara-collar:',c
+
+		print 'distancia ->collar-ref2:',d
+		print 'distancia ->camara-ref2:',e
+
+	if(ip=='172.22.120.194'):
+		latCam,lonCam =-38.835684, -72.700900 #coordenada fija de la camara
+		latOrigen,lonOrigen = -38.837626, -72.704261 #coordenada donde apunta el origen de la camara
+		latm9,lonm9=-38.835339, -72.705240 #coordenada angulo -90 grados
+		lat, lon  #posicion llegada del collar
+
+		a=haversine(lat,lon,latOrigen,lonOrigen) #collar-origen
+		b=haversine(latCam,lonCam,latOrigen,lonOrigen) #camara-origen
+		c=haversine(latCam,lonCam,lat,lon) #camara-collar
+
+		#referencia -90 grados
+		d=haversine(latCam,lonCam,latm9,lonm9) #camara-ref2
+		e=haversine(lat,lon,latm9,lonm9) #collar-ref2
+		print 'distancia ->collar-origen:',a
+		print 'distancia ->camara-origen:',b
+		print 'distancia ->camara-collar:',c
+
+		print 'distancia ->collar-ref2:',d
+		print 'distancia ->camara-ref2:',e
 	
-	a=haversine(lat,lon,latOrigen,lonOrigen) #collar-origen
-	b=haversine(latCam,lonCam,latOrigen,lonOrigen) #camara-origen
-	c=haversine(latCam,lonCam,lat,lon) #camara-collar
-
-	#referencia -90 grados
-	d=haversine(latCam,lonCam,latm9,lonm9) #camara-ref2
-	e=haversine(lat,lon,latm9,lonm9) #collar-ref2	
-	print 'distancia ->collar-origen:',a
-	print 'distancia ->camara-origen:',b
-	print 'distancia ->camara-collar:',c
-
-	print 'distancia ->collar-ref2:',d
-	print 'distancia ->camara-ref2:',e
-
 	pan_ant=1
 	#pan
 	if c!=0:
 		beta=acos((-(e**2)+d**2+c**2)/(2*d*c)) #codicion
 
 		if beta<pi/2:
-			alfa=acos((-(a**2)+b**2+c**2)/(2*b*c)) 
+			alfa=acos((-(a**2)+b**2+c**2)/(2*b*c))
 		else:
 			alfa=-acos((-(a**2)+b**2+c**2)/(2*b*c))
 

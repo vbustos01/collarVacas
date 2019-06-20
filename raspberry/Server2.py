@@ -108,7 +108,7 @@ def save_datLoRa():
                 break      
         if stop_th:
             break
-        os.system("clear")
+        #os.system("clear")
         dato=desempaquetar(cola1.extraer())
         Latitud=sexa2deci(dato['location'][0],dato['location'][1],dato['location'][2],0)
         Longitud=sexa2deci(dato['location'][3],dato['location'][4],dato['location'][5],0)
@@ -127,7 +127,7 @@ save_data.start()
 """configuraciones LoRa"""
 lora = mylora(verbose=False)
 lora.set_freq(866)
-lora.set_pa_config(pa_select=1, max_power=21, output_power=15)
+lora.set_pa_config(pa_select=1, max_power=8, output_power=8)
 lora.set_bw(BW.BW125)
 lora.set_coding_rate(CODING_RATE.CR4_5)
 lora.set_spreading_factor(8)

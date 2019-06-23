@@ -28,7 +28,7 @@ deploy:
 	ampy put drivers_lora/all/controller_esp32.py drivers/controller_esp32.py
 	ampy put drivers_lora/all/sx127x.py drivers/sx127x.py
 
-	ampy put drivers_lora/all/direccionCollar.py drivers/direccionCollar.py
+	ampy put direccionCollar.py drivers/direccionCollar.py
 	ampy put drivers_lora/all/data_frame.py drivers/data_frame.py
 	ampy put drivers_lora/all/cola.py drivers/cola.py
 

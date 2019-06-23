@@ -21,23 +21,13 @@ class ESP32Controller(Controller):
 
 
     # ESP config
-    ON_BOARD_LED_PIN_NO = 2
-    ON_BOARD_LED_HIGH_IS_ON = True
     GPIO_PINS = (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
                  12, 13, 14, 15, 16, 17, 18, 19, 21, 22,
                  23, 25, 26, 27, 32, 34, 35, 36, 37, 38, 39)
 
 
-    def __init__(self,
-                 pin_id_led = ON_BOARD_LED_PIN_NO,
-                 on_board_led_high_is_on = ON_BOARD_LED_HIGH_IS_ON,
-                 pin_id_reset = PIN_ID_FOR_LORA_RESET,
-                 blink_on_start = (2, 0.5, 0.5)):
-
-        super().__init__(pin_id_led,
-                         on_board_led_high_is_on,
-                         pin_id_reset,
-                         blink_on_start)
+    def __init__(self,pin_id_reset = PIN_ID_FOR_LORA_RESET):
+        super().__init__(pin_id_reset)
 
 
     def prepare_pin(self, pin_id, in_out = Pin.OUT):

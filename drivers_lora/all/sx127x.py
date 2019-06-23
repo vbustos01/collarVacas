@@ -89,10 +89,11 @@ class SX127x:
         init_try = True
         re_try = 0
         # check version
-        while(init_try and re_try < 5):
+        while(init_try and re_try < 10):
             version = self.readRegister(REG_VERSION)
+            print(version)
             re_try = re_try + 1
-            if(version != 0):
+            if(version == 0x12):
                 init_try = False
         if version != 0x12:
             raise Exception('Invalid version.')

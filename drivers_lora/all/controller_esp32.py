@@ -1,8 +1,11 @@
 from machine import Pin, SPI, reset
-from drivers.controller import Controller
+from time import sleep
 
+class Mock:
+    pass
 
-class ESP32Controller(Controller):
+class ESP32Controller:
+
 
     # LoRa config
     PIN_ID_FOR_LORA_RESET = 14
@@ -27,13 +30,40 @@ class ESP32Controller(Controller):
 
 
     def __init__(self,pin_id_reset = PIN_ID_FOR_LORA_RESET):
-        super().__init__(pin_id_reset)
+        self.pin_reset = self.prepare_pin(pin_id_reset)
+        self.reset_pin(self.pin_reset)
+        self.transceivers = {}
 
+    def add_transceiver(self,
+                        transceiver,
+                        pin_id_ss = PIN_ID_FOR_LORA_SS,
+                        pin_id_RxDone = PIN_ID_FOR_LORA_DIO0,
+                        pin_id_RxTimeout = PIN_ID_FOR_LORA_DIO1,
+                        pin_id_ValidHeader = PIN_ID_FOR_LORA_DIO2,
+                        pin_id_CadDone = PIN_ID_FOR_LORA_DIO3,
+                        pin_id_CadDetected = PIN_ID_FOR_LORA_DIO4,
+                        pin_id_PayloadCrcError = PIN_ID_FOR_LORA_DIO5):
+        #transceiver.blink_led = self.blink_led
+        transceiver.pin_ss = self.prepare_pin(pin_id_ss)
+        transceiver.pin_RxDone = self.prepare_irq_pin(pin_id_RxDone)
+        transceiver.pin_RxTimeout = self.prepare_irq_pin(pin_id_RxTimeout)
+        transceiver.pin_ValidHeader = self.prepare_irq_pin(pin_id_ValidHeader)
+        transceiver.pin_CadDone = self.prepare_irq_pin(pin_id_CadDone)
+        transceiver.pin_CadDetected = self.prepare_irq_pin(pin_id_CadDetected)
+        transceiver.pin_PayloadCrcError = self.prepare_irq_pin(pin_id_PayloadCrcError)
+
+        self.spi = self.prepare_spi(self.get_spi())
+        transceiver.transfer = self.spi.transfer
+
+        transceiver.init()
+
+        self.transceivers[transceiver.name] = transceiver
+        return transceiver
 
     def prepare_pin(self, pin_id, in_out = Pin.OUT):
         if pin_id is not None:
             pin = Pin(pin_id, in_out)
-            new_pin = Controller.Mock()
+            new_pin = Mock()
             new_pin.pin_id = pin_id
             new_pin.value = pin.value
 
@@ -77,7 +107,7 @@ class ESP32Controller(Controller):
     def prepare_spi(self, spi):
 
         if spi:
-            new_spi = Controller.Mock()
+            new_spi = Mock()
 
             def transfer(pin_ss, address, value = 0x00):
                 response = bytearray(1)
@@ -94,7 +124,12 @@ class ESP32Controller(Controller):
             new_spi.transfer = transfer
             new_spi.close = spi.deinit
             return new_spi
-
+    
+    def reset_pin(self, pin, duration_low = 0.05, duration_high = 0.05):
+        pin.low()
+        sleep(duration_low)
+        pin.high()
+        sleep(duration_high)
 
     def __exit__(self):
         self.spi.close()

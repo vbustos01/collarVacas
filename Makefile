@@ -24,7 +24,6 @@ deploy:
 
 	##DRIVERS LORA
 	ampy put drivers_lora/all/config_lora.py drivers/config_lora.py
-	ampy put drivers_lora/all/controller.py drivers/controller.py
 	ampy put drivers_lora/all/controller_esp32.py drivers/controller_esp32.py
 	ampy put drivers_lora/all/sx127x.py drivers/sx127x.py
 

@@ -127,7 +127,7 @@ def LoRa_thread():
     global colamsn
     global lora_th
     set_sleep = False
-    print("se inicio el hilo")
+    print("Radio Lora Iniciada\n")
     while True:
         while not(lora_th.detectACK):#no se enviara otro paquete hasta que se confirme un ACK en n intentos
             time.sleep(0.4)

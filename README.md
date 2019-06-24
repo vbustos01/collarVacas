@@ -1,5 +1,22 @@
-## Instalacion del firmware en la tarjeta ESP32
+# Instalacion del firmware en la tarjeta ESP32
+  ## Alternativa rápida
+Se descarga el archivo binario del firmware en:
+https://drive.google.com/open?id=1CjA_CMBRQhjH8vCs6YJ-R2wf2iAVI3lf
 
+Luego, usando esptool.py:
+
+```
+$ esptool.py --chip esp32 -p /dev/ttyUSB0 erase_flash
+...
+$ esptool.py --chip esp32 -p /dev/ttyUSB0 write_flash -z 0x1000 firmware.bin
+```
+En caso de error por permisos:
+```
+sudo adduser MyUser dialout
+sudo chmod a+rw /dev/ttyUSB0
+```
+
+  ## Alternativa completa
 La guía paso a paso se encuentra en la siguiente url (en inglés): 
 https://github.com/micropython/micropython/blob/master/ports/esp32/README.md
 
@@ -20,7 +37,7 @@ $ make erase
 $ make deploy
 ```
 
-## Instalar monitor serial Picocom
+# Instalar monitor serial Picocom
 ```
 $ sudo apt-get install picocom
 ```

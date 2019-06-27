@@ -1,9 +1,7 @@
 import drivers.mpu6050 as mpu
 import drivers.constants as reg
-import ustruct
+import ustruct, uos
 from machine import Pin
-from uos import *
-from utime import *
 
 class IMU(object):
 	"""
@@ -80,7 +78,7 @@ class IMU(object):
 	# Saca una muestra cada 1/samplingrate de los registros de los sensores
 	# (obsoleto)
 	# TODO: mejorar o eliminar este metodo
-	def writesamples(self, duration=5, samplingrate=10):
+	"""def writesamples(self, duration=5, samplingrate=10):
 		if self.sd is not None:
 			IMU.fileCounter += 1
 			fc = open("fileCounterIMU.txt", "w")
@@ -108,29 +106,84 @@ class IMU(object):
 			print("bytes escritos: "+str(numwrite))
 			f.close()
 			umount("/")
+	"""
+	def setsamplerate(self, fs):
+		"""
+		La frecuencia de muestreo puede ir entre 4 Hz y 1 kHz
+		esto, dejando el DLPF_CFG del registro 26 distinto de 0 o 7
+		"""
+		old = self.imu.read_byte(reg.MPU6050_RA_CONFIG)
+		self.imu.write_byte(reg.MPU6050_RA_CONFIG, (old & 0b11111000) | 1)
+		if fs >= 4 and fs <= 1000:
+			samplingrate = fs
+		elif fs > 1000:
+			samplingrate = 1000
+		else:
+			samplingrate = 4
+		SMPLRT_DIV = int(1e3 / samplingrate - 1)
+		self.imu.write_byte(reg.MPU6050_RA_SMPLRT_DIV, SMPLRT_DIV)
+
+	def setscale(self, acc_scale, gyro_scale):
+		"""
+		Ajusta la escala del acelerometro entre +-2g y +-16g
+		acc_scale = 0 -> +- 2g
+		acc_scale = 1 -> +- 4g
+		acc_scale = 2 -> +- 8g
+		acc_scale = 3 -> +- 16g
 	
-	#Permite leer en rafaga los bytes albergados en la FIFO, retorna un bytearray
+		Ajusta la escala del giroscopio entre +-250°/s y +-2000°/s
+		gyro_scale = 0 -> +- 250°/s
+		gyro_scale = 1 -> +- 500°/s
+		gyro_scale = 2 -> +- 1000°/s
+		gyro_scale = 3 -> +- 2000°/s
+
+		"""
+		pass
+		#self.imu.(reg.MPU6050_RA_ACCEL_CONFIG, )
+
 	def dumpfifo(self):
+		"""
+		Permite leer en rafaga los bytes albergados en la FIFO, retorna un bytearray
+		"""
 		fifoenabled   = self.imu.read_byte(reg.MPU6050_RA_FIFO_EN)
+		bytesread = bytearray()
 		if fifoenabled is 0:
-			return bytearray()
+			return bytesread
 		fifocount 	  = self.fifo_count()
-		bytesread 	  = bytearray()
-		for i in xrange(fifocount):
+		for i in range(fifocount):
 			bytesread.append(self.imu.read_byte(reg.MPU6050_RA_FIFO_R_W))
 		return bytesread
+
+	def sortfifo(self, buf):
+		"""
+		Distribuye los datos crudos de la fifo en una lista de acuerdo al orden
+		acordado en el laboratorio:
+		Cada muestra tiene 8 bytes
+		Primero en salir |	2B	|	2B	|	2B	|	2B	| Ultimo en salir
+						   temp   acelX   acelY   acelZ
+		"""
+		nbytes = 8		# numero de bytes por muestra 
+		nsamples = len(buf) // nbytes
+		samples = []
+		for x in range(nsamples):
+			samples.append(ustruct.unpack('>hhhh', buf))
+		return samples
 
 	def fifo_enable(self):
 		# metodo para direccionar las muestras de los sensores hacia la fifo
 		# Registro 35 (FIFO_EN)
 		# MPU6050_RA_FIFO_EN = 0x23
-		self.imu.write_byte(0x23, 128)
+		# y Registro 106 (USER_CTRL)
+		# MPU6050_RA_USER_CTRL = 0x6A
+		self.imu.write_byte(0x23, 0b10001000) # escribiendo 0b10001000 se leen 2B temp + 6B acel
+		old = self.imu.read_byte(0x6A)
+		self.imu.write_byte(0x6A, old | 0b01000000)
 
 	def fifo_count(self):
 		# este metodo lee el registro 114 (FIFO_COUNT)
 		# este registro lleva la cuenta de las muestras actualmente en la fifo
 		# falta convertir el numero a su valor real
-		count = ustruct.unpack('>h',bytearray([self.imu.read_byte(0x72) self.imu.read_byte(0x73)]))
+		count = ustruct.unpack('>h',bytearray([self.imu.read_byte(0x72), self.imu.read_byte(0x73)]))
 		return count[0]
 
 	def irq_enable(self):

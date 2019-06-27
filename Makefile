@@ -54,3 +54,7 @@ erase:
 	-ampy rm menu.py
 	-ampy rm gps.py
 	-ampy rm lora.py
+
+flash:
+	esptool.py --chip esp32 -p /dev/ttyUSB0 erase_flash
+	esptool.py --chip esp32 -p /dev/ttyUSB0 write_flash -z 0x1000 firmware.bin

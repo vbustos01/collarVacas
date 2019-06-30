@@ -31,8 +31,6 @@ deploy:
 	ampy put drivers_lora/all/data_frame.py drivers/data_frame.py
 	ampy put drivers_lora/all/cola.py drivers/cola.py
 
-
-
 	#-----MAIN y BOOT-----#
 	#ampy put boot.py
 	#ampy put main.py

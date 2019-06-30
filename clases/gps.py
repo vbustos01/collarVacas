@@ -87,13 +87,37 @@ class GPS():
 	def req_time(self):
 	# req_time es un metodo para obtener la hora de una cadena GPGGA
 	# tambien transforma la hora UTC a la hora de chile la retorna en una lista
-		self.uart.write(b'$PMTK314,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0*29\r\n') #GPGGA
+		self.uart.write(b'$PMTK314,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0*28\r\n') #GPGGA
 		sleep(1)
+		self.uart.readline()
 		frame = self.uart.readline()
-		self.time = str(frame).split(',')
+		while (frame is None or not (b'$GPGGA'==frame[0:6])) or not (b'*' in frame):
+			frame = self.uart.readline()
+			sleep(1)
+		h = int(frame[7:9]) - 4
+		m = int(frame[9:11])	
+		s = int(frame[11:13])
+		frame = self.uart.readline()
+		while (frame is None or not (b'$GPRMC'==frame[0:6])) or not (b'*' in frame):
+			frame = self.uart.readline()
+			sleep(1)
+		frame = str(frame)
+		frame = frame.split(',')
+
+		dia = int(frame[9][:2])
+		mes = int(frame[9][2:4])
+		year = int(frame[9][4:6])
+
+		"""
+		dia = int(frame[57:59])
+		mes = int(frame[59:61])
+		year = int(frame[61:63]) + 2000
+		"""
 		# se le restan 4 horas al tiempo UTC
-		hora = (int(self.time[1][:2]) - 4, int(self.time[1][2:4]), int(self.time[1][4:6]))
-		return hora
+		#hora = (int(self.time[1][:2]) - 4, int(self.time[1][2:4]), int(self.time[1][4:6]))
+		#return hora
+		tiempo_raw = (year, mes, dia, 0 ,h, m, s, 0)
+		return tiempo_raw
 
 	def decode(self, data):
 	# Metodo para decodificar las sentencias GPRMC y GPGGA

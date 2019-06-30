@@ -6,6 +6,8 @@ from machine import Pin
 class IMU(object):
 	"""
 	Clase para la interacción sencilla con el periférico MPU6050
+	TO DO
+		- implementar reseteo de la fifo
 	"""
 	fileCounter = 0
 	try:
@@ -18,8 +20,6 @@ class IMU(object):
 		f.write("0")
 		f.close()
 		fileCounter = 0 
-
-
 
 	def __init__(self):
 		super(IMU, self).__init__()
@@ -40,7 +40,7 @@ class IMU(object):
 		text = ""
 		for _x in x:
 			text += str(_x)+","
-		text += "\n"
+		#text += "\n"
 		return text
 
 	# Cambia el estado del chip, True = dormido, False = despierto
@@ -162,11 +162,9 @@ class IMU(object):
 		Primero en salir |	2B	|	2B	|	2B	|	2B	| Ultimo en salir
 						   temp   acelX   acelY   acelZ
 		"""
-		nbytes = 8		# numero de bytes por muestra 
-		nsamples = len(buf) // nbytes
 		samples = []
-		for x in range(nsamples):
-			samples.append(ustruct.unpack('>hhhh', buf))
+		for x in range(0, len(buf), 8):
+			samples.append(ustruct.unpack('>hhhh', buf[x:x+8]))
 		return samples
 
 	def fifo_enable(self):
@@ -175,8 +173,13 @@ class IMU(object):
 		# MPU6050_RA_FIFO_EN = 0x23
 		# y Registro 106 (USER_CTRL)
 		# MPU6050_RA_USER_CTRL = 0x6A
-		self.imu.write_byte(0x23, 0b10001000) # escribiendo 0b10001000 se leen 2B temp + 6B acel
 		old = self.imu.read_byte(0x6A)
+		# FIFO RESET
+		self.imu.write_byte(0x6A, old & 0b10111111) # se desactiva FIFO ENABLE para hacer el reset
+		self.imu.write_byte(0x6A, old | 0b00000100)
+
+		self.imu.write_byte(0x23, 0b10001000) # escribiendo 0b10001000 se leen 2B temp + 6B acel
+		# FIFO ENABLE 
 		self.imu.write_byte(0x6A, old | 0b01000000)
 
 	def fifo_count(self):
@@ -189,9 +192,15 @@ class IMU(object):
 	def irq_enable(self):
 		# activa la interrupcion del registro 56 (INT_ENABLE)
 		#MPU6050_RA_INT_ENABLE                 = 0x38
-		# se deja en 1 para activar solo DATA_RDY_EN
-		self.imu.write_byte(0x38, 1)
+		self.imu.write_byte(0x38, 0b00010000)
 
 	def irq_status(self):
 		return self.imu.read_byte(0x3A)
 
+	def int_umbral(self, umbral, tiempo):
+		# Configura el umbral y el tiempo de la ventana para la interrupcion por umbral
+		# El tiempo esta en segundos y el umbral en g
+		self.imu.set_motion_detection_threshold(threshold=umbral)
+		self.imu.set_motion_detection_duration(duration=tiempo)
+		self.imu.set_int_motion_enabled(enabled=True)
+		print('Deteccion por umbral ready')

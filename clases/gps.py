@@ -18,7 +18,7 @@ class GPS():
 	"""
 	def __init__(self):
 		self.uart = UART(2, 9600)
-		self.uart.init(9600, bits=8, parity=None, stop=2, tx=17, rx=33)
+		self.uart.init(9600, bits=8, parity=None, stop=2, tx=33, rx=17)
 		self.pos = 0
 		# configurar gps a 9600 baud
 		#self.uart.write(b'$PMTK251,9600*27\r\n')
@@ -93,21 +93,25 @@ class GPS():
 		frame = self.uart.readline()
 		while (frame is None or not (b'$GPGGA'==frame[0:6])) or not (b'*' in frame):
 			frame = self.uart.readline()
-			sleep(1)
+			sleep(0.3)
 		h = int(frame[7:9]) - 4
 		m = int(frame[9:11])	
 		s = int(frame[11:13])
 		frame = self.uart.readline()
 		while (frame is None or not (b'$GPRMC'==frame[0:6])) or not (b'*' in frame):
 			frame = self.uart.readline()
-			sleep(1)
+			sleep(0.3)
 		frame = str(frame)
 		frame = frame.split(',')
 
 		dia = int(frame[9][:2])
 		mes = int(frame[9][2:4])
-		year = int(frame[9][4:6])
+		year = int(frame[9][4:6])+2000
 
+		print("[debug] year: {}".format(year))
+		if year < 2019 or year > 2021:
+			return None
+		 
 		"""
 		dia = int(frame[57:59])
 		mes = int(frame[59:61])

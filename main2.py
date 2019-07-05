@@ -1,13 +1,12 @@
 # Main creado con la intencion de tomar muestras de imu
 from gps import GPS
-import _thread
 from sd import *
 from imu import *
 from time import sleep, ticks_ms
 from machine import Timer, deepsleep, Pin, RTC, ADC
 import uos
 from drivers.direccionCollar import *
-from lora import *
+import lora
 import utime
 ################# Sensado de bateria
 LOW_BAT_LEVEL = 1600
@@ -25,10 +24,15 @@ sd = initSD()
 gps = GPS()
 gps.attachSD(sd)
 #gps.write2sd()
-gps_time = gps.req_time()
-	# Seteo de la hora 
+gps_time = None
+while gps_time is None:
+	print("[debug] solicitando hora al GPS")
+	gps_time = gps.req_time()
+print("[debug] hora solicitada exitosamente")
+# Seteo de la hora 
 rtc = RTC()
 rtc.datetime(gps_time)
+print("[debug] rtc.datetime: {}".format(rtc.datetime()))
 
 	# Modulo IMU
 imu = IMU()
@@ -40,7 +44,7 @@ imu.fifo_enable()
 def foo():
 	aux = imu.dumpfifo()
 	aux = imu.sortfifo(aux)
-	print(ticks_ms())
+	print("[debug] ms_intA: {}".format(ticks_ms()))
 
 	if sd is not None:
 		uos.mount(sd,'/')
@@ -70,11 +74,12 @@ while 1:
 		deepsleep()
 
 	t_aux = utime.mktime(rtc.datetime()[0:3] + rtc.datetime()[4:7] + (0,0))
+	print("[debug] utime: {}".format(t_aux))
 
 	posicion = gps.req_pos()
 	sensors = {'GPS':True,'IMU':False,'SD':True,'MIC':False} 
 	pre_frame ={'address':dirCollar,'cmd':7,                                
 		'sensors':sensors,'location':posicion, 
-		't_unix':4294967295,'bateria':int(promedio),'C_close':True}
-	lora_th.addMsn2cola(pre_frame)
-	sleep(5)
+		't_unix':t_aux,'bateria':int(promedio),'C_close':True}
+	lora.lora_th.addMsn2cola(pre_frame)
+	sleep(12)

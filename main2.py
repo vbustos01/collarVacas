@@ -64,7 +64,10 @@ def foo():
 fof = Pin(36, Pin.IN, Pin.PULL_UP)
 fof.irq(lambda x: foo(), Pin.IRQ_RISING)
 
+gps.sleep_mode() # duerme al gps por primera vez
+
 while 1:
+	gps.sleep_mode() #despierta al gps cada ciclo
 	promedio = 0
 	for i in range(100):
 		promedio = promedio + adc.read()
@@ -81,5 +84,9 @@ while 1:
 	pre_frame ={'address':dirCollar,'cmd':7,                                
 		'sensors':sensors,'location':posicion, 
 		't_unix':t_aux,'bateria':int(promedio),'C_close':True}
-	lora.lora_th.addMsn2cola(pre_frame)
-	sleep(12)
+	try:
+		lora.lora_th.addMsn2cola(pre_frame)
+	except ValueError as e:
+		print(e)
+	gps.sleep_mode() #duerme al gps cada iteracion
+	sleep(60*15)

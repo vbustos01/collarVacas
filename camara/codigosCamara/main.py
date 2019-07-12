@@ -1,10 +1,11 @@
-# -*- coding: utf-8 -*-
+	# -*- coding: utf-8 -*-
 
 from ptz_cam import ptzcam
 from time import sleep
-from funciones_cam import seguimiento,controlTiltZoom,getData
-
-
+from funciones_cam import seguimiento,getData,controlZoom,controlTilt
+from interpolacion import interpolTilt,interpolZoom,interpolPan
+from pan import controlPan
+from pruebagps import revision
 """ 
 INFORMACION DE CODIGO
 
@@ -41,10 +42,9 @@ ip2='172.22.120.194' #camara norte
 
 #se crea el objeto ptz
 vaca1=ptzcam(ip1)
-#vaca2=ptzcam(ip2)
 
-while True:
-
+if True:
+	#sleep(12)
 	#extrar posicion actual de la camara
 	x=vaca1.status.Position.PanTilt._x # pan - eje horizontal
 	y=vaca1.status.Position.PanTilt._y #tilt - eje vertical
@@ -57,26 +57,42 @@ while True:
 
 	#posicion requerida a apuntar
 	print 'tomando datos'
-	posicion = getData()
+	#posicion = getData()
 
-	pan, distancia = seguimiento(posicion['Latitud'],posicion['Longitud'],ip1)#lat,lon,ip
-	#pan2, distancia2 = seguimiento(posicion['Latitud'],posicion['Longitud'],ip2)#lat,lon,ip
+	print "corregir angulos pan!!!!"
+	
+	
+	#lat,lon=-38.834835,-72.698472 #poste1
+	#lat,lon=-38.833929,-72.698461 #poste2
+	#lat,lon=-38.832722,-72.698398 #poste 3 no coincide/no coincide
+	#lat,lon=-38.833755,-72.699508 #poste 5
+	#lat,lon=-38.834621,-72.699629 #punto 6 
+	#lat,lon=-38.832674,-72.70066 #poste 7 no coincide/no coincide
+	#lat,lon=-38.833777,-72.70078 #poste 8 no coincide/no coincide
+	#lat,lon=-38.835504,-72.70199 #punto 9
+	#lat,lon=-38.835660,-72.700070 #punto 10 arbol
+	#lat,lon=-38.835717,-72.700986 #poste 11 cerca  no coincide
+	#lat,lon=-38.838654, -72.701000 #poste12
+	#lat,lon=-38.838820, -72.702915 #poste13
+	lat,lon=-38.837749, -72.704183 #poste14
+	#lat,lon=-38.836755, -72.708900
+	
 
-	zoom, tilt = controlTiltZoom(distancia)
-	#zoom2, tilt2 = controlTiltZoom(distancia2)
+	#print (posicion['Latitud'],posicion['Longitud'])
+	print lat,lon
+	pan,distancia=seguimiento(lat,lon,ip1)
+	print pan
+	pan=interpolPan(pan)
+	tilt=controlTilt(distancia)
+	tilt=interpolTilt(distancia,ip1)
 
-	print "coordenada gps solicitada"
-	print (posicion['Latitud'],posicion['Longitud'])
+	zoom=interpolZoom(distancia)
 
-
-	velocity=0.3 #velocidad camara
+	velocity=0.1 #velocidad camara
 	vaca1.move_abspantilt(pan,tilt,zoom,velocity) #la precision del desplazamiento depende de la velocidad.
-	#vaca2.move_abspantilt(pan2,tilt2,zoom2,velocity) #la precision del desplazamiento depende de la velocidad.
-
+	
 	vaca1.stop()
-	#vaca2.stop()
-
-	print 'tiempo espera'
-	sleep(10)
+	
+	
 
 #Soli Deo Gloria

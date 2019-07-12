@@ -1,6 +1,7 @@
 from math import sqrt,sin,cos,asin,pi,acos,degrees,atan2,hypot,fabs
 from numpy import sign
 import pickle
+import math
 
 #funcion para calcular la distancia entre dos coordenadas de GPS
 def haversine(lat1,lon1,lat2,lon2):
@@ -16,9 +17,13 @@ def haversine(lat1,lon1,lat2,lon2):
 def seguimiento(lat,lon,ip):
 
 	if(ip=='172.22.120.193'):
-		latCam,lonCam =-38.835684, -72.700900 #coordenada fija de la camara
-		latOrigen,lonOrigen = -38.837626, -72.704261 #coordenada donde apunta el origen de la camara
-		latm9,lonm9=-38.835339, -72.705240 #coordenada angulo -90 grados
+		latCam,lonCam =-38.835723, -72.700791 #coordenada fija de la camara
+		latOrigen,lonOrigen = -38.837665, -72.703433 #coordenada donde apunta el origen de la camara
+		#-38.837626, -72.704261 anterior
+		#-38.837665, -72.703433
+		#latm9,lonm9=-38.835339, -72.705240 #coordenada angulo 90 grados
+		latm9,lonm9=-38.835061, -72.701736 #coordenada angulo 90 grados		
+
 		lat, lon  #posicion llegada del collar
 
 		a=haversine(lat,lon,latOrigen,lonOrigen) #collar-origen
@@ -28,112 +33,126 @@ def seguimiento(lat,lon,ip):
 		#referencia -90 grados
 		d=haversine(latCam,lonCam,latm9,lonm9) #camara-ref2
 		e=haversine(lat,lon,latm9,lonm9) #collar-ref2
-		print 'distancia ->collar-origen:',a
-		print 'distancia ->camara-origen:',b
+		#print 'distancia ->collar-origen:',a
+		#print 'distancia ->camara-origen:',b
 		print 'distancia ->camara-collar:',c
 
-		print 'distancia ->collar-ref2:',d
-		print 'distancia ->camara-ref2:',e
+		#print 'distancia ->collar-ref2:',d
+		#print 'distancia ->camara-ref2:',e
+
+		pan_ant=1
+		#pan
+		if c!=0:
+			beta=acos((-(e**2)+d**2+c**2)/(2*d*c)) #codicion
+
+			if beta<pi/2:
+				alfa=acos((-(a**2)+b**2+c**2)/(2*b*c))
+			else:
+				alfa=-acos((-(a**2)+b**2+c**2)/(2*b*c))
+
+			#print degrees(alfa),'grados, desde el origen'
+
+			pan=alfa/pi #
+			pan_ant=pan
+
+		else:
+			pan=pan_ant
+
+		if pan <1 and pan>0.5:
+			pan=pan-0.002440430577 #offset en sentido antihorario
+		if pan<0.5 and pan>0:
+			pan=pan+0.013334 #offset en sentido antihorario
+		if pan>-0.5 and pan<0:
+			pan=pan+0.0110546 #offset en sentido horario
+	 	if pan >-0.99 and pan<-0.5:
+			pan=pan+0.00965#offset en sentido antihorario
+		if pan >-1 and pan<-0.99:
+			pan=pan-0.0114 #offset caso especial
+		if pan<-1:
+			pan=2+pan
+
+
 
 	if(ip=='172.22.120.194'):
-		latCam,lonCam =-38.835684, -72.700900 #coordenada fija de la camara
-		latOrigen,lonOrigen = -38.837626, -72.704261 #coordenada donde apunta el origen de la camara
-		latm9,lonm9=-38.835339, -72.705240 #coordenada angulo -90 grados
+		latCam,lonCam =-38.835723, -72.700791 #coordenada fija de la camara
+		latOrigen,lonOrigen = -38.835061, -72.701736 #coordenada donde apunta el origen de la camara
+		latm9,lonm9=-38.834049, -72.698538 #coordenada angulo 90 grados
 		lat, lon  #posicion llegada del collar
 
 		a=haversine(lat,lon,latOrigen,lonOrigen) #collar-origen
 		b=haversine(latCam,lonCam,latOrigen,lonOrigen) #camara-origen
 		c=haversine(latCam,lonCam,lat,lon) #camara-collar
 
-		#referencia -90 grados
+		#referencia 90 grados
 		d=haversine(latCam,lonCam,latm9,lonm9) #camara-ref2
 		e=haversine(lat,lon,latm9,lonm9) #collar-ref2
-		print 'distancia ->collar-origen:',a
-		print 'distancia ->camara-origen:',b
+		#print 'distancia ->collar-origen:',a
+		#print 'distancia ->camara-origen:',b
+		
 		print 'distancia ->camara-collar:',c
 
-		print 'distancia ->collar-ref2:',d
-		print 'distancia ->camara-ref2:',e
-	
-	pan_ant=1
-	#pan
-	if c!=0:
-		beta=acos((-(e**2)+d**2+c**2)/(2*d*c)) #codicion
+		#print 'distancia ->collar-ref2:',d
+		#print 'distancia ->camara-ref2:',e
+		pan_ant=1
+		#pan
+		if c!=0:
+			beta=acos((-(e**2)+d**2+c**2)/(2*d*c)) #codicion
 
-		if beta<pi/2:
-			alfa=acos((-(a**2)+b**2+c**2)/(2*b*c))
+			if beta<pi/2:
+				alfa=acos((-(a**2)+b**2+c**2)/(2*b*c))
+			else:
+				alfa=-acos((-(a**2)+b**2+c**2)/(2*b*c))
+
+			#print degrees(alfa),'grados, desde el origen'
+
+			pan=alfa/pi #paramatros listo
+			pan_ant=pan
+
 		else:
-			alfa=-acos((-(a**2)+b**2+c**2)/(2*b*c))
+			pan=pan_ant
 
-		print degrees(alfa),'grados, desde el origen'
+		'''	
+		if pan <1 and pan>0.5:
+			pan=pan-0.002440430577 #offset en sentido antihorario
+		if pan<0.5 and pan>0:
+			pan=pan+0.013334 #offset en sentido antihorario
+		if pan>-0.5 and pan<0:
+			pan=pan+0.0110546 #offset en sentido horario
+	 	if pan >-0.99 and pan<-0.5:
+			pan=pan+0.00965#offset en sentido antihorario
 
-		pan=alfa/pi #paramatros listo
-		pan_ant=pan
+		if pan >-1 and pan<-0.99:
+			pan=pan-0.0114 #offset caso especial
+		if pan<-1:
+			print "gg"
+			pan=2+pan
+		'''	
 
-	else:
-		pan=pan_ant
+
 
 	return pan,c
 
 
 
+def controlZoom(distancia):
 
-def controlTiltZoom(distancia):
+	#distancia de 0-500
+	#zoom 0-1
+	if distancia>=250:
+		distancia=250
 
-	distancia = float(distancia)
+	z=distancia/250
 
-	a=(distancia*19/500)
-	a=round(a)
+	return z
 
-	print a
-
-
-	if(a==0):
-		zoom,tilt=0,-0.529091
-	if(a==1):
-		zoom,tilt=0,-0.36
-	if(a==2):
-		zoom,tilt=0.015625,-0.109091
-	if(a==3):
-		zoom,tilt=0.015625,0.04
-	if(a==4):
-		zoom,tilt=0.046875,0.170909
-	if(a==5):
-		zoom,tilt=0.054688,0.309091
-	if(a==6):
-		zoom,tilt=0.109375,0.347273
-	if(a==7):
-		zoom,tilt=0.164062,0.38
-	if(a==8):
-		zoom,tilt=0.195312,0.412727
-	if(a==9):
-		zoom,tilt=0.234375,0.465455
-	if(a==10):
-		zoom,tilt=0.234375,0.443636
-	if(a==11):
-		zoom,tilt=0.273438,0.454545
-	if(a==12):
-		zoom,tilt=0.3125,0.472727 
-	if(a==13):
-		zoom,tilt=0.429688,0.481818
-	if(a==14):
-		zoom,tilt=0.429688,0.487273
-	if(a==15):
-		zoom,tilt=0.507812,0.496364
-	if(a==16):
-		zoom,tilt=0.59375,0.501818 
-	if(a==17):
-		zoom,tilt=0.671875,0.503636
-	if(a==18):
-		zoom,tilt=1.0,0.507273
-	if(a>=19):
-		zoom,tilt=1.0,0.530909 
-		print 'alerta, vaca robada'
+def controlTilt(x):
+	#distancia de 0-500
+	#tilt -0.52 -- 0.52
+	y=(3e-8)*x**3 - (2e-5)*x**2 + (0.0053)*x+ 0.0791
 
 
-	print 'anillo',a
 
-	return zoom,tilt
+	return y
 
 
 def getData():
@@ -142,7 +161,4 @@ def getData():
 	diccionario=pickle.load(archivo)
 	archivo.close
 	return diccionario
-
-
-#print haversine(-38.835755, -72.702552,-38.834438, -72.707096)
 

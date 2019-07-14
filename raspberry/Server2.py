@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import os
 import threading
 import time
@@ -12,7 +13,10 @@ from angles import sexa2deci
 """Es necesario instalar la libreria angles "pip install angles"""
 BOARD.setup()#Mapeo de pines de la raspberry
 BOARD.reset()#Reseteo de los pines
-
+debug = True
+def debugmsg(msg):
+    if debug:
+        print("[debug] : "+str(msg))
 nodos =  1# Cantidad de Nodos Clientes(maximo 255)
 t_sample= 1#Decenas de segundos(maximo 255)
 
@@ -44,39 +48,39 @@ class mylora(LoRa):
             self.clear_irq_flags(RxDone=1)
             self.clear_irq_flags(PayloadCrcError=1)
             self.Recibido = False
-            print('ERROR EN PAYLOAD')
+            debugmsg('ERROR EN PAYLOAD')
             self.reset_ptr_rx()
             self.set_mode(MODE.RXCONT)
 
     def on_tx_done(self):
-        print("\nTxDone")
-        print(self.get_irq_flags())
+        debugmsg("TxDone")
+        debugmsg(self.get_irq_flags())
 
     def on_cad_done(self):
-        print("\non_CadDone")
-        print(self.get_irq_flags())
+        debugmsg("\non_CadDone")
+        debugmsg(self.get_irq_flags())
 
     def on_rx_timeout(self):
-        #print("TimeOut")
+        debugmsg("TimeOut")
         self.TimeOut = True
         self.clear_irq_flags(RxTimeout=1)
         #print(self.get_irq_flags())
 
     def on_valid_header(self):
-        print("\non_ValidHeader")
-        print(self.get_irq_flags())
+        debugmsg("\non_ValidHeader")
+        debugmsg(self.get_irq_flags())
 
     def on_payload_crc_error(self):
-        print("\non_PayloadCrcError")
-        print(self.get_irq_flags())
+        debugmsg("\non_PayloadCrcError")
+        debugmsg(self.get_irq_flags())
 
     def on_fhss_change_channel(self):
-        print("\non_FhssChangeChannel")
+        debugmsg("\non_FhssChangeChannel")
         print(self.get_irq_flags())
         #RXSINGLE
 
     def Enviar(self,paquete):
-        self.write_payload(paquete) # Send comando 
+        self.write_payload(paquete) # Se escribe el payload en fifo
         self.set_mode(MODE.TX)
         #tiempo_anterior = time.time()
         while (self.get_irq_flags()['tx_done'] == 0):#Espera que se envie el paquete
@@ -108,13 +112,19 @@ def save_datLoRa():
                 break      
         if stop_th:
             break
-        #os.system("clear")
-        dato=desempaquetar(cola1.extraer())
+        #os.system("clear")        
+        dato=desempaquetar(cola1.extraer())#Desempaquetado y extracción de la cola
         Latitud=sexa2deci(dato['location'][0],dato['location'][1],dato['location'][2],0)
         Longitud=sexa2deci(dato['location'][3],dato['location'][4],dato['location'][5],0)
-        pickle.dump({'Latitud':Latitud,'Longitud':Longitud},open("/home/pi/datos/vaca_ID{}.dat".format(dato['address']),'wb'),protocol=2)
-        print(dato)
-        subirdatosVacas(dato)
+        try:
+            pickle.dump({'Latitud':Latitud,'Longitud':Longitud},open("/home/pi/datos/vaca_ID{}.dat".format(dato['address']),'wb'),protocol=2)
+        except:
+            debugmsg("Error al guardar en .dat")
+        try:
+            subirdatosVacas(dato)
+            print(dato)
+        except:
+            debugmsg("Error al subir en Servidor")
         contador += 1
         print("Server2 Iniciado")
         print("Radio LoRa encendida")
@@ -136,8 +146,8 @@ lora.set_rx_crc(True)
 lora.set_preamble(8)
 lora.set_implicit_header_mode(False)
 #lora.set_symb_timeout(SYMB_TIME_OUT)
-print(lora.__str__())
-time.sleep(2)
+debugmsg(lora.__str__())
+#time.sleep(2)
 #lora.set_low_data_rate_optim(True)
 #lora.set_pa_config(pa_select=1)
 #assert(lora.get_agc_auto_on() == 1)

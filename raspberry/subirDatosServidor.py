@@ -40,7 +40,7 @@ def subirdatosVacas(diccionario):
         Longitud=sexa2deci(diccionario['location'][3],diccionario['location'][4],diccionario['location'][5],0)
         v_s = 3.6/4096*diccionario['bateria']
         v_bat = (v_s-0.7)*16/5+0.7
-        print(diccionario['t_unix'])
+        #print(diccionario['t_unix'])
         date = str(datetime.datetime.utcfromtimestamp(diccionario['t_unix']+timeESP32).strftime("%Y-%m-%d %H:%M:%S"))
         tupla = (str(date),v_bat,
                 (str(diccionario['sensors']['GPS'])).upper(),(str(diccionario['sensors']['IMU'])).upper(),

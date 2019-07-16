@@ -1,7 +1,7 @@
 export AMPY_PORT=/dev/ttyUSB0
 
 # directorios donde se buscan los archivos
-VPATH = imu/ : clases/ : sd/ : gps/ : drivers_lora/all : microfono/ : pantalla_oled/
+VPATH = imu/ : clases/ : sd/ : gps/ : lora/ : microfono/ : pantalla_oled/
 
 # archivos que van en la raiz del sistema de archivos de la esp32
 arch_raiz := \
@@ -16,7 +16,6 @@ sd.py
 
 # archivos que van al directorio drivers/ de la esp32
 arch_drivers := 	\
-config_lora.py		\
 controller_esp32.py \
 sx127x.py 			\
 mpu6050.py 			\

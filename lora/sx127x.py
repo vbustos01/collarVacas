@@ -72,7 +72,7 @@ class SX127x:
     
     def __init__(self,
                  name = 'SX127x',
-                 parameters = {'frequency': 868E6, 'tx_power_level': 2, 'signal_bandwidth': 125E3,
+                 parameters = {'frequency': 868, 'tx_power_level': 2, 'signal_bandwidth': 125E3,
                                'spreading_factor': 8, 'coding_rate': 5, 'preamble_length': 8,
                                'implicitHeader': False, 'sync_word': 0x12, 'enable_CRC': False},
                  onReceive = None):
@@ -100,7 +100,7 @@ class SX127x:
         self.sleep()
 
         # config
-        self.setFrequency(self.parameters['frequency'])
+        self.setFreqMhz(self.parameters['frequency'])
         self.setSignalBandwidth(self.parameters['signal_bandwidth'])
 
         # set LNA boost
@@ -188,7 +188,7 @@ class SX127x:
         return irqFlags
 
     def packetRssi(self):
-        return (self.readRegister(REG_PKT_RSSI_VALUE) - (164 if self._frequency < 868E6 else 157))
+        return (self.readRegister(REG_PKT_RSSI_VALUE) - (164 if self._frequency < 862 else 157)) 
 
     def packetSnr(self):
         return (self.readRegister(REG_PKT_SNR_VALUE)) * 0.25
@@ -231,7 +231,6 @@ class SX127x:
 
         else:
             # PA BOOST
-            """AQUIESTA LA SOLUCION JOSE"""
             level = min(max(level, 2), 17)
             self.writeRegister(REG_PA_CONFIG, PA_BOOST | (level - 2))
     
@@ -278,19 +277,18 @@ class SX127x:
         #val = #(loc['pa_select'] << 7) | (loc['max_power'] << 4) | (loc['output_power'])
         #self.writeRegister(REG_PA_CONFIG, val)
 
-    def setFrequency(self, frequency):
-        self._frequency = frequency
+    def setFreqMhz(self, freq):#freq. en MHz
+        freq =137 if freq < 137 else (1020 if freq > 1020 else freq) # limites para los chips SX127(6-7)
+        self._frequency = freq
+        freq = int(freq*16384)
 
-        frfs = {169E6: (42, 64, 0),
-                433E6: (108, 64, 0),
-                434E6: (108, 128, 0),
-                866E6: (216, 128, 0),
-                868E6: (217, 0, 0),
-                915E6: (228, 192, 0)}
+        msb = (freq >> 16) & 0xFF # 8 bits más significativos 
+        midsb = (freq >> 8) & 0xFF # 8 bits centrales
+        lsb = freq & 0xFF # 8 bits menos significativos
 
-        self.writeRegister(REG_FRF_MSB, frfs[frequency][0])
-        self.writeRegister(REG_FRF_MID, frfs[frequency][1])
-        self.writeRegister(REG_FRF_LSB, frfs[frequency][2])
+        self.writeRegister(REG_FRF_MSB, msb)
+        self.writeRegister(REG_FRF_MID, midsb)
+        self.writeRegister(REG_FRF_LSB, lsb)
 
     def setSpreadingFactor(self, sf):
         sf = min(max(sf, 6), 12)

@@ -88,7 +88,7 @@ class ESP32Controller:
         spi = None
 
         try:
-            spi = SPI(baudrate = 10000000, polarity = 0, phase = 0, bits = 8, firstbit = SPI.MSB,
+            spi = SPI(baudrate = 5000000, polarity = 0, phase = 0, bits = 8, firstbit = SPI.MSB,
                       sck = Pin(self.PIN_ID_SCK, Pin.OUT, Pin.PULL_DOWN),
                       mosi = Pin(self.PIN_ID_MOSI, Pin.OUT, Pin.PULL_UP),
                       miso = Pin(self.PIN_ID_MISO, Pin.IN, Pin.PULL_UP))

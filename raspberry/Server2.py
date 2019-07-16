@@ -38,6 +38,7 @@ class mylora(LoRa):
             #comando =paquete[1]
             if len(paquete)>5:
                 self.paqueteRecibidoC=paquete
+                self.RSSI = self.get_pkt_rssi_value() #RSSI(dBm) del paquete recibido
                 #mensaje = paquete[2:]
                 #mensaje = mensaje[0]<<24 | mensaje[1]<<16 | mensaje[2]<<8 | mensaje[3]
                 #print("se recibio el siguiente mensaje:")
@@ -98,7 +99,7 @@ class mylora(LoRa):
                     self.paqueteACK=[self.paqueteRecibidoC[0],0]
                     self.Enviar(self.paqueteACK)
                     self.reset_ptr_rx()
-                    cola1.agregar(self.paqueteRecibidoC)
+                    cola1.agregar([self.paqueteRecibidoC,self.RSSI])
                     self.set_mode(MODE.RXCONT)
             #print("Ingrese Número de Nodos:")
             #os.system("clear")
@@ -112,8 +113,9 @@ def save_datLoRa():
                 break      
         if stop_th:
             break
-        #os.system("clear")        
-        dato=desempaquetar(cola1.extraer())#Desempaquetado y extracción de la cola
+        #os.system("clear")
+        data = cola1.extraer()       
+        dato=desempaquetar(data[0])#Desempaquetado y extracción de la cola
         Latitud=sexa2deci(dato['location'][0],dato['location'][1],dato['location'][2],0)
         Longitud=sexa2deci(dato['location'][3],dato['location'][4],dato['location'][5],0)
         try:
@@ -123,6 +125,7 @@ def save_datLoRa():
         try:
             subirdatosVacas(dato)
             print(dato)
+            print("RSSI : {}[dBm]".format(data[1]))
         except:
             debugmsg("Error al subir en Servidor")
         contador += 1
@@ -137,7 +140,7 @@ save_data.start()
 """configuraciones LoRa"""
 lora = mylora(verbose=False)
 lora.set_freq(866)
-lora.set_pa_config(pa_select=1, max_power=17, output_power=17)
+lora.set_pa_config(pa_select=1, max_power=15, output_power=17)
 lora.set_bw(BW.BW125)
 lora.set_coding_rate(CODING_RATE.CR4_5)
 lora.set_spreading_factor(8)

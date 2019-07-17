@@ -72,7 +72,7 @@ class SX127x:
     
     def __init__(self,
                  name = 'SX127x',
-                 parameters = {'frequency': 868, 'tx_power_level': 2, 'signal_bandwidth': 125E3,
+                 parameters = {'frequency': 868, 'Pa_Config':{"pa_select":0,"max_power":7,"output_power":10}, 'signal_bandwidth': 125E3,
                                'spreading_factor': 8, 'coding_rate': 5, 'preamble_length': 8,
                                'implicitHeader': False, 'sync_word': 0x12, 'enable_CRC': False},
                  onReceive = None):
@@ -109,7 +109,7 @@ class SX127x:
         # set auto AGC
         self.writeRegister(REG_MODEM_CONFIG_3, 0x04)
 
-        self.setTxPower(self.parameters['tx_power_level'])
+        self.set_pa_config(**self.parameters['Pa_Config'])#se descomprime el diccionario Pa_Config para obtener cada parametro 
         self._implicitHeaderMode = None
         self.implicitHeaderMode(self.parameters['implicitHeader'])
         self.setSpreadingFactor(self.parameters['spreading_factor'])
@@ -211,37 +211,18 @@ class SX127x:
     def readpowertx(self):
         return self.readRegister(REG_PA_CONFIG)
 
-    def setTxPower(self, level, outputPin = PA_OUTPUT_PA_BOOST_PIN):
-        if (outputPin == PA_OUTPUT_RFO_PIN):
-            # RFO
-            level = min(max(level, 0), 14)
-            self.writeRegister(REG_PA_CONFIG, 0x70 | level)
-
-        else:
-            # PA BOOST
-            level = min(max(level, 2), 17)
-            self.writeRegister(REG_PA_CONFIG, 0Xf0 | (level - 2))
-            #self.writeRegister(REG_PA_CONFIG, PA_BOOST | (level - 2))
-    
-    def setTxPowermax(self, level,MPower, outputPin = PA_OUTPUT_PA_BOOST_PIN):
-        if (outputPin == PA_OUTPUT_RFO_PIN):
-            # RFO
-            level = min(max(level, 0), 14)
-            self.writeRegister(REG_PA_CONFIG, 0x70 | level)
-
-        else:
-            # PA BOOST
-            level = min(max(level, 2), 17)
-            self.writeRegister(REG_PA_CONFIG, PA_BOOST | (level - 2))
-    
-    def get_pa_config(self, convert_dBm=False):#Esta funcion permite obtener la configuracion del amplicador
+    def get_pa_config(self, convert_dBm=False):
         v = self.readRegister(REG_PA_CONFIG)
-        pa_select    = v >> 7
+        pa_select    = v >> 7 
         max_power    = v >> 4 & 0b111
         output_power = v & 0b1111
         if convert_dBm:
-            max_power = max_power * .6 + 10.8
-            output_power = max_power - (15 - output_power)
+            if pa_select:
+                max_power = max_power * .6 + 10.8
+                output_power = 17 - (15 - output_power)
+            else:
+                max_power = max_power * .6 + 10.8
+                output_power = max_power - (15 - output_power)
         return dict(
                 pa_select    = pa_select,
                 max_power    = max_power,
@@ -249,33 +230,11 @@ class SX127x:
             )
     
     def set_pa_config(self, pa_select=None, max_power=None, output_power=None):
-        """ Configure the PA
-        :param pa_select: Selects PA output pin, 0->RFO, 1->PA_BOOST
-        :param max_power: Select max output power Pmax=10.8+0.6*MaxPower
-        :param output_power: Output power Pout=Pmax-(15-OutputPower) if PaSelect = 0,
-                Pout=17-(15-OutputPower) if PaSelect = 1 (PA_BOOST pin)
-        :return: new register value
-        """
         loc = locals()
         current = self.get_pa_config()
         loc = {s: current[s] if loc[s] is None else loc[s] for s in loc}
         val = (loc['pa_select'] << 7) | (loc['max_power'] << 4) | (loc['output_power'])
         self.writeRegister(REG_PA_CONFIG,val)
-
-    #def set_pa_config(self, pa_select=None, max_power=None, output_power=None):
-        #pass;
-        """ Configure the PA
-        :param pa_select: Selects PA output pin, 0->RFO, 1->PA_BOOST
-        :param max_power: Select max output power Pmax=10.8+0.6*MaxPower
-        :param output_power: Output power Pout=Pmax-(15-OutputPower) if PaSelect = 0,
-                Pout=17-(15-OutputPower) if PaSelect = 1 (PA_BOOST pin)
-        :return: new register value
-        """
-        #loc = locals()
-        #current = self.readRegister(REG_PA_CONFIG)
-        #loc = #{s: current[s] if loc[s] is None else loc[s] for s in loc}
-        #val = #(loc['pa_select'] << 7) | (loc['max_power'] << 4) | (loc['output_power'])
-        #self.writeRegister(REG_PA_CONFIG, val)
 
     def setFreqMhz(self, freq):#freq. en MHz
         freq =137 if freq < 137 else (1020 if freq > 1020 else freq) # limites para los chips SX127(6-7)
@@ -517,3 +476,61 @@ class SX127x:
         gc.collect()
         #print('[Memory - free: {}   allocated: {}]'.format(gc.mem_free(), gc.mem_alloc()))
 
+    def read_all_reg(self):
+        # only sleep mode or standby
+        onoff = lambda i: 'ON' if i else 'OFF'
+        f = self.get_freq()
+        cfg1 = self.get_modem_config_1()
+        cfg2 = self.get_modem_config_2()
+        cfg3 = self.get_modem_config_3()
+        pa_config = self.get_pa_config(convert_dBm=True)
+        ocp = self.get_ocp(convert_mA=True)
+        lna = self.get_lna()
+        s =  "SX127x LoRa registers:\n"
+        s += " mode               %s\n" % MODE.lookup[self.get_mode()]
+        s += " freq               %f MHz\n" % f
+        s += " coding_rate        %s\n" % CODING_RATE.lookup[cfg1['coding_rate']]
+        s += " bw                 %s\n" % BW.lookup[cfg1['bw']]
+        s += " spreading_factor   %s chips/symb\n" % (1 << cfg2['spreading_factor'])
+        s += " implicit_hdr_mode  %s\n" % onoff(cfg1['implicit_header_mode'])
+        s += " rx_payload_crc     %s\n" % onoff(cfg2['rx_crc'])
+        s += " tx_cont_mode       %s\n" % onoff(cfg2['tx_cont_mode'])
+        s += " preamble           %d\n" % self.get_preamble()
+        s += " low_data_rate_opti %s\n" % onoff(cfg3['low_data_rate_optim'])
+        s += " agc_auto_on        %s\n" % onoff(cfg3['agc_auto_on'])
+        s += " symb_timeout       %s\n" % self.get_symb_timeout()
+        s += " freq_hop_period    %s\n" % self.get_hop_period()
+        s += " hop_channel        %s\n" % self.get_hop_channel()
+        s += " payload_length     %s\n" % self.get_payload_length()
+        s += " max_payload_length %s\n" % self.get_max_payload_length()
+        s += " irq_flags_mask     %s\n" % self.get_irq_flags_mask()
+        s += " irq_flags          %s\n" % self.get_irq_flags()
+        s += " rx_nb_byte         %d\n" % self.get_rx_nb_bytes()
+        s += " rx_header_cnt      %d\n" % self.get_rx_header_cnt()
+        s += " rx_packet_cnt      %d\n" % self.get_rx_packet_cnt()
+        s += " pkt_snr_value      %f\n" % self.get_pkt_snr_value()
+        s += " pkt_rssi_value     %d\n" % self.get_pkt_rssi_value()
+        s += " rssi_value         %d\n" % self.get_rssi_value()
+        s += " fei                %d\n" % self.get_fei()
+        s += " pa_select          %s\n" % PA_SELECT.lookup[pa_config['pa_select']]
+        s += " max_power          %f dBm\n" % pa_config['max_power']
+        s += " output_power       %f dBm\n" % pa_config['output_power']
+        s += " ocp                %s\n"     % onoff(ocp['ocp_on'])
+        s += " ocp_trim           %f mA\n"  % ocp['ocp_trim']
+        s += " lna_gain           %s\n" % GAIN.lookup[lna['lna_gain']]
+        s += " lna_boost_lf       %s\n" % bin(lna['lna_boost_lf'])
+        s += " lna_boost_hf       %s\n" % bin(lna['lna_boost_hf'])
+        s += " detect_optimize    %#02x\n" % self.get_detect_optimize()
+        s += " detection_thresh   %#02x\n" % self.get_detection_threshold()
+        s += " sync_word          %#02x\n" % self.get_sync_word()
+        s += " dio_mapping 0..5   %s\n" % self.get_dio_mapping()
+        s += " tcxo               %s\n" % ['XTAL', 'TCXO'][self.get_tcxo()]
+        s += " pa_dac             %s\n" % ['default', 'PA_BOOST'][self.get_pa_dac()]
+        s += " fifo_addr_ptr      %#02x\n" % self.get_fifo_addr_ptr()
+        s += " fifo_tx_base_addr  %#02x\n" % self.get_fifo_tx_base_addr()
+        s += " fifo_rx_base_addr  %#02x\n" % self.get_fifo_rx_base_addr()
+        s += " fifo_rx_curr_addr  %#02x\n" % self.get_fifo_rx_current_addr()
+        s += " fifo_rx_byte_addr  %#02x\n" % self.get_fifo_rx_byte_addr()
+        s += " status             %s\n" % self.get_modem_status()
+        s += " version            %#02x\n" % self.get_version()
+        return s

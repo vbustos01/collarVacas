@@ -25,7 +25,7 @@ class LoRa:
 
     def __init__(self,
                  name = 'SX127x',
-                 parameters = {'frequency': 866, 'tx_power_level': 10, 'signal_bandwidth': 125E3,
+                 parameters = {'frequency': 866,'Pa_Config':{"pa_select":0,"max_power":7,"output_power":10}, 'signal_bandwidth': 125E3,
                                'spreading_factor': 8, 'coding_rate': 5, 'preamble_length': 8,
                                'implicitHeader': False, 'sync_word': 0x12, 'enable_CRC': True},
                  intentosACK=2,

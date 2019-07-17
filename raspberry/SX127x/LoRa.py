@@ -292,12 +292,16 @@ class LoRa(object):
 
     def get_pa_config(self, convert_dBm=False):
         v = self.spi.xfer([REG.LORA.PA_CONFIG, 0])[1]
-        pa_select    = v >> 7
+        pa_select    = v >> 7 
         max_power    = v >> 4 & 0b111
         output_power = v & 0b1111
         if convert_dBm:
-            max_power = max_power * .6 + 10.8
-            output_power = max_power - (15 - output_power)
+            if pa_select:
+                max_power = max_power * .6 + 10.8
+                output_power = 17 - (15 - output_power)
+            else:
+                max_power = max_power * .6 + 10.8
+                output_power = max_power - (15 - output_power)
         return dict(
                 pa_select    = pa_select,
                 max_power    = max_power,

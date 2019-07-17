@@ -140,7 +140,7 @@ save_data.start()
 """configuraciones LoRa"""
 lora = mylora(verbose=False)
 lora.set_freq(866)
-lora.set_pa_config(pa_select=1, max_power=15, output_power=17)
+lora.set_pa_config(pa_select=1, max_power=15, output_power=15)
 lora.set_bw(BW.BW125)
 lora.set_coding_rate(CODING_RATE.CR4_5)
 lora.set_spreading_factor(8)

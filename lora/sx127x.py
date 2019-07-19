@@ -73,7 +73,7 @@ class SX127x:
     
     def __init__(self,
                  name = 'SX127x',
-                 parameters = {'frequency': 868, 'Pa_Config':{"pa_select":0,"max_power":7,"output_power":10}, 'signal_bandwidth': 125E3,
+                 parameters = {'frequency': 866, 'Pa_Config':{'pa_select':0,'max_power':7,'output_power':10}, 'signal_bandwidth': 125E3,
                                'spreading_factor': 8, 'coding_rate': 5, 'preamble_length': 8,
                                'implicitHeader': False, 'sync_word': 0x12, 'enable_CRC': False},
                  onReceive = None):
@@ -110,7 +110,7 @@ class SX127x:
         # set auto AGC
         self.writeRegister(REG_MODEM_CONFIG_3, 0x04)
 
-        self.set_pa_config(**self.parameters['Pa_Config'])#se descomprime el diccionario Pa_Config para obtener cada parametro 
+        self.set_pa_config(self.parameters['Pa_Config'])#se descomprime el diccionario Pa_Config para obtener cada parametro 
         self._implicitHeaderMode = None
         self.implicitHeaderMode(self.parameters['implicitHeader'])
         self.setSpreadingFactor(self.parameters['spreading_factor'])
@@ -243,11 +243,10 @@ class SX127x:
                 output_power = output_power
             )
     
-    def set_pa_config(self, pa_select=None, max_power=None, output_power=None):
-        loc = locals()
+    def set_pa_config(self,pa_configs):
         current = self.get_pa_config()
-        loc = {s: current[s] if loc[s] is None else loc[s] for s in loc}
-        val = (loc['pa_select'] << 7) | (loc['max_power'] << 4) | (loc['output_power'])
+        pa_configs = {s: current[s] if pa_configs[s] is None else pa_configs[s] for s in pa_configs}
+        val = (pa_configs['pa_select'] << 7) | (pa_configs['max_power'] << 4) | (pa_configs['output_power'])
         self.writeRegister(REG_PA_CONFIG,val)
 
     def setFreqMhz(self, freq):#freq. en MHz
@@ -481,7 +480,8 @@ class SX127x:
         msb=self.readRegister(REG_FRF_MSB)
         mid=self.readRegister(REG_FRF_MID)
         lsb=self.readRegister(REG_FRF_LSB)
-        return ((msb<<16) | (mid<< 8) | lsb)/16384.0
+        v=(msb<<16) | (mid<< 8) | lsb
+        return v/16384
 
     def get_mode(self):
         return self.readRegister(REG_OP_MODE) & 0x7
@@ -534,7 +534,7 @@ class SX127x:
         'LowDataOpt': (cnf3>>3) & 0x1, 'G_auto_lna': (cnf3>>2) & 0x1 
         }
 
-    def read_all_reg(self):
+    def get_registers(self):
         bws = ('7.8 KHz', '10.4 KHz', '15.6 KHz', '20.8 KHz', '31.25 KHz', '41.7 KHz', '62.5 KHz', '125 KHz', '250 KHz')
         crc = (None,'4/5','4/6','4/7','4/8')
         mode = ('SLEEP','STDBY','FSTX','TX','FSRX','RXCONTINUOUS','RXSINGLE','CAD')
@@ -547,7 +547,7 @@ class SX127x:
         lna = self.get_lna()
         s =  "Registros principales radio LoRa SX1276\n"
         s += " Modo               %s\n" % mode[self.get_mode()]
-        s += " frecuencia         %f MHz\n" % f
+        s += " frecuencia         %s MHz\n" % f
         s += " coding_rate        %s\n" % crc[configs['CR']]
         s += " ancho de banda     %s\n" % bws[configs['Bw']]
         s += " spreading_factor   %s chips/symb\n" % 2**configs['SF']
@@ -561,7 +561,7 @@ class SX127x:
         #s += " max_payload_length %s\n" % self.get_max_payload_length()
         s += " irq_flags_mask     %s\n" % self.get_irq_flags_mask()
         #s += " irq_flags          %s\n" % self.get_irq_flags()
-        s += " pa_select          %s\n" % 'PA_BOOST' if pa_config['pa_select'] else 'RFO'
+        s += " pa_select          %s\n" % ('PA_BOOST' if pa_config['pa_select'] else 'RFO')
         s += " max_power          %f dBm\n" % pa_config['max_power']
         s += " output_power       %f dBm\n" % pa_config['output_power']
         s += " ocp                %s\n"     % onoff(ocp['ocp_on'])

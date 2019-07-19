@@ -25,7 +25,7 @@ class LoRa:
 
     def __init__(self,
                  name = 'SX127x',
-                 parameters = {'frequency': 866,'Pa_Config':{"pa_select":0,"max_power":7,"output_power":10}, 'signal_bandwidth': 125E3,
+                 parameters = {'frequency': 866,'Pa_Config':dict( pa_select = 1, max_power = 7, output_power = 15 ), 'signal_bandwidth': 125E3,
                                'spreading_factor': 8, 'coding_rate': 5, 'preamble_length': 8,
                                'implicitHeader': False, 'sync_word': 0x12, 'enable_CRC': True},
                  intentosACK=2,
@@ -53,7 +53,7 @@ class LoRa:
         # pre_frame ={'address':255,'cmd':7,                                
         #             'sensors':sensors,'location':"3844.7556,S,07236.9213,W", 
         #             't_unix':454545666,'bateria':1024,'C_close':True}
-        self.setModoSTBY()
+        self.setModoSleep()
         #self.paqueteActual = empaquetar(pre_frame)
 
     def CAD_Done(self):
@@ -123,6 +123,9 @@ class LoRa:
     def setModoCAD(self):
         self.lora.CAD()
 
+    def get_registers(self):
+        return self.lora.get_registers()
+
 def LoRa_thread():
     global colamsn
     global lora_th
@@ -148,6 +151,6 @@ def LoRa_thread():
 
 colamsn=cola()
 lora_th=LoRa()
-print(lora_th.lora.read_all_regs())
+print(lora_th.get_registers())
 lora_th.beginIRQ()
 _thread.start_new_thread(LoRa_thread,())

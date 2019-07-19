@@ -1,5 +1,5 @@
 class ptzcam(): 
-    def __init__(self,ip):
+    def __init__(self,ip,wsdl):
         from onvif import ONVIFCamera
         from time import sleep
 
@@ -8,7 +8,7 @@ class ptzcam():
     #Several cameras that have been tried  -------------------------------------/home/pi/collarVacas/camara/python-onvif/wsdl
     #Netcat camera (on my local network) Port 8899
 
-        self.mycam = ONVIFCamera(ip, 80, 'admin', 'ufro_ufro_ufro', '/home/pi/collarVacas/camara/python-onvif/wsdl')
+        self.mycam = ONVIFCamera(ip, 80, 'admin', 'ufro_ufro_ufro', wsdl)
         #self.mycam = ONVIFCamera(ip, 80, 'admin', 'vacas123', '/home/grace/collarVacas/camara/python-onvif/wsdl')    
     #This is a demo camera that anyone can use for testing
     #Toshiba IKS-WP816R

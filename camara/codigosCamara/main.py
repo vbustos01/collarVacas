@@ -5,7 +5,7 @@ from time import sleep
 from funciones_cam import seguimiento,getData,controlZoom,controlTilt
 from interpolacion import interpolTilt,interpolZoom,interpolPan
 from pan import controlPan
-from pruebagps import revision
+
 """ 
 INFORMACION DE CODIGO
 
@@ -39,9 +39,10 @@ fecha de actualizacion comentarios: 13/07/19
 ip1='172.22.120.193' #camara sur
 ip2='172.22.120.194' #camara norte
 
+wsdl='/home/grace/collarVacas/camara/python-onvif/wsdl'
 
 #se crea el objeto ptz
-vaca1=ptzcam(ip1)
+vaca1=ptzcam(ip1,wsdl)
 
 if True:
 	#sleep(12)

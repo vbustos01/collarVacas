@@ -12,6 +12,7 @@ REG_FRF_MSB = 0x06
 REG_FRF_MID = 0x07
 REG_FRF_LSB = 0x08
 REG_PA_CONFIG = 0x09
+REG_OCP = 0x0b
 REG_LNA = 0x0c
 REG_FIFO_ADDR_PTR = 0x0d
 
@@ -187,6 +188,19 @@ class SX127x:
         self.writeRegister(REG_IRQ_FLAGS, irqFlags)
         return irqFlags
 
+    def get_irq_flags_mask(self):
+        v = self.readRegister(0x11)
+        return dict(
+                rx_timeout     = v >> 7 & 0x1,
+                rx_done        = v >> 6 & 0x1,
+                crc_error      = v >> 5 & 0x1,
+                valid_header   = v >> 4 & 0x1,
+                tx_done        = v >> 3 & 0x1,
+                cad_done       = v >> 2 & 0x1,
+                fhss_change_ch = v >> 1 & 0x1,
+                cad_detected   = v >> 0 & 0x1,
+            )
+
     def packetRssi(self):
         return (self.readRegister(REG_PKT_RSSI_VALUE) - (164 if self._frequency < 862 else 157)) 
 
@@ -284,18 +298,6 @@ class SX127x:
 
     def setSyncWord(self, sw):
         self.writeRegister(REG_SYNC_WORD, sw)
-
-
-    # def enable_Rx_Done_IRQ(self, enable = True):
-        # if enable:
-            # self.writeRegister(REG_IRQ_FLAGS_MASK, self.readRegister(REG_IRQ_FLAGS_MASK) & ~IRQ_RX_DONE_MASK)
-        # else:
-            # self.writeRegister(REG_IRQ_FLAGS_MASK, self.readRegister(REG_IRQ_FLAGS_MASK) | IRQ_RX_DONE_MASK)
-
-
-    # def dumpRegisters(self):
-        # for i in range(128):
-            # print("0x{0:02x}: {1:02x}".format(i, self.readRegister(i)))
 
     def Cambiar_MapPin_irq_CAD(self,on=False):#Esta función permite cambiar los mapeos de los pines de interrupción de radio LoRa
         self.CAD_ON = on
@@ -428,7 +430,6 @@ class SX127x:
             if self._CADDetected:
                 self._CADDetected(self)
 
-
     def receivedPacket(self, size = 0):
         irqFlags = self.getIrqFlags()
 
@@ -476,61 +477,103 @@ class SX127x:
         gc.collect()
         #print('[Memory - free: {}   allocated: {}]'.format(gc.mem_free(), gc.mem_alloc()))
 
+    def get_freqMhz(self):
+        msb=self.readRegister(REG_FRF_MSB)
+        mid=self.readRegister(REG_FRF_MID)
+        lsb=self.readRegister(REG_FRF_LSB)
+        return ((msb<<16) | (mid<< 8) | lsb)/16384.0
+
+    def get_mode(self):
+        return self.readRegister(REG_OP_MODE) & 0x7
+
+    def get_preamble(self):
+        return (self.readRegister(REG_PREAMBLE_MSB)<<8 | self.readRegister(REG_PREAMBLE_LSB))
+
+    def get_ocp(self, convert_mA=False):
+        v = self.readRegister(REG_OCP)
+        ocp_on = v >> 5 & 0x01
+        ocp_trim = v & 0b11111
+        if convert_mA:
+            if ocp_trim <= 15:
+                ocp_trim = 45. + 5. * ocp_trim
+            elif ocp_trim <= 27:
+                ocp_trim = -30. + 10. * ocp_trim
+            else:
+                assert ocp_trim <= 27
+        return dict(
+                ocp_on   = ocp_on,
+                ocp_trim = ocp_trim
+                )
+
+    def get_lna(self):
+        v = self.readRegister(REG_LNA)
+        return dict(
+                lna_gain     = v >> 5,
+                lna_boost_lf = v >> 3 & 0b11,
+                lna_boost_hf = v & 0b11
+            )
+
+    def get_fei(self):
+        msb = self.readRegister(0x28) & 0x0F
+        mid = self.readRegister(0x29)
+        lsb = self.readRegister(0x2a)
+        freq_error = lsb + 256 * (mid + 256 * msb)
+        return freq_error*self.parameters['signal_bandwidth']*2**24/(500.0*32E6) #Error Estimado para la frecuencia dada
+        #ver registros para mas información y considerar la freq de clock de lora de 32Mhz
+
+    def get_configs(self):
+        
+        cnf1=self.readRegister(REG_MODEM_CONFIG_1)
+        cnf2=self.readRegister(REG_MODEM_CONFIG_2)
+        cnf3=self.readRegister(REG_MODEM_CONFIG_3)
+        time_out_lsb=self.readRegister(REG_SYMB_TIMEOUTLSB)
+        symb_time_out= (cnf3&0x3)<< 8 | time_out_lsb
+        
+        return {'Bw':cnf1>>4,'CR':(cnf1>>1)& 0x7,'impHeaderMod':cnf1&0x1,
+        'SF':cnf2>>4,'RxCrcOn':(cnf2>>2)&0x01,'symb_time_out':symb_time_out,
+        'LowDataOpt': (cnf3>>3) & 0x1, 'G_auto_lna': (cnf3>>2) & 0x1 
+        }
+
     def read_all_reg(self):
+        bws = ('7.8 KHz', '10.4 KHz', '15.6 KHz', '20.8 KHz', '31.25 KHz', '41.7 KHz', '62.5 KHz', '125 KHz', '250 KHz')
+        crc = (None,'4/5','4/6','4/7','4/8')
+        mode = ('SLEEP','STDBY','FSTX','TX','FSRX','RXCONTINUOUS','RXSINGLE','CAD')
         # only sleep mode or standby
-        onoff = lambda i: 'ON' if i else 'OFF'
-        f = self.get_freq()
-        cfg1 = self.get_modem_config_1()
-        cfg2 = self.get_modem_config_2()
-        cfg3 = self.get_modem_config_3()
+        onoff = lambda i: 'on' if i else 'off'
+        f = self.get_freqMhz()
+        configs=self.get_configs()
         pa_config = self.get_pa_config(convert_dBm=True)
         ocp = self.get_ocp(convert_mA=True)
         lna = self.get_lna()
-        s =  "SX127x LoRa registers:\n"
-        s += " mode               %s\n" % MODE.lookup[self.get_mode()]
-        s += " freq               %f MHz\n" % f
-        s += " coding_rate        %s\n" % CODING_RATE.lookup[cfg1['coding_rate']]
-        s += " bw                 %s\n" % BW.lookup[cfg1['bw']]
-        s += " spreading_factor   %s chips/symb\n" % (1 << cfg2['spreading_factor'])
-        s += " implicit_hdr_mode  %s\n" % onoff(cfg1['implicit_header_mode'])
-        s += " rx_payload_crc     %s\n" % onoff(cfg2['rx_crc'])
-        s += " tx_cont_mode       %s\n" % onoff(cfg2['tx_cont_mode'])
+        s =  "Registros principales radio LoRa SX1276\n"
+        s += " Modo               %s\n" % mode[self.get_mode()]
+        s += " frecuencia         %f MHz\n" % f
+        s += " coding_rate        %s\n" % crc[configs['CR']]
+        s += " ancho de banda     %s\n" % bws[configs['Bw']]
+        s += " spreading_factor   %s chips/symb\n" % 2**configs['SF']
+        s += " implicit_hdr_mode  %s\n" % onoff(configs['impHeaderMod'])
+        s += " rx_payload_crc     %s\n" % onoff(configs['RxCrcOn'])
         s += " preamble           %d\n" % self.get_preamble()
-        s += " low_data_rate_opti %s\n" % onoff(cfg3['low_data_rate_optim'])
-        s += " agc_auto_on        %s\n" % onoff(cfg3['agc_auto_on'])
-        s += " symb_timeout       %s\n" % self.get_symb_timeout()
-        s += " freq_hop_period    %s\n" % self.get_hop_period()
-        s += " hop_channel        %s\n" % self.get_hop_channel()
-        s += " payload_length     %s\n" % self.get_payload_length()
-        s += " max_payload_length %s\n" % self.get_max_payload_length()
+        s += " low_data_rate_opti %s\n" % onoff(configs['LowDataOpt'])
+        s += " agc_auto_on        %s\n" % onoff(configs['G_auto_lna'])
+        s += " symb_timeout       %s\n" % configs['symb_time_out']
+        #s += " payload_length     %s\n" % self.get_payload_length()
+        #s += " max_payload_length %s\n" % self.get_max_payload_length()
         s += " irq_flags_mask     %s\n" % self.get_irq_flags_mask()
-        s += " irq_flags          %s\n" % self.get_irq_flags()
-        s += " rx_nb_byte         %d\n" % self.get_rx_nb_bytes()
-        s += " rx_header_cnt      %d\n" % self.get_rx_header_cnt()
-        s += " rx_packet_cnt      %d\n" % self.get_rx_packet_cnt()
-        s += " pkt_snr_value      %f\n" % self.get_pkt_snr_value()
-        s += " pkt_rssi_value     %d\n" % self.get_pkt_rssi_value()
-        s += " rssi_value         %d\n" % self.get_rssi_value()
-        s += " fei                %d\n" % self.get_fei()
-        s += " pa_select          %s\n" % PA_SELECT.lookup[pa_config['pa_select']]
+        #s += " irq_flags          %s\n" % self.get_irq_flags()
+        s += " pa_select          %s\n" % 'PA_BOOST' if pa_config['pa_select'] else 'RFO'
         s += " max_power          %f dBm\n" % pa_config['max_power']
         s += " output_power       %f dBm\n" % pa_config['output_power']
         s += " ocp                %s\n"     % onoff(ocp['ocp_on'])
         s += " ocp_trim           %f mA\n"  % ocp['ocp_trim']
-        s += " lna_gain           %s\n" % GAIN.lookup[lna['lna_gain']]
+        s += " lna_gain           %s\n" % bin(lna['lna_gain'])
         s += " lna_boost_lf       %s\n" % bin(lna['lna_boost_lf'])
         s += " lna_boost_hf       %s\n" % bin(lna['lna_boost_hf'])
-        s += " detect_optimize    %#02x\n" % self.get_detect_optimize()
-        s += " detection_thresh   %#02x\n" % self.get_detection_threshold()
-        s += " sync_word          %#02x\n" % self.get_sync_word()
-        s += " dio_mapping 0..5   %s\n" % self.get_dio_mapping()
-        s += " tcxo               %s\n" % ['XTAL', 'TCXO'][self.get_tcxo()]
-        s += " pa_dac             %s\n" % ['default', 'PA_BOOST'][self.get_pa_dac()]
-        s += " fifo_addr_ptr      %#02x\n" % self.get_fifo_addr_ptr()
-        s += " fifo_tx_base_addr  %#02x\n" % self.get_fifo_tx_base_addr()
-        s += " fifo_rx_base_addr  %#02x\n" % self.get_fifo_rx_base_addr()
-        s += " fifo_rx_curr_addr  %#02x\n" % self.get_fifo_rx_current_addr()
-        s += " fifo_rx_byte_addr  %#02x\n" % self.get_fifo_rx_byte_addr()
-        s += " status             %s\n" % self.get_modem_status()
-        s += " version            %#02x\n" % self.get_version()
+        #s += " detect_optimize    %#02x\n" % self.get_detect_optimize()
+        #s += " detection_thresh   %#02x\n" % self.get_detection_threshold()
+        s += " sync_word          %#02x\n" % self.readRegister(REG_SYNC_WORD)
+        #s += " dio_mapping 0..5   %s\n" % self.get_dio_mapping()
+        #s += " tcxo               %s\n" % ['XTAL', 'TCXO'][self.get_tcxo()]
+        #s += " pa_dac             %s\n" % ['default', 'PA_BOOST'][self.get_pa_dac()]
+        s += " version            %#02x\n" % self.readRegister(REG_VERSION)
         return s

@@ -148,5 +148,6 @@ def LoRa_thread():
 
 colamsn=cola()
 lora_th=LoRa()
+print(lora_th.lora.read_all_regs())
 lora_th.beginIRQ()
 _thread.start_new_thread(LoRa_thread,())
